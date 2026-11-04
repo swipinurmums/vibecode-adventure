@@ -1,0 +1,59 @@
+name: Explore discovery test
+
+on:
+  workflow_dispatch:
+    inputs:
+      airport:
+        description: Departure airport
+        required: true
+        type: choice
+        options:
+          - MAN
+          - BHX
+          - LBA
+        default: MAN
+      region:
+        description: Search area
+        required: true
+        type: choice
+        options:
+          - worldwide
+          - europe
+        default: worldwide
+
+permissions:
+  contents: read
+
+jobs:
+  explore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Explore search
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+        run: |
+          if [ -z "$SERPAPI_KEY" ]; then
+            echo "SERPAPI_KEY repository secret is missing."
+            exit 1
+          fi
+          python explore_scan.py --airport "${{ inputs.airport }}" --region "${{ inputs.region }}"
+
+      - name: Upload search results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: explore-results-${{ inputs.airport }}-${{ inputs.region }}-${{ github.run_number }}
+          path: data/runs/
+          if-no-files-found: warn
+          retention-days: 14
