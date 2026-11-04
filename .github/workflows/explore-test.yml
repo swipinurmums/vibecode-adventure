@@ -19,7 +19,12 @@ on:
         options:
           - worldwide
           - europe
-        default: worldwide
+          - asia
+          - africa
+          - north_america
+          - south_america
+          - oceania
+        default: asia
 
 permissions:
   contents: read
