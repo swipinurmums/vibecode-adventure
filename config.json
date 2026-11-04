@@ -1,0 +1,23 @@
+{
+  "departure_airports": ["MAN", "BHX", "LBA"],
+  "localisation": {
+    "gl": "uk",
+    "hl": "en",
+    "currency": "GBP"
+  },
+  "flight": {
+    "type": "1",
+    "travel_class": "1",
+    "adults": "1",
+    "travel_duration": "2"
+  },
+  "regions": {
+    "worldwide": null,
+    "europe": "/m/02j9z",
+    "asia": null,
+    "africa": null,
+    "north_america": null,
+    "south_america": null,
+    "oceania": null
+  }
+}
