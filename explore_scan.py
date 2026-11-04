@@ -76,9 +76,9 @@ def main() -> int:
     group.add_argument("--all", action="store_true", help="Scan MAN, BHX and LBA (3 API searches)")
     parser.add_argument(
         "--region",
-        choices=["worldwide", "europe"],
+        choices=["worldwide", "europe", "asia", "africa", "north_america", "south_america", "oceania"],
         default="worldwide",
-        help="Worldwide baseline or Europe. Other continent IDs await validation.",
+        help="Worldwide baseline or a configured continent/region.",
     )
     args = parser.parse_args()
 
