@@ -22,7 +22,9 @@ def load_config() -> dict[str, Any]:
     return json.loads(Path("config.json").read_text(encoding="utf-8"))
 
 
-def fetch_explore(api_key: str, airport: str, config: dict[str, Any]) -> dict[str, Any]:
+def fetch_explore(
+    api_key: str, airport: str, config: dict[str, Any], region_id: str | None
+) -> dict[str, Any]:
     params = {
         "engine": "google_travel_explore",
         "departure_id": airport,
@@ -32,6 +34,9 @@ def fetch_explore(api_key: str, airport: str, config: dict[str, Any]) -> dict[st
         **config["flight"],
         "api_key": api_key,
     }
+    if region_id:
+        params["arrival_area_id"] = region_id
+
     response = requests.get(API_URL, params=params, timeout=60)
     response.raise_for_status()
     payload = response.json()
@@ -53,7 +58,7 @@ def normalise_destinations(payload: dict[str, Any], airport: str) -> list[dict[s
             "departure_date": item.get("start_date"),
             "return_date": item.get("end_date"),
             "flight_price_gbp": item.get("flight_price"),
-            # Kept raw until we verify whether this represents a night or full stay.
+            # Stored raw until the hotel-price basis is verified.
             "hotel_price_raw": item.get("hotel_price"),
             "flight_duration_minutes": item.get("flight_duration"),
             "stops": item.get("number_of_stops"),
@@ -73,7 +78,7 @@ def main() -> int:
         "--region",
         choices=["worldwide", "europe"],
         default="worldwide",
-        help="Worldwide baseline by default; Europe is the only region ID verified so far.",
+        help="Worldwide baseline or Europe. Other continent IDs await validation.",
     )
     args = parser.parse_args()
 
@@ -96,26 +101,12 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     all_rows: list[dict[str, Any]] = []
+    errors = 0
     for airport in airports:
         print(f"Searching {airport} ({args.region})...")
         try:
-            payload = fetch_explore(api_key, airport, config)
-            if region_id:
-                # Region-specific request is kept explicit to make credit usage visible.
-                params = {
-                    "engine": "google_travel_explore",
-                    "departure_id": airport,
-                    "arrival_area_id": region_id,
-                    "gl": config["localisation"]["gl"],
-                    "hl": config["localisation"]["hl"],
-                    "currency": config["localisation"]["currency"],
-                    **config["flight"],
-                    "api_key": api_key,
-                }
-                response = requests.get(API_URL, params=params, timeout=60)
-                response.raise_for_status()
-                payload = response.json()
-
+            # Exactly one API request per airport per run.
+            payload = fetch_explore(api_key, airport, config, region_id)
             (output_dir / f"{airport}_{args.region}.json").write_text(
                 json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8"
             )
@@ -123,6 +114,7 @@ def main() -> int:
             all_rows.extend(rows)
             print(f"  {len(rows)} destinations returned")
         except (requests.RequestException, ValueError, RuntimeError) as exc:
+            errors += 1
             print(f"  ERROR: {exc}", file=sys.stderr)
 
     if all_rows:
@@ -134,7 +126,9 @@ def main() -> int:
 
     print(f"\nSaved results to: {output_dir}")
     print(f"Total destination rows: {len(all_rows)}")
-    return 0
+    if errors:
+        print(f"Airport searches with errors: {errors}")
+    return 1 if errors else 0
 
 
 if __name__ == "__main__":
