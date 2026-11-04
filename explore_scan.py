@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Small, auditable Google Travel Explore discovery test."""
+"""Google Travel Explore discovery scan with a readable, date-aware summary."""
 
 from __future__ import annotations
 
@@ -16,6 +16,10 @@ import requests
 from dotenv import load_dotenv
 
 API_URL = "https://serpapi.com/search"
+REGIONS = [
+    "worldwide", "europe", "asia", "africa",
+    "north_america", "south_america", "oceania",
+]
 
 
 def load_config() -> dict[str, Any]:
@@ -69,6 +73,65 @@ def normalise_destinations(payload: dict[str, Any], airport: str) -> list[dict[s
     return rows
 
 
+def price_number(value: Any) -> float | None:
+    if value is None or value == "":
+        return None
+    try:
+        return float(str(value).replace(",", "").replace("£", "").strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def format_duration(value: Any) -> str:
+    if value is None or value == "":
+        return "—"
+    if isinstance(value, (int, float)):
+        hours, minutes = divmod(int(value), 60)
+        return f"{hours}h {minutes}m" if hours else f"{minutes}m"
+    return str(value)
+
+
+def print_summary(rows: list[dict[str, Any]], airport: str, region: str) -> None:
+    priced = [row for row in rows if price_number(row.get("flight_price_gbp")) is not None]
+    unpriced = len(rows) - len(priced)
+    print(f"\n=== {airport} | {region.replace('_', ' ').title()} ===")
+    print(f"Destinations: {len(rows)} | Priced: {len(priced)} | No price: {unpriced}")
+
+    dates = [
+        date
+        for row in rows
+        for date in (row.get("departure_date"), row.get("return_date"))
+        if date
+    ]
+    if dates:
+        print(f"Date range in results: {min(dates)} to {max(dates)}")
+
+    if not priced:
+        print("No priced destinations in this response.")
+        return
+
+    priced.sort(key=lambda row: price_number(row.get("flight_price_gbp")) or float("inf"))
+    print("\nCheapest 10 priced destinations (flight price only):")
+    for index, row in enumerate(priced[:10], start=1):
+        destination = row.get("destination") or "Unknown destination"
+        country = row.get("country") or ""
+        label = f"{destination}, {country}" if country else destination
+        price = price_number(row.get("flight_price_gbp"))
+        outbound = row.get("departure_date") or "date TBC"
+        inbound = row.get("return_date") or "date TBC"
+        stops = row.get("stops")
+        stops_label = f"{stops} stop(s)" if stops is not None else "stops TBC"
+        duration = format_duration(row.get("flight_duration_minutes"))
+        airline = row.get("airline") or "airline TBC"
+        print(
+            f"{index:>2}. {label} | £{price:,.0f} return | "
+            f"{outbound} → {inbound} | {stops_label} | {duration} | {airline}"
+        )
+        link = row.get("google_travel_url")
+        if link:
+            print(f"    {link}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group(required=True)
@@ -76,7 +139,7 @@ def main() -> int:
     group.add_argument("--all", action="store_true", help="Scan MAN, BHX and LBA (3 API searches)")
     parser.add_argument(
         "--region",
-        choices=["worldwide", "europe", "asia", "africa", "north_america", "south_america", "oceania"],
+        choices=REGIONS,
         default="worldwide",
         help="Worldwide baseline or a configured continent/region.",
     )
@@ -93,7 +156,7 @@ def main() -> int:
     region_id = config["regions"].get(args.region)
 
     if args.region != "worldwide" and not region_id:
-        print(f"No verified Google region ID is configured for: {args.region}", file=sys.stderr)
+        print(f"No region ID is configured for: {args.region}", file=sys.stderr)
         return 2
 
     run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -112,7 +175,7 @@ def main() -> int:
             )
             rows = normalise_destinations(payload, airport)
             all_rows.extend(rows)
-            print(f"  {len(rows)} destinations returned")
+            print_summary(rows, airport, args.region)
         except (requests.RequestException, ValueError, RuntimeError) as exc:
             errors += 1
             print(f"  ERROR: {exc}", file=sys.stderr)
@@ -124,7 +187,7 @@ def main() -> int:
             writer.writeheader()
             writer.writerows(all_rows)
 
-    print(f"\nSaved results to: {output_dir}")
+    print(f"\nSaved raw responses and CSV to: {output_dir}")
     print(f"Total destination rows: {len(all_rows)}")
     if errors:
         print(f"Airport searches with errors: {errors}")
