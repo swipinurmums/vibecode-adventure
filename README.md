@@ -49,8 +49,9 @@ The initial scan uses:
 - Origin: one of MAN, BHX, LBA
 - UK localisation, GBP, English
 - Economy, return flights
-- Flexible dates within Google Explore's supported window
-- Trip duration: Explore exposes flexible duration presets (weekend / 1 week / 2 weeks), not the exact 3–14 day range used by the Deals API. This is recorded as a limitation for the first test.
+- Travel window: explicitly all months within the next 6 months (`month=0`)
+- Trip duration: 1 week for the first baseline test; Explore also supports weekend and 2-week presets
+- This is not an exact 3–14 day range; the separate Deals API supports a custom trip-length range.
 
 The script deliberately makes one request per airport. Avoid repeatedly forcing fresh searches while testing: SerpApi's exact-parameter cache can serve repeat requests for free within its cache window.
 
@@ -58,7 +59,7 @@ The script deliberately makes one request per airport. Avoid repeatedly forcing 
 
 Explore supports `arrival_area_id` using Google Knowledge Graph location IDs. Europe is documented by SerpApi as `/m/02j9z`. Other continent IDs should be verified against Google's/SerpApi's location data before being added; this project does not guess opaque IDs.
 
-The first run establishes the unrestricted worldwide baseline. Next we will validate region IDs and compare Asia, Africa, the Americas and Oceania against that baseline, while watching the 250-search monthly allowance.
+The first run establishes the unrestricted worldwide baseline over the next six months. The script sends `month=0` explicitly; Explore defines this as all months within the next six months. Next we will validate region IDs and compare Asia, Africa, the Americas and Oceania against that baseline, while watching the 250-search monthly allowance.
 
 ## Important caveats
 
