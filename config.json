@@ -1,5 +1,9 @@
 {
-  "departure_airports": ["MAN", "BHX", "LBA"],
+  "departure_airports": [
+    "MAN",
+    "BHX",
+    "LBA"
+  ],
   "localisation": {
     "gl": "uk",
     "hl": "en",
@@ -9,7 +13,8 @@
     "type": "1",
     "travel_class": "1",
     "adults": "1",
-    "travel_duration": "2"
+    "travel_duration": "2",
+    "month": "0"
   },
   "regions": {
     "worldwide": null,
