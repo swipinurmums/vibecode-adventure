@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from deal_tracker import observation, compare, ingest_explore, ingest_hotels, classify_accommodation
+from deal_tracker import observation, compare, ingest_explore, ingest_hotels, classify_accommodation, append_history
 
 
 class DealTrackerTests(unittest.TestCase):
