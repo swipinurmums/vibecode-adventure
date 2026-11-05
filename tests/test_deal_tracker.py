@@ -73,6 +73,35 @@ class DealTrackerTests(unittest.TestCase):
         self.assertEqual(classify_accommodation("Generator Dublin", "hotel"), "hostel")
         self.assertEqual(classify_accommodation("Clink i Lár", "hotel"), "hostel")
 
+    def test_same_day_repeat_scans_do_not_inflate_flight_sample_count(self):
+        current = observation("flight", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08", 100)
+        history = [
+            dict(current, price_gbp=150, observed_at="2026-11-05T08:00:00+00:00"),
+            dict(current, price_gbp=150, observed_at="2026-11-05T12:00:00+00:00"),
+            dict(current, price_gbp=140, observed_at="2026-11-04T08:00:00+00:00"),
+        ]
+        result = compare(history, current, "flight")
+        self.assertEqual(result["sample_count"], 2)
+        self.assertEqual(result["deal_status"], "building_history")
+
+    def test_hotel_repeated_same_day_observation_is_deduplicated_per_property(self):
+        current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                              100, "Hotel A", "hotel", 4.2, 2)
+        history = [
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        150, "Hotel B", "hotel", 4.3, 2),
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        140, "Hotel B", "hotel", 4.3, 2),
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        130, "Hotel C", "hotel", 4.3, 2),
+        ]
+        history[0]["observed_at"] = "2026-11-05T08:00:00+00:00"
+        history[1]["observed_at"] = "2026-11-05T12:00:00+00:00"
+        history[2]["observed_at"] = "2026-11-04T08:00:00+00:00"
+        result = compare(history, current, "hotel")
+        self.assertEqual(result["sample_count"], 2)
+        self.assertEqual(result["deal_status"], "building_history")
+
     def test_invalid_trip_dates_and_prices_are_rejected(self):
         self.assertIsNone(observation("flight", "MAN", "Rome", "Italy", "bad", "2027-05-08", 100))
         self.assertIsNone(observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08", 0))
