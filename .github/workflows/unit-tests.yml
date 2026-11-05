@@ -1,0 +1,31 @@
+name: Backend unit tests
+
+on:
+  push:
+    paths:
+      - "deal_tracker.py"
+      - "hotel_scan.py"
+      - "explore_scan.py"
+      - "credit_ledger.py"
+      - "tests/**"
+      - "requirements.txt"
+      - ".github/workflows/unit-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run backend tests
+        run: python -m unittest discover -s tests -v
