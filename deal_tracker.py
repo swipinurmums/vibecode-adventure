@@ -57,7 +57,7 @@ def rating_band(value):
 
 def observation(kind, origin, destination, country, start, end, price,
                 property_name=None, accommodation_type_value=None,
-                rating=None, adults=1):
+                rating=None, adults=1, tax_basis="unknown"):
     try:
         nights = (datetime.strptime(end, "%Y-%m-%d") -
                   datetime.strptime(start, "%Y-%m-%d")).days
@@ -82,7 +82,8 @@ def observation(kind, origin, destination, country, start, end, price,
             "property_key": (property_name or "").strip().casefold(),
             "accommodation_type": classify_accommodation(property_name, accommodation_type_value),
             "rating_band": rating_band(rating),
-            "adults": guest_count
+            "adults": guest_count,
+            "tax_basis": tax_basis or "unknown"
         })
     return row
 
@@ -112,7 +113,7 @@ def compare(history, current, kind):
         if row.get("kind") != kind or any(row.get(k) != current.get(k) for k in keys):
             continue
         if kind == "hotel":
-            hotel_keys = ("accommodation_type", "rating_band", "adults")
+            hotel_keys = ("accommodation_type", "rating_band", "adults", "tax_basis")
             if any(comparable_hotel_value(row, k) != comparable_hotel_value(current, k)
                    for k in hotel_keys):
                 continue
@@ -182,7 +183,8 @@ def ingest_hotels(source, history_path=HISTORY):
             "hotel", item.get("origin"), item.get("destination"), item.get("country"),
             item.get("flight_departure_date"), item.get("flight_return_date"),
             item.get("total_price_gbp"), item.get("property"),
-            item.get("accommodation_type"), item.get("rating"), item.get("adults", 1)
+            item.get("accommodation_type"), item.get("rating"), item.get("adults", 1),
+            item.get("tax_basis", "unknown")
         )
         if row is None:
             continue
