@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from deal_tracker import observation, compare, ingest_explore, ingest_hotels
+from deal_tracker import observation, compare, ingest_explore, ingest_hotels, classify_accommodation
 
 
 class DealTrackerTests(unittest.TestCase):
@@ -49,14 +49,29 @@ class DealTrackerTests(unittest.TestCase):
         self.assertEqual(result["sample_count"], 0)
         self.assertEqual(result["deal_status"], "building_history")
 
-    def test_legacy_hotel_history_uses_inferred_type_and_unrated_band(self):
+    def test_unrated_hotels_only_compare_with_same_property(self):
         current = observation("hotel", "MAN", "Dublin", "Ireland", "2027-05-01", "2027-05-08",
-                              100, "New Hotel", "hotel", None, 1)
-        history = [dict(current, property=name, property_key=name.casefold(),
-                        accommodation_type=None, rating_band=None, price_gbp=150 + i)
-                   for i, name in enumerate(("Old Hotel A", "Old Hotel B", "Old Hotel C"))]
+                              100, "Lua's Place", "hotel", None, 1)
+        history = [
+            dict(current, property=name, property_key=name.casefold(),
+                 accommodation_type=None, rating_band=None, price_gbp=150 + i)
+            for i, name in enumerate(("Generator Dublin", "The Dawson Hotel", "Lua's Place"))
+        ]
+        result = compare(history, current, "hotel")
+        self.assertEqual(result["sample_count"], 1)
+        self.assertEqual(result["deal_status"], "building_history")
+
+    def test_unrated_property_requires_its_own_three_price_observations(self):
+        current = observation("hotel", "MAN", "Dublin", "Ireland", "2027-05-01", "2027-05-08",
+                              100, "Lua's Place", "hotel", None, 1)
+        history = [dict(current, price_gbp=150 + i, observed_at=str(i)) for i in range(3)]
         result = compare(history, current, "hotel")
         self.assertEqual(result["sample_count"], 3)
+        self.assertEqual(result["deal_status"], "strong_deal")
+
+    def test_known_hostel_brands_are_not_misclassified_as_hotels(self):
+        self.assertEqual(classify_accommodation("Generator Dublin", "hotel"), "hostel")
+        self.assertEqual(classify_accommodation("Clink i Lár", "hotel"), "hostel")
 
     def test_invalid_trip_dates_and_prices_are_rejected(self):
         self.assertIsNone(observation("flight", "MAN", "Rome", "Italy", "bad", "2027-05-08", 100))
