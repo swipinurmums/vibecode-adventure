@@ -29,15 +29,12 @@ def current(data):
 
 def status(data):
     month = current(data)
-    print(f"UTC month: {month_key()}")
-    print(f"Reconciled: {data.get('reconciled', False)}")
-    print(f"Opening usage baseline: {month.get('baseline_used')}")
     reserved = month.get("reserved", {})
-    tracked = sum(int(reserved.get(k, 0)) for k in CAPS)
-    baseline = month.get("baseline_used")
-    print(f"Tracked reservations: {tracked}/{TOTAL_CAP}")
-    if baseline is not None:
-        print(f"Estimated total usage incl. baseline: {baseline + tracked}/{TOTAL_CAP}")
+    counted = sum(int(reserved.get(k, 0)) for k in CAPS)
+    print(f"UTC month: {month_key()}")
+    print(f"Reconciled: {month.get('baseline_used') is not None}")
+    print(f"Opening usage baseline (charged to flight allocation): {month.get('baseline_used')}")
+    print(f"Counted monthly usage incl. baseline: {counted}/{TOTAL_CAP}")
     for name, cap in CAPS.items():
         used = int(reserved.get(name, 0))
         print(f"{name}: {used}/{cap} (remaining allocation {max(0, cap-used)})")
@@ -47,7 +44,12 @@ def reconcile(baseline_used):
         raise ValueError(f"baseline_used must be between 0 and {TOTAL_CAP}")
     data = load()
     month = current(data)
+    if month.get("baseline_used") is not None:
+        raise RuntimeError("This month is already reconciled. Refusing to reset recorded reservations.")
+    # Prior unclassified usage is conservatively charged to the flight bucket,
+    # preserving the 50 personal and 80 hotel allocations.
     month["baseline_used"] = baseline_used
+    month["reserved"] = {"flight": baseline_used, "personal": 0, "hotel": 0}
     data["reconciled"] = True
     save(data)
     print(f"Saved opening baseline of {baseline_used} searches for {month_key()}.")
@@ -60,14 +62,14 @@ def reserve(category, count=1):
         raise ValueError("count must be positive")
     data = load()
     month = current(data)
-    if not data.get("reconciled") or month.get("baseline_used") is None:
+    if month.get("baseline_used") is None:
         raise RuntimeError("BLOCKED: monthly ledger has not been reconciled. Check SerpApi account usage, then run the ledger setup workflow first.")
     reserved = month.setdefault("reserved", {})
     for name in CAPS:
         reserved.setdefault(name, 0)
     if reserved[category] + count > CAPS[category]:
         raise RuntimeError(f"BLOCKED: {category} allocation would exceed {CAPS[category]} searches/month.")
-    total = month["baseline_used"] + sum(int(reserved[k]) for k in CAPS)
+    total = sum(int(reserved[k]) for k in CAPS)
     if total + count > TOTAL_CAP:
         raise RuntimeError(f"BLOCKED: monthly account cap of {TOTAL_CAP} would be exceeded.")
     reserved[category] += count
