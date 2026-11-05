@@ -352,6 +352,16 @@ def report(rows):
         if row["kind"] == "hotel":
             label += f" [{row.get('accommodation_type')}, {row.get('rating_band')}]"
         print(f"{row['kind']}: {label} £{row['price_gbp']:.2f} — {row['deal_status']} — {detail}")
+        if row["kind"] == "hotel":
+            combined = row.get("combined_benchmark_gbp")
+            if combined is None:
+                print(f"  Combined flight + stay: {row.get('combined_deal_status', 'unavailable')} (component history still building)")
+            else:
+                print(
+                    f"  Combined flight + stay: £{row['combined_price_gbp']:.2f} vs "
+                    f"indicative £{combined:.2f} benchmark "
+                    f"({row['combined_discount_percent']:+.1f}%) — {row['combined_deal_status']}"
+                )
 
 
 def main():
