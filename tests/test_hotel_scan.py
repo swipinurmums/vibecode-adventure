@@ -52,12 +52,14 @@ class HotelMatchingTests(unittest.TestCase):
                   "flight_price_gbp":45}
         payload = {"properties":[
             {"name":"Jacobs Inn Hostel", "type":"hotel", "overall_rating":4.3},
+            {"name":"Clink i Lár", "type":"hotel", "overall_rating":4.0},
             {"name":"Example Hotel", "type":"hotel", "overall_rating":4.2},
             {"name":"City Studio Apartment", "type":"vacation rental"}
         ]}
         rows = normalise(payload, flight, 1)
         by_name = {r["property"]: r for r in rows}
         self.assertEqual(by_name["Jacobs Inn Hostel"]["accommodation_type"], "hostel")
+        self.assertEqual(by_name["Clink i Lár"]["accommodation_type"], "hostel")
         self.assertEqual(by_name["Example Hotel"]["accommodation_type"], "hotel")
         self.assertEqual(by_name["City Studio Apartment"]["accommodation_type"], "vacation_rental")
 
