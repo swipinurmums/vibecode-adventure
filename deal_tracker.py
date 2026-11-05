@@ -137,7 +137,7 @@ def location_rating_band(value):
         return "unknown"
     if not 1 <= score <= 5:
         return "unknown"
-    lower = int((score - 1) * 2) / 2 + 1
+    lower = min(int((score - 1) * 2) / 2 + 1, 4.5)
     return f"{lower:.1f}_{lower + 0.5:.1f}"
 
 
@@ -192,8 +192,9 @@ def compare(history, current, kind):
             # broad review-score band: same star class and location-score band,
             # with at least 20 reviews for both properties. Otherwise only
             # compare a property against its own history.
-            same_property = (comparable_hotel_value(row, "property_key") ==
-                             comparable_hotel_value(current, "property_key"))
+            current_property_key = comparable_hotel_value(current, "property_key")
+            row_property_key = comparable_hotel_value(row, "property_key")
+            same_property = bool(current_property_key) and row_property_key == current_property_key
             quality_keys = ("hotel_class", "location_rating_band")
             quality_known = all(
                 comparable_hotel_value(row, k) is not None and
