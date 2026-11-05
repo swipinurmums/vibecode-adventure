@@ -52,6 +52,11 @@ def normalise(payload, flight, adults):
             "property": p.get("name"), "accommodation_type": classify_accommodation(
                 p.get("name"), p.get("type")),
             "rating": p.get("overall_rating"),
+            "review_count": p.get("reviews"),
+            "hotel_class": p.get("extracted_hotel_class"),
+            "location_rating": p.get("location_rating"),
+            "latitude": (p.get("gps_coordinates") or {}).get("latitude"),
+            "longitude": (p.get("gps_coordinates") or {}).get("longitude"),
             "total_price_gbp": price, "tax_basis": basis,
             "before_tax_gbp": before,
             "nightly_price_gbp": (p.get("rate_per_night") or {}).get("extracted_display_price"),
@@ -135,7 +140,8 @@ def main():
         fields = list(rows[0]) if rows else [
             "origin","destination","country","flight_departure_date","flight_return_date",
             "flight_price_gbp","flight_stops","flight_airline","nights","adults","property",
-            "accommodation_type","rating","review_count","hotel_class","location_rating",\n            "latitude","longitude","total_price_gbp","tax_basis","before_tax_gbp",
+            "accommodation_type","rating","review_count","hotel_class","location_rating",
+            "latitude","longitude","total_price_gbp","tax_basis","before_tax_gbp",
             "nightly_price_gbp","source","url"]
         with (folder / "hotels.csv").open("w", newline="", encoding="utf-8") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields)
