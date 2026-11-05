@@ -80,7 +80,7 @@ def observation(kind, origin, destination, country, start, end, price,
             guest_count = 1
         row.update({
             "property_key": (property_name or "").strip().casefold(),
-            "accommodation_type": accommodation_type_value or classify_accommodation(property_name),
+            "accommodation_type": classify_accommodation(property_name, accommodation_type_value),
             "rating_band": rating_band(rating),
             "adults": guest_count
         })
@@ -104,7 +104,10 @@ def comparable_hotel_value(row, key):
 
 def compare(history, current, kind):
     keys = ("origin", "destination", "country", "travel_month", "nights")
-    prices = []
+    # Keep at most one observation per UTC day for each hotel property (or
+    # per route for flights). Re-running an identical scan must not inflate
+    # the benchmark sample count with duplicate same-day prices.
+    samples_by_key = {}
     for row in history:
         if row.get("kind") != kind or any(row.get(k) != current.get(k) for k in keys):
             continue
@@ -123,7 +126,15 @@ def compare(history, current, kind):
         except (KeyError, TypeError, ValueError):
             continue
         if value > 0:
-            prices.append(value)
+            observed = str(row.get("observed_at") or "")
+            day = observed[:10] if len(observed) >= 10 else observed
+            if kind == "hotel":
+                property_key = (row.get("property") or "").strip().casefold()
+                sample_key = (day, property_key)
+            else:
+                sample_key = (day,)
+            samples_by_key[sample_key] = value
+    prices = list(samples_by_key.values())
     if len(prices) < MIN_SAMPLES:
         return {"sample_count": len(prices), "benchmark_gbp": None,
                 "discount_percent": None, "deal_status": "building_history"}
