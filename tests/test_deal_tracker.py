@@ -179,14 +179,14 @@ class DealTrackerTests(unittest.TestCase):
 
     def test_hotel_comparison_excludes_different_tax_basis(self):
         current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                              100, "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees")
+                              100, "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)
         history = [
             observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                        150, "Hotel B", "hotel", 4.3, 2, "displayed_total_tax_status_unknown"),
+                        150, "Hotel B", "hotel", 4.3, 2, "displayed_total_tax_status_unknown", 4, 4.7, 180),
             observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                        140, "Hotel C", "hotel", 4.3, 2, "after_taxes_and_fees"),
+                        140, "Hotel C", "hotel", 4.3, 2, "after_taxes_and_fees", 4, 4.7, 180),
             observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                        130, "Hotel D", "hotel", 4.3, 2, "after_taxes_and_fees")
+                        130, "Hotel D", "hotel", 4.3, 2, "after_taxes_and_fees", 4, 4.7, 180)
         ]
         result = compare(history, current, "hotel")
         self.assertEqual(result["sample_count"], 2)
@@ -216,16 +216,21 @@ class DealTrackerTests(unittest.TestCase):
                 writer = csv.DictWriter(handle, fieldnames=[
                     "origin", "destination", "country", "flight_departure_date",
                     "flight_return_date", "total_price_gbp", "property",
-                    "accommodation_type", "rating", "adults", "hotel_class",\n                    "location_rating", "review_count"])
+                    "accommodation_type", "rating", "adults", "hotel_class",
+                    "location_rating", "review_count"])
                 writer.writeheader()
                 writer.writerow({"origin": "MAN", "destination": "Rome", "country": "Italy",
                     "flight_departure_date": "2027-05-01", "flight_return_date": "2027-05-08",
                     "total_price_gbp": "100", "property": "Hotel A",
-                    "accommodation_type": "hotel", "rating": "4.2", "adults": "2",\n                    "hotel_class": "4", "location_rating": "4.5", "review_count": "150"})
+                    "accommodation_type": "hotel", "rating": "4.2", "adults": "2",
+                    "hotel_class": "4", "location_rating": "4.5", "review_count": "150"})
             rows = ingest_hotels(source, history)
             self.assertEqual(rows[0]["accommodation_type"], "hotel")
             self.assertEqual(rows[0]["rating_band"], "4_to_4_5")
-            self.assertEqual(rows[0]["adults"], 2)\n            self.assertEqual(rows[0]["hotel_class"], 4)\n            self.assertEqual(rows[0]["location_rating_band"], "4.5_5.0")\n            self.assertEqual(rows[0]["review_count"], 150)
+            self.assertEqual(rows[0]["adults"], 2)
+            self.assertEqual(rows[0]["hotel_class"], 4)
+            self.assertEqual(rows[0]["location_rating_band"], "4.5_5.0")
+            self.assertEqual(rows[0]["review_count"], 150)
 
 
 if __name__ == "__main__":
