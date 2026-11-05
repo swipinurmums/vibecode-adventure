@@ -135,7 +135,7 @@ def main():
         fields = list(rows[0]) if rows else [
             "origin","destination","country","flight_departure_date","flight_return_date",
             "flight_price_gbp","flight_stops","flight_airline","nights","adults","property",
-            "accommodation_type","rating","total_price_gbp","tax_basis","before_tax_gbp",
+            "accommodation_type","rating","review_count","hotel_class","location_rating",\n            "latitude","longitude","total_price_gbp","tax_basis","before_tax_gbp",
             "nightly_price_gbp","source","url"]
         with (folder / "hotels.csv").open("w", newline="", encoding="utf-8") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields)
