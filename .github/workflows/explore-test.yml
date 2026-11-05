@@ -24,10 +24,14 @@ on:
           - north_america
           - south_america
           - oceania
-        default: asia
+        default: worldwide
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: serpapi-monthly-ledger
+  cancel-in-progress: false
 
 jobs:
   explore:
@@ -35,15 +39,22 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Install dependencies
         run: pip install -r requirements.txt
-
+      - name: Test scanner and ledger logic
+        run: python -m unittest discover -s tests -v
+      - name: Reserve one flight search and persist ledger before API call
+        run: |
+          python credit_ledger.py reserve --category flight --count 1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/usage/monthly.json
+          git commit -m "Record SerpApi flight search reservation"
+          git push
       - name: Run Explore search
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
@@ -53,7 +64,6 @@ jobs:
             exit 1
           fi
           python explore_scan.py --airport "${{ inputs.airport }}" --region "${{ inputs.region }}"
-
       - name: Upload search results
         if: always()
         uses: actions/upload-artifact@v4

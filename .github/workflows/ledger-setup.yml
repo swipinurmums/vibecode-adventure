@@ -1,0 +1,37 @@
+name: Set up monthly SerpApi credit ledger
+
+on:
+  workflow_dispatch:
+    inputs:
+      baseline_used:
+        description: Total SerpApi searches already used this month (check your SerpApi dashboard)
+        required: true
+        type: number
+
+permissions:
+  contents: write
+
+concurrency:
+  group: serpapi-monthly-ledger
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Reconcile current-month opening usage and save ledger
+        run: |
+          python credit_ledger.py reconcile --baseline-used "${{ inputs.baseline_used }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/usage/monthly.json
+          git commit -m "Reconcile monthly SerpApi usage baseline"
+          git push
+      - name: Show remaining allocations
+        run: python credit_ledger.py status

@@ -27,7 +27,11 @@ on:
         default: worldwide
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: serpapi-monthly-ledger
+  cancel-in-progress: false
 
 jobs:
   flight-to-hotel:
@@ -41,8 +45,16 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Test flight-to-hotel matching logic
+      - name: Test flight-to-hotel matching and credit ledger
         run: python -m unittest discover -s tests -v
+      - name: Reserve one flight search and persist ledger before API call
+        run: |
+          python credit_ledger.py reserve --category flight --count 1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/usage/monthly.json
+          git commit -m "Record SerpApi flight search reservation"
+          git push
       - name: Discover flights and dates
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
@@ -52,17 +64,41 @@ jobs:
             exit 1
           fi
           python explore_scan.py --airport "${{ inputs.airport }}" --region "${{ inputs.region }}"
-      - name: Search hotels for the cheapest eligible flight
-        env:
-          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+      - name: Check whether any hotel candidate qualifies
+        id: candidates
         run: |
           CSV_PATH="$(find data/runs -name destinations.csv -type f -print -quit)"
           if [ -z "$CSV_PATH" ]; then
-            echo "Flight scan produced no destination CSV; no hotel search made."
-            exit 1
+            echo "No destination CSV found; no hotel request will be made."
+            echo "eligible=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-          echo "Using flight results from: $CSV_PATH"
-          python hotel_scan.py --from-csv "$CSV_PATH" --max-searches 1 --max-flight-price 250
+          COUNT="$(python -c 'import sys; from hotel_scan import load_flight_candidates; print(len(load_flight_candidates(sys.argv[1], 250)))' "$CSV_PATH")"
+          echo "Eligible priced destinations with valid dates: $COUNT"
+          echo "csv_path=$CSV_PATH" >> "$GITHUB_OUTPUT"
+          if [ "$COUNT" -gt 0 ]; then
+            echo "eligible=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "eligible=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Reserve one hotel search and persist ledger before API call
+        if: steps.candidates.outputs.eligible == 'true'
+        run: |
+          python credit_ledger.py reserve --category hotel --count 1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/usage/monthly.json
+          git commit -m "Record SerpApi hotel search reservation"
+          git push
+      - name: Search hotels using flight dates
+        if: steps.candidates.outputs.eligible == 'true'
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+        run: |
+          python hotel_scan.py --from-csv "${{ steps.candidates.outputs.csv_path }}" --max-searches 1 --max-flight-price 250
+      - name: Explain skipped hotel search
+        if: steps.candidates.outputs.eligible != 'true'
+        run: echo "No eligible flight candidate; no hotel credit reserved or hotel API request made."
       - name: Upload combined flight and hotel results
         if: always()
         uses: actions/upload-artifact@v4
