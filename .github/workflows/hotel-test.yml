@@ -1,0 +1,59 @@
+name: Hotel price test
+on:
+  workflow_dispatch:
+    inputs:
+      city:
+        description: Destination city
+        required: true
+        type: string
+      country:
+        description: Country
+        required: false
+        type: string
+      check_in:
+        description: Check-in date YYYY-MM-DD
+        required: true
+        type: string
+      check_out:
+        description: Check-out date YYYY-MM-DD
+        required: true
+        type: string
+      adults:
+        description: Adults
+        required: true
+        type: choice
+        options:
+          - "1"
+          - "2"
+        default: "1"
+permissions:
+  contents: read
+jobs:
+  hotel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - name: Test hotel logic
+        run: python -m unittest discover -s tests -v
+      - name: Make one hotel search
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          CITY: ${{ inputs.city }}
+          COUNTRY: ${{ inputs.country }}
+          CHECK_IN: ${{ inputs.check_in }}
+          CHECK_OUT: ${{ inputs.check_out }}
+          ADULTS: ${{ inputs.adults }}
+        run: |
+          if [ -z "$SERPAPI_KEY" ]; then echo "SERPAPI_KEY secret missing"; exit 1; fi
+          python hotel_scan.py --city "$CITY" --country "$COUNTRY" --check-in "$CHECK_IN" --check-out "$CHECK_OUT" --adults "$ADULTS"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hotel-results-${{ github.run_number }}
+          path: data/hotels/
+          if-no-files-found: warn
+          retention-days: 14
