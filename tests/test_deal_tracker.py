@@ -102,6 +102,22 @@ class DealTrackerTests(unittest.TestCase):
         self.assertEqual(result["sample_count"], 2)
         self.assertEqual(result["deal_status"], "building_history")
 
+
+    def test_hotel_comparison_excludes_different_tax_basis(self):
+        current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                              100, "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees")
+        history = [
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        150, "Hotel B", "hotel", 4.3, 2, "displayed_total_tax_status_unknown"),
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        140, "Hotel C", "hotel", 4.3, 2, "after_taxes_and_fees"),
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        130, "Hotel D", "hotel", 4.3, 2, "after_taxes_and_fees")
+        ]
+        result = compare(history, current, "hotel")
+        self.assertEqual(result["sample_count"], 2)
+        self.assertEqual(result["deal_status"], "building_history")
+
     def test_invalid_trip_dates_and_prices_are_rejected(self):
         self.assertIsNone(observation("flight", "MAN", "Rome", "Italy", "bad", "2027-05-08", 100))
         self.assertIsNone(observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08", 0))
