@@ -71,13 +71,35 @@ class DealTrackerTests(unittest.TestCase):
             observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
                         500, "Villa A", "vacation_rental", 4.2, 2),
             observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                        500, "Hotel B", "hotel", 3.2, 2),
+                        500, "Hotel B", "hotel", 3.2, 2, "unknown", 4, 4.5, 100),
             observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                        500, "Hotel C", "hotel", 4.2, 1)
+                        500, "Hotel C", "hotel", 4.2, 1, "unknown", 4, 4.5, 100)
         ]
         result = compare(history, current, "hotel")
         self.assertEqual(result["sample_count"], 0)
         self.assertEqual(result["deal_status"], "building_history")
+
+    def test_hotel_comparison_rejects_different_star_class_or_location_quality(self):
+        current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                              100, "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.5, 150)
+        history = [
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        500, "Hotel B", "hotel", 4.3, 2, "after_taxes_and_fees", 3, 4.5, 150),
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        500, "Hotel C", "hotel", 4.3, 2, "after_taxes_and_fees", 4, 3.5, 150),
+        ]
+        self.assertEqual(compare(history, current, "hotel")["sample_count"], 0)
+
+    def test_cross_property_hotel_benchmark_requires_sufficient_review_count(self):
+        current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                              100, "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.5, 150)
+        history = [
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        150, "Hotel B", "hotel", 4.3, 2, "after_taxes_and_fees", 4, 4.5, 8),
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        140, "Hotel C", "hotel", 4.3, 2, "after_taxes_and_fees", 4, 4.5, 180),
+        ]
+        self.assertEqual(compare(history, current, "hotel")["sample_count"], 1)
 
     def test_unrated_hotels_only_compare_with_same_property(self):
         current = observation("hotel", "MAN", "Dublin", "Ireland", "2027-05-01", "2027-05-08",
@@ -172,16 +194,16 @@ class DealTrackerTests(unittest.TestCase):
                 writer = csv.DictWriter(handle, fieldnames=[
                     "origin", "destination", "country", "flight_departure_date",
                     "flight_return_date", "total_price_gbp", "property",
-                    "accommodation_type", "rating", "adults"])
+                    "accommodation_type", "rating", "adults", "hotel_class",\n                    "location_rating", "review_count"])
                 writer.writeheader()
                 writer.writerow({"origin": "MAN", "destination": "Rome", "country": "Italy",
                     "flight_departure_date": "2027-05-01", "flight_return_date": "2027-05-08",
                     "total_price_gbp": "100", "property": "Hotel A",
-                    "accommodation_type": "hotel", "rating": "4.2", "adults": "2"})
+                    "accommodation_type": "hotel", "rating": "4.2", "adults": "2",\n                    "hotel_class": "4", "location_rating": "4.5", "review_count": "150"})
             rows = ingest_hotels(source, history)
             self.assertEqual(rows[0]["accommodation_type"], "hotel")
             self.assertEqual(rows[0]["rating_band"], "4_to_4_5")
-            self.assertEqual(rows[0]["adults"], 2)
+            self.assertEqual(rows[0]["adults"], 2)\n            self.assertEqual(rows[0]["hotel_class"], 4)\n            self.assertEqual(rows[0]["location_rating_band"], "4.5_5.0")\n            self.assertEqual(rows[0]["review_count"], 150)
 
 
 if __name__ == "__main__":
