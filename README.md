@@ -33,5 +33,8 @@ Install dependencies with pip install -r requirements.txt. Set SERPAPI_KEY as a 
 - **Flight-to-hotel integration test:** reserves one flight search, then reserves one hotel search only if an eligible priced flight with valid dates exists.
 - **Unit tests:** python -m unittest discover -s tests -v
 
+## Historical deal detection
+Successful Explore and hotel workflows append observed prices to data/history/observations.jsonl. Comparisons require the same origin, destination, country, travel month and trip length; hotels additionally require the same property. A benchmark is withheld until at least three comparable earlier observations exist. The median is used, and prices at least 15% below it are marked strong_deal. This is an early personal history benchmark, not a market-wide average.
+
 ## Remaining backend work
-Destination food/transport costs, total-holiday scoring, broader hotel comparisons, Google Flights Deals integration, historical deal tracking and alerts. Dashboard comes last. This is a discovery tool, not a booking bot.
+Improve flight benchmarks with dedicated Google Flights price insights, broaden hotel comparisons beyond exact property matches, build combined holiday deal scoring and alerts. Destination food/transport estimates are a later drill-down detail, not a primary ranking factor. Dashboard comes last. This is a discovery tool, not a booking bot.

@@ -64,6 +64,15 @@ jobs:
             exit 1
           fi
           python explore_scan.py --airport "${{ inputs.airport }}" --region "${{ inputs.region }}"
+      - name: Store historical flight price observations
+        run: |
+          JSON_PATH="$(find data/runs -name "${{ inputs.airport }}_${{ inputs.region }}.json" -type f -print | sort | tail -n 1)"
+          if [ -n "$JSON_PATH" ]; then
+            python deal_tracker.py ingest-explore --file "$JSON_PATH"
+            git add data/history/observations.jsonl
+            git commit -m "Store historical flight prices" || echo "No new history changes"
+            git push
+          fi
       - name: Upload search results
         if: always()
         uses: actions/upload-artifact@v4

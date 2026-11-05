@@ -96,6 +96,22 @@ jobs:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
         run: |
           python hotel_scan.py --from-csv "${{ steps.candidates.outputs.csv_path }}" --max-searches 1 --max-flight-price 250
+      - name: Store historical flight and hotel price observations
+        if: always()
+        run: |
+          JSON_PATH="$(find data/runs -name "${{ inputs.airport }}_${{ inputs.region }}.json" -type f -print | sort | tail -n 1)"
+          if [ -n "$JSON_PATH" ]; then
+            python deal_tracker.py ingest-explore --file "$JSON_PATH"
+          fi
+          HOTEL_CSV="$(find data/hotels -name hotels.csv -type f -print | sort | tail -n 1)"
+          if [ -n "$HOTEL_CSV" ]; then
+            python deal_tracker.py ingest-hotels --file "$HOTEL_CSV"
+          fi
+          if [ -f data/history/observations.jsonl ]; then
+            git add data/history/observations.jsonl
+            git commit -m "Store historical holiday prices" || echo "No new history changes"
+            git push
+          fi
       - name: Explain skipped hotel search
         if: steps.candidates.outputs.eligible != 'true'
         run: echo "No eligible flight candidate; no hotel credit reserved or hotel API request made."
