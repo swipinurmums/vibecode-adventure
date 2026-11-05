@@ -17,7 +17,9 @@ def valid_nights(start, end):
 
 def classify_accommodation(name, source_type=None):
     label = f"{source_type or ''} {name or ''}".casefold()
-    if "hostel" in label:
+    hostel_terms = ("hostel", "generator", "clink", "jacobs inn",
+                    "abbey court", "gogarty", "a&o hostel", "meininger")
+    if any(term in label for term in hostel_terms):
         return "hostel"
     rental_terms = ("vacation rental", "apartment", "homestay", "guesthouse",
                     "guest house", "holiday home", "holiday rental", "villa",
