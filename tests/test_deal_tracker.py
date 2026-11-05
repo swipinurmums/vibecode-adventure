@@ -163,11 +163,11 @@ class DealTrackerTests(unittest.TestCase):
                               100, "Hotel A", "hotel", 4.2, 2)
         history = [
             observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                        150, "Hotel B", "hotel", 4.3, 2),
+                        150, "Hotel A", "hotel", 4.3, 2),
             observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                        140, "Hotel B", "hotel", 4.3, 2),
+                        140, "Hotel A", "hotel", 4.3, 2),
             observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                        130, "Hotel C", "hotel", 4.3, 2),
+                        130, "Hotel A", "hotel", 4.3, 2),
         ]
         history[0]["observed_at"] = "2026-11-05T08:00:00+00:00"
         history[1]["observed_at"] = "2026-11-05T12:00:00+00:00"
