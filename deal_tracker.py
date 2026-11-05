@@ -120,7 +120,11 @@ def observation(kind, origin, destination, country, start, end, price,
             "accommodation_type": classify_accommodation(property_name, accommodation_type_value),
             "rating_band": rating_band(rating),
             "adults": guest_count,
-            "tax_basis": tax_basis or "unknown"
+            "tax_basis": tax_basis or "unknown",
+            "hotel_class": (int(hotel_class) if str(hotel_class or "").strip().isdigit() else None),
+            "location_rating": location_rating,
+            "location_rating_band": location_rating_band(location_rating),
+            "review_count": (int(review_count) if str(review_count or "").strip().isdigit() else 0)
         })
     return row
 
@@ -183,11 +187,33 @@ def compare(history, current, kind):
             if any(comparable_hotel_value(row, k) != comparable_hotel_value(current, k)
                    for k in hotel_keys):
                 continue
-            # An unrated property has no defensible cross-property quality match.
-            # Compare it only with its own prior prices, not every unrated listing.
-            if comparable_hotel_value(current, "rating_band") == "unrated":
-                if comparable_hotel_value(row, "property_key") != comparable_hotel_value(current, "property_key"):
-                    continue
+            # Cross-property matching needs stronger quality evidence than a
+            # broad review-score band: same star class and location-score band,
+            # with at least 20 reviews for both properties. Otherwise only
+            # compare a property against its own history.
+            same_property = (comparable_hotel_value(row, "property_key") ==
+                             comparable_hotel_value(current, "property_key"))
+            quality_keys = ("hotel_class", "location_rating_band")
+            quality_known = all(
+                comparable_hotel_value(row, k) is not None and
+                comparable_hotel_value(current, k) is not None and
+                comparable_hotel_value(row, k) != "unknown" and
+                comparable_hotel_value(current, k) != "unknown"
+                for k in quality_keys
+            )
+            enough_reviews = (
+                comparable_hotel_value(row, "review_count") >= 20 and
+                comparable_hotel_value(current, "review_count") >= 20
+            )
+            if not same_property and not (quality_known and enough_reviews):
+                continue
+            if not same_property and any(
+                comparable_hotel_value(row, k) != comparable_hotel_value(current, k)
+                for k in quality_keys
+            ):
+                continue
+            if comparable_hotel_value(current, "rating_band") == "unrated" and not same_property:
+                continue
         try:
             value = float(row["price_gbp"])
         except (KeyError, TypeError, ValueError):
@@ -250,7 +276,8 @@ def ingest_hotels(source, history_path=HISTORY):
             item.get("flight_departure_date"), item.get("flight_return_date"),
             item.get("total_price_gbp"), item.get("property"),
             item.get("accommodation_type"), item.get("rating"), item.get("adults", 1),
-            item.get("tax_basis", "unknown")
+            item.get("tax_basis", "unknown"), item.get("hotel_class"),
+            item.get("location_rating"), item.get("review_count")
         )
         if row is None:
             continue
