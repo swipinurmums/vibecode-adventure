@@ -91,7 +91,7 @@ def comparable_lead_time_band(row):
 
 def observation(kind, origin, destination, country, start, end, price,
                 property_name=None, accommodation_type_value=None,
-                rating=None, adults=1, tax_basis="unknown"):
+                rating=None, adults=1, tax_basis="unknown", hotel_class=None,\n                location_rating=None, review_count=None):
     observed_at = datetime.now(timezone.utc).isoformat()
     try:
         nights = (datetime.strptime(end, "%Y-%m-%d") -
@@ -125,7 +125,30 @@ def observation(kind, origin, destination, country, start, end, price,
     return row
 
 
+def location_rating_band(value):
+    try:
+        score = float(value)
+    except (TypeError, ValueError):
+        return "unknown"
+    if not 1 <= score <= 5:
+        return "unknown"
+    lower = int((score - 1) * 2) / 2 + 1
+    return f"{lower:.1f}_{lower + 0.5:.1f}"
+
+
 def comparable_hotel_value(row, key):
+    if key == "hotel_class":
+        try:
+            return int(row.get(key))
+        except (TypeError, ValueError):
+            return None
+    if key == "location_rating_band":
+        return row.get(key) or location_rating_band(row.get("location_rating"))
+    if key == "review_count":
+        try:
+            return int(row.get(key) or 0)
+        except (TypeError, ValueError):
+            return 0
     if key == "accommodation_type":
         return row.get(key) or classify_accommodation(row.get("property"))
     if key == "rating_band":
