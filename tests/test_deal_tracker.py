@@ -55,9 +55,9 @@ class DealTrackerTests(unittest.TestCase):
 
     def test_hotels_compare_across_properties_in_same_category_and_quality_band(self):
         current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                              100, "Hotel A", "hotel", 4.2, 2)
+                              100, "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)
         history = [observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
-                               price, name, "hotel", 4.3, 2)
+                               price, name, "hotel", 4.3, 2, "after_taxes_and_fees", 4, 4.7, 180)
                    for price, name in ((150, "Hotel B"), (140, "Hotel C"), (130, "Hotel D"))]
         result = compare(history, current, "hotel")
         self.assertEqual(result["sample_count"], 3)
@@ -98,6 +98,28 @@ class DealTrackerTests(unittest.TestCase):
                         150, "Hotel B", "hotel", 4.3, 2, "after_taxes_and_fees", 4, 4.5, 8),
             observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
                         140, "Hotel C", "hotel", 4.3, 2, "after_taxes_and_fees", 4, 4.5, 180),
+        ]
+        self.assertEqual(compare(history, current, "hotel")["sample_count"], 1)
+
+    def test_cross_property_hotel_benchmark_requires_matching_star_and_location_quality(self):
+        current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                              100, "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)
+        history = [
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        500, "Hotel B", "hotel", 4.3, 2, "after_taxes_and_fees", 3, 4.6, 150),
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        500, "Hotel C", "hotel", 4.3, 2, "after_taxes_and_fees", 4, 3.6, 150),
+        ]
+        self.assertEqual(compare(history, current, "hotel")["sample_count"], 0)
+
+    def test_cross_property_hotel_benchmark_requires_twenty_reviews(self):
+        current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                              100, "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)
+        history = [
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        150, "Hotel B", "hotel", 4.3, 2, "after_taxes_and_fees", 4, 4.7, 8),
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        140, "Hotel C", "hotel", 4.3, 2, "after_taxes_and_fees", 4, 4.7, 180),
         ]
         self.assertEqual(compare(history, current, "hotel")["sample_count"], 1)
 
