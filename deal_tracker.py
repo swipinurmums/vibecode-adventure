@@ -93,6 +93,8 @@ def comparable_hotel_value(row, key):
         return row.get(key) or classify_accommodation(row.get("property"))
     if key == "rating_band":
         return row.get(key) or "unrated"
+    if key == "tax_basis":
+        return row.get(key) or "unknown"
     if key == "adults":
         try:
             return int(row.get(key) or 1)
