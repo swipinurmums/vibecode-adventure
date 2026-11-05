@@ -6,12 +6,26 @@ from dotenv import load_dotenv
 
 API_URL = "https://serpapi.com/search"
 
+
 def valid_nights(start, end):
     try:
         n = (date.fromisoformat(end) - date.fromisoformat(start)).days
     except (TypeError, ValueError):
         return 0
     return n if n > 0 else 0
+
+
+def classify_accommodation(name, source_type=None):
+    label = f"{source_type or ''} {name or ''}".casefold()
+    if "hostel" in label:
+        return "hostel"
+    rental_terms = ("vacation rental", "apartment", "homestay", "guesthouse",
+                    "guest house", "holiday home", "holiday rental", "villa",
+                    "serviced apartment", "private room")
+    if any(term in label for term in rental_terms):
+        return "vacation_rental"
+    return "hotel"
+
 
 def normalise(payload, flight, adults):
     nights = valid_nights(flight["departure_date"], flight["return_date"])
@@ -33,7 +47,9 @@ def normalise(payload, flight, adults):
             "flight_stops": flight.get("stops"),
             "flight_airline": flight.get("airline"),
             "nights": nights, "adults": adults,
-            "property": p.get("name"), "rating": p.get("overall_rating"),
+            "property": p.get("name"), "accommodation_type": classify_accommodation(
+                p.get("name"), p.get("type")),
+            "rating": p.get("overall_rating"),
             "total_price_gbp": price, "tax_basis": basis,
             "before_tax_gbp": before,
             "nightly_price_gbp": (p.get("rate_per_night") or {}).get("extracted_display_price"),
@@ -41,6 +57,7 @@ def normalise(payload, flight, adults):
         })
     return sorted(rows, key=lambda r: (r["total_price_gbp"] is None,
                                        r["total_price_gbp"] if r["total_price_gbp"] is not None else float("inf")))
+
 
 def fetch_one(api_key, flight, adults):
     params = {
@@ -57,6 +74,7 @@ def fetch_one(api_key, flight, adults):
     if payload.get("error") or payload.get("search_metadata", {}).get("status") == "Error":
         raise RuntimeError(payload.get("error") or "SerpApi hotel search failed")
     return payload
+
 
 def load_flight_candidates(path, max_flight_price):
     with open(path, newline="", encoding="utf-8-sig") as handle:
@@ -77,6 +95,7 @@ def load_flight_candidates(path, max_flight_price):
         candidates.append(row)
     candidates.sort(key=lambda r: r["flight_price_gbp"])
     return candidates
+
 
 def main():
     ap = argparse.ArgumentParser(description="Search hotels using dates discovered by the flight scanner.")
@@ -114,7 +133,8 @@ def main():
         fields = list(rows[0]) if rows else [
             "origin","destination","country","flight_departure_date","flight_return_date",
             "flight_price_gbp","flight_stops","flight_airline","nights","adults","property",
-            "rating","total_price_gbp","tax_basis","before_tax_gbp","nightly_price_gbp","source","url"]
+            "accommodation_type","rating","total_price_gbp","tax_basis","before_tax_gbp",
+            "nightly_price_gbp","source","url"]
         with (folder / "hotels.csv").open("w", newline="", encoding="utf-8") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields)
             writer.writeheader()
@@ -129,6 +149,7 @@ def main():
             print("No whole-stay property totals returned; nightly prices were not converted into totals.")
     print(f"Hotel results saved under {root}")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -1,25 +1,98 @@
-import json,tempfile,unittest
+import csv
+import json
+import tempfile
+import unittest
 from pathlib import Path
-from deal_tracker import observation,compare,ingest_explore
+
+from deal_tracker import observation, compare, ingest_explore, ingest_hotels
+
+
 class DealTrackerTests(unittest.TestCase):
- def test_three_comparable_observations_use_median(self):
-  current=observation("flight","MAN","Rome","Italy","2027-05-01","2027-05-08",100)
-  history=[dict(current,price_gbp=p,observed_at=str(i)) for i,p in enumerate((150,140,130))]
-  result=compare(history,current,"flight")
-  self.assertEqual(result["benchmark_gbp"],140);self.assertEqual(result["discount_percent"],28.6);self.assertEqual(result["deal_status"],"strong_deal")
- def test_requires_three_samples_and_matches_trip_month_duration(self):
-  current=observation("flight","MAN","Rome","Italy","2027-05-01","2027-05-08",80)
-  history=[dict(current,price_gbp=150,observed_at="a"),dict(current,price_gbp=150,observed_at="b",travel_month="06"),dict(current,price_gbp=150,observed_at="c",nights=14)]
-  self.assertEqual(compare(history,current,"flight")["deal_status"],"building_history")
- def test_hotels_only_compare_same_property(self):
-  current=observation("hotel","MAN","Rome","Italy","2027-05-01","2027-05-08",100,"Hotel A")
-  history=[dict(current,price_gbp=150,observed_at=str(i)) for i in range(3)];history.append(dict(current,property_key="hotel b",price_gbp=900,observed_at="other"))
-  self.assertEqual(compare(history,current,"hotel")["benchmark_gbp"],150)
- def test_invalid_trip_dates_are_rejected(self):
-  self.assertIsNone(observation("flight","MAN","Rome","Italy","bad","2027-05-08",100))
- def test_ingest_persists_flight_observation(self):
-  with tempfile.TemporaryDirectory() as folder:
-   source=Path(folder)/"response.json";history=Path(folder)/"observations.jsonl"
-   source.write_text(json.dumps({"search_parameters":{"departure_id":"MAN"},"destinations":[{"name":"Rome","country":"Italy","start_date":"2027-05-01","end_date":"2027-05-08","flight_price":100}]}),encoding="utf-8")
-   rows=ingest_explore(source,history);self.assertEqual(len(rows),1);self.assertEqual(rows[0]["origin"],"MAN");self.assertEqual(len(history.read_text().splitlines()),1)
-if __name__=="__main__":unittest.main()
+    def test_three_comparable_observations_use_median(self):
+        current = observation("flight", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08", 100)
+        history = [dict(current, price_gbp=p, observed_at=str(i)) for i, p in enumerate((150, 140, 130))]
+        result = compare(history, current, "flight")
+        self.assertEqual(result["benchmark_gbp"], 140)
+        self.assertEqual(result["discount_percent"], 28.6)
+        self.assertEqual(result["deal_status"], "strong_deal")
+
+    def test_requires_three_samples_and_matches_trip_month_duration(self):
+        current = observation("flight", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08", 80)
+        history = [dict(current, price_gbp=150, observed_at="a"),
+                   dict(current, price_gbp=150, observed_at="b", travel_month="06"),
+                   dict(current, price_gbp=150, observed_at="c", nights=14)]
+        self.assertEqual(compare(history, current, "flight")["deal_status"], "building_history")
+
+    def test_hotels_compare_across_properties_in_same_category_and_quality_band(self):
+        current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                              100, "Hotel A", "hotel", 4.2, 2)
+        history = [observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                               price, name, "hotel", 4.3, 2)
+                   for price, name in ((150, "Hotel B"), (140, "Hotel C"), (130, "Hotel D"))]
+        result = compare(history, current, "hotel")
+        self.assertEqual(result["sample_count"], 3)
+        self.assertEqual(result["benchmark_gbp"], 140)
+        self.assertEqual(result["deal_status"], "strong_deal")
+
+    def test_hotel_comparison_excludes_different_type_rating_and_guest_count(self):
+        current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                              100, "Hotel A", "hotel", 4.2, 2)
+        history = [
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        500, "Villa A", "vacation_rental", 4.2, 2),
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        500, "Hotel B", "hotel", 3.2, 2),
+            observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
+                        500, "Hotel C", "hotel", 4.2, 1)
+        ]
+        result = compare(history, current, "hotel")
+        self.assertEqual(result["sample_count"], 0)
+        self.assertEqual(result["deal_status"], "building_history")
+
+    def test_legacy_hotel_history_uses_inferred_type_and_unrated_band(self):
+        current = observation("hotel", "MAN", "Dublin", "Ireland", "2027-05-01", "2027-05-08",
+                              100, "New Hotel", "hotel", None, 1)
+        history = [dict(current, property=name, property_key=name.casefold(),
+                        accommodation_type=None, rating_band=None, price_gbp=150 + i)
+                   for i, name in enumerate(("Old Hotel A", "Old Hotel B", "Old Hotel C"))]
+        result = compare(history, current, "hotel")
+        self.assertEqual(result["sample_count"], 3)
+
+    def test_invalid_trip_dates_and_prices_are_rejected(self):
+        self.assertIsNone(observation("flight", "MAN", "Rome", "Italy", "bad", "2027-05-08", 100))
+        self.assertIsNone(observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08", 0))
+
+    def test_ingest_persists_flight_observation(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder) / "response.json"
+            history = Path(folder) / "observations.jsonl"
+            source.write_text(json.dumps({"search_parameters": {"departure_id": "MAN"},
+                "destinations": [{"name": "Rome", "country": "Italy", "start_date": "2027-05-01",
+                                  "end_date": "2027-05-08", "flight_price": 100}]}), encoding="utf-8")
+            rows = ingest_explore(source, history)
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["origin"], "MAN")
+            self.assertEqual(len(history.read_text().splitlines()), 1)
+
+    def test_ingest_hotels_persists_category_and_quality(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder) / "hotels.csv"
+            history = Path(folder) / "observations.jsonl"
+            with source.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(handle, fieldnames=[
+                    "origin", "destination", "country", "flight_departure_date",
+                    "flight_return_date", "total_price_gbp", "property",
+                    "accommodation_type", "rating", "adults"])
+                writer.writeheader()
+                writer.writerow({"origin": "MAN", "destination": "Rome", "country": "Italy",
+                    "flight_departure_date": "2027-05-01", "flight_return_date": "2027-05-08",
+                    "total_price_gbp": "100", "property": "Hotel A",
+                    "accommodation_type": "hotel", "rating": "4.2", "adults": "2"})
+            rows = ingest_hotels(source, history)
+            self.assertEqual(rows[0]["accommodation_type"], "hotel")
+            self.assertEqual(rows[0]["rating_band"], "4_to_4_5")
+            self.assertEqual(rows[0]["adults"], 2)
+
+
+if __name__ == "__main__":
+    unittest.main()

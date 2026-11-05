@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 from hotel_scan import load_flight_candidates, normalise, valid_nights
 
+
 class HotelMatchingTests(unittest.TestCase):
     def test_trip_dates_are_taken_from_flight_row(self):
         self.assertEqual(valid_nights("2027-01-10", "2027-01-17"), 7)
@@ -35,7 +36,7 @@ class HotelMatchingTests(unittest.TestCase):
         flight = {"origin":"MAN","destination":"Milan","country":"Italy",
                   "departure_date":"2027-01-10","return_date":"2027-01-17",
                   "flight_price_gbp":45,"stops":"0","airline":"Example"}
-        payload = {"properties":[{"name":"Example Hotel",
+        payload = {"properties":[{"name":"Example Hotel", "type":"hotel", "overall_rating":4.2,
             "rate_per_night":{"extracted_display_price":80},
             "total_rate":{"extracted_display_price":560,
                           "extracted_after_taxes_fees":610}}]}
@@ -43,6 +44,22 @@ class HotelMatchingTests(unittest.TestCase):
         self.assertEqual(row["total_price_gbp"],610)
         self.assertEqual(row["nights"],7)
         self.assertEqual(row["flight_departure_date"],"2027-01-10")
+        self.assertEqual(row["accommodation_type"], "hotel")
+
+    def test_hostels_are_separated_from_regular_hotels(self):
+        flight = {"origin":"MAN","destination":"Dublin","country":"Ireland",
+                  "departure_date":"2027-01-10","return_date":"2027-01-17",
+                  "flight_price_gbp":45}
+        payload = {"properties":[
+            {"name":"Jacobs Inn Hostel", "type":"hotel", "overall_rating":4.3},
+            {"name":"Example Hotel", "type":"hotel", "overall_rating":4.2},
+            {"name":"City Studio Apartment", "type":"vacation rental"}
+        ]}
+        rows = normalise(payload, flight, 1)
+        by_name = {r["property"]: r for r in rows}
+        self.assertEqual(by_name["Jacobs Inn Hostel"]["accommodation_type"], "hostel")
+        self.assertEqual(by_name["Example Hotel"]["accommodation_type"], "hotel")
+        self.assertEqual(by_name["City Studio Apartment"]["accommodation_type"], "vacation_rental")
 
     def test_does_not_invent_total_from_nightly_price(self):
         flight = {"origin":"MAN","destination":"Milan","country":"Italy",
@@ -51,6 +68,7 @@ class HotelMatchingTests(unittest.TestCase):
         payload = {"properties":[{"name":"Nightly only",
             "rate_per_night":{"extracted_display_price":80}}]}
         self.assertIsNone(normalise(payload, flight, 1)[0]["total_price_gbp"])
+
 
 if __name__ == "__main__":
     unittest.main()
