@@ -1,16 +1,56 @@
+import csv
+import tempfile
 import unittest
-from hotel_scan import normalise, days
-class Tests(unittest.TestCase):
- def test_date(self):
-  self.assertEqual(days("2027-01-10","2027-01-17"),7)
-  with self.assertRaises(ValueError): days("2027-01-17","2027-01-17")
- def test_after_tax_total(self):
-  p={"properties":[{"name":"Test","rate_per_night":{"extracted_display_price":80},"total_rate":{"extracted_display_price":560,"extracted_after_taxes_fees":610}}]}
-  r=normalise(p,"City","Country","2027-01-10","2027-01-17",1)[0]
-  self.assertEqual(r["total_price_gbp"],610)
-  self.assertEqual(r["nightly_price_gbp"],80)
- def test_no_invented_total(self):
-  p={"properties":[{"name":"Test","rate_per_night":{"extracted_display_price":80}}]}
-  r=normalise(p,"City","Country","2027-01-10","2027-01-12",1)[0]
-  self.assertIsNone(r["total_price_gbp"])
-if __name__=="__main__": unittest.main()
+from pathlib import Path
+from hotel_scan import load_flight_candidates, normalise, valid_nights
+
+class HotelMatchingTests(unittest.TestCase):
+    def test_trip_dates_are_taken_from_flight_row(self):
+        self.assertEqual(valid_nights("2027-01-10", "2027-01-17"), 7)
+        self.assertEqual(valid_nights("2027-01-17", "2027-01-17"), 0)
+        self.assertEqual(valid_nights("bad-date", "2027-01-17"), 0)
+
+    def test_candidate_uses_discovered_dates_and_price_filter(self):
+        rows = [
+            {"origin":"MAN","destination":"Bangkok","country":"Thailand",
+             "departure_date":"2027-01-10","return_date":"2027-01-17",
+             "flight_price_gbp":"440","stops":"1","airline":"Example"},
+            {"origin":"MAN","destination":"Milan","country":"Italy",
+             "departure_date":"2027-02-10","return_date":"2027-02-17",
+             "flight_price_gbp":"45","stops":"0","airline":"Example"},
+        ]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "destinations.csv"
+            with path.open("w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=list(rows[0]))
+                writer.writeheader()
+                writer.writerows(rows)
+            candidates = load_flight_candidates(path, 250)
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["destination"], "Milan")
+        self.assertEqual(candidates[0]["departure_date"], "2027-02-10")
+        self.assertEqual(candidates[0]["return_date"], "2027-02-17")
+
+    def test_prefers_whole_stay_total_after_tax(self):
+        flight = {"origin":"MAN","destination":"Milan","country":"Italy",
+                  "departure_date":"2027-01-10","return_date":"2027-01-17",
+                  "flight_price_gbp":45,"stops":"0","airline":"Example"}
+        payload = {"properties":[{"name":"Example Hotel",
+            "rate_per_night":{"extracted_display_price":80},
+            "total_rate":{"extracted_display_price":560,
+                          "extracted_after_taxes_fees":610}}]}
+        row = normalise(payload, flight, 1)[0]
+        self.assertEqual(row["total_price_gbp"],610)
+        self.assertEqual(row["nights"],7)
+        self.assertEqual(row["flight_departure_date"],"2027-01-10")
+
+    def test_does_not_invent_total_from_nightly_price(self):
+        flight = {"origin":"MAN","destination":"Milan","country":"Italy",
+                  "departure_date":"2027-01-10","return_date":"2027-01-12",
+                  "flight_price_gbp":45}
+        payload = {"properties":[{"name":"Nightly only",
+            "rate_per_night":{"extracted_display_price":80}}]}
+        self.assertIsNone(normalise(payload, flight, 1)[0]["total_price_gbp"])
+
+if __name__ == "__main__":
+    unittest.main()

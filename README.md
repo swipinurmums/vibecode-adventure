@@ -1,70 +1,27 @@
 # Vibecode Adventure
 
-A personal holiday-bargain discovery tool. The first milestone tests whether Google Travel Explore can find useful destinations worldwide from Manchester (MAN), Birmingham (BHX), and Leeds Bradford (LBA).
+Personal holiday-bargain discovery tool. Backend first; dashboard last.
 
-## Current milestone: global discovery proof of concept
+## Flight discovery
+Google Travel Explore scans MAN, BHX and LBA worldwide or by region. Results include destinations, estimated return fares, outbound/return dates, stops, duration, airline and Google Travel links. The separate Google Flights Deals API for flexible 3–14-day trips remains planned.
 
-- Search Google Travel Explore independently from each departure airport.
-- Start with an unrestricted worldwide search (no arrival region filter).
-- Save raw JSON responses and a readable CSV for inspection.
-- Preserve Google Travel links so fares can be checked manually.
-- Do not rank by Google discount percentage alone.
-- Do not calculate a holiday-value score yet: the meaning and time basis of Explore's `hotel_price` needs validation first.
+## Flight-to-hotel integration
+The Flight-to-hotel integration test workflow starts with a fresh Explore scan. It passes the resulting CSV directly to hotel_scan.py. No check-in or check-out dates are entered manually: the dates come from each discovered flight row.
 
-## Requirements
+The current integration test deliberately makes at most ONE Google Hotels request, for the cheapest eligible flight costing no more than £250 return. It uses the exact flight dates, and records the matched flight details alongside each hotel result. If no eligible priced flight with valid dates is found, no hotel search is made.
 
-- Python 3.10+
-- A SerpApi account and API key
+Hotel totals prefer the extracted whole-stay total after taxes and fees. If that is unavailable, a displayed whole-stay total is retained with tax status marked unknown. Nightly rates are stored separately and never multiplied to invent a stay total.
+
+## SerpApi credit policy
+The free allowance is 250 searches/month. Proposed planning allocation: 120 automated flight searches, 50 reserved for personal/manual destination searches, 80 for hotel comparisons and development. These are NOT yet enforced by a persistent monthly ledger. The integrated workflow is manual-dispatch only and makes one flight search plus at most one hotel search. Do not enable scheduled hotel searches or increase the hotel-search cap until monthly usage accounting and reserve enforcement exist. Identical cached requests within one hour may be free; the code does not force fresh searches.
 
 ## Setup
+Install dependencies with pip install -r requirements.txt. Set SERPAPI_KEY as a GitHub repository secret; never commit or paste the key into chat.
 
-1. Clone this repository.
-2. Create a virtual environment and install dependencies:
+## Workflows
+- Explore discovery test: one regional flight scan.
+- Flight-to-hotel integration test: one flight scan followed by at most one hotel search for the cheapest eligible flight, using its discovered dates.
+- Unit tests: python -m unittest discover -s tests -v
 
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate        # Windows: .venv\\Scripts\\activate
-   pip install -r requirements.txt
-   ```
-
-3. Copy `.env.example` to `.env` and add your SerpApi key. **Never commit `.env` or paste your API key into chat.**
-4. Run a single airport first:
-
-   ```bash
-   python explore_scan.py --airport MAN
-   ```
-
-5. Run all three airports:
-
-   ```bash
-   python explore_scan.py --all
-   ```
-
-Output is written to `data/runs/<timestamp>/`. Raw responses are retained so we can inspect the exact fields and compare the regional coverage.
-
-## Search settings
-
-The initial scan uses:
-- Engine: `google_travel_explore`
-- Origin: one of MAN, BHX, LBA
-- UK localisation, GBP, English
-- Economy, return flights
-- Travel window: explicitly all months within the next 6 months (`month=0`)
-- Trip duration: 1 week for the first baseline test; Explore also supports weekend and 2-week presets
-- This is not an exact 3–14 day range; the separate Deals API supports a custom trip-length range.
-
-The script deliberately makes one request per airport. Avoid repeatedly forcing fresh searches while testing: SerpApi's exact-parameter cache can serve repeat requests for free within its cache window.
-
-## Regional discovery
-
-Explore supports `arrival_area_id` using Google Knowledge Graph location IDs. Europe is documented by SerpApi as `/m/02j9z`. Other continent IDs should be verified against Google's/SerpApi's location data before being added; this project does not guess opaque IDs.
-
-The first run establishes the unrestricted worldwide baseline over the next six months. The script sends `month=0` explicitly; Explore defines this as all months within the next six months. Next we will validate region IDs and compare Asia, Africa, the Americas and Oceania against that baseline, while watching the 250-search monthly allowance.
-
-## Important caveats
-
-- Explore returns Google's surfaced destination suggestions, not every possible fare.
-- Prices and availability can change; always open the Google Flights link before making a decision.
-- A low airfare is not automatically a cheap holiday.
-- `hotel_price` is stored as supplied but is not yet treated as a nightly rate or total stay cost.
-- This is a discovery and alerting tool, not a booking bot.
+## Remaining backend work
+Destination food/transport estimates, total-holiday scoring, monthly credit ledger/reserve enforcement, hotel matching across multiple selected flights, Google Flights Deals integration, historical deal tracking and alerts. Dashboard comes last. This is a discovery tool, not a booking bot.
