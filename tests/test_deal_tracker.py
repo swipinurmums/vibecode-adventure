@@ -16,6 +16,36 @@ class DealTrackerTests(unittest.TestCase):
         self.assertEqual(result["discount_percent"], 28.6)
         self.assertEqual(result["deal_status"], "strong_deal")
 
+
+    def test_flight_comparison_excludes_different_booking_lead_time_bands(self):
+        current = observation("flight", "MAN", "Rome", "Italy",
+                              "2027-05-01", "2027-05-08", 100)
+        history = [
+            dict(current, price_gbp=150, observed_at="2026-11-05T08:00:00+00:00",
+                 lead_time_band=current["lead_time_band"]),
+            dict(current, price_gbp=140, observed_at="2026-11-04T08:00:00+00:00",
+                 lead_time_band=current["lead_time_band"]),
+            dict(current, price_gbp=130, observed_at="2026-11-03T08:00:00+00:00",
+                 lead_time_band="0_7_days")
+        ]
+        result = compare(history, current, "flight")
+        self.assertEqual(result["sample_count"], 2)
+        self.assertEqual(result["deal_status"], "building_history")
+
+    def test_legacy_flight_history_derives_lead_time_from_observation_date(self):
+        current = observation("flight", "MAN", "Rome", "Italy",
+                              "2027-05-01", "2027-05-08", 100)
+        history = [
+            dict(current, price_gbp=150, observed_at="2026-11-05T08:00:00+00:00"),
+            dict(current, price_gbp=140, observed_at="2026-11-04T08:00:00+00:00"),
+            dict(current, price_gbp=130, observed_at="2026-11-03T08:00:00+00:00")
+        ]
+        for row in history:
+            row.pop("lead_time_band", None)
+        result = compare(history, current, "flight")
+        self.assertEqual(result["sample_count"], 3)
+        self.assertEqual(result["deal_status"], "strong_deal")
+
     def test_requires_three_samples_and_matches_trip_month_duration(self):
         current = observation("flight", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08", 80)
         history = [dict(current, price_gbp=150, observed_at="a"),
