@@ -91,7 +91,8 @@ def comparable_lead_time_band(row):
 
 def observation(kind, origin, destination, country, start, end, price,
                 property_name=None, accommodation_type_value=None,
-                rating=None, adults=1, tax_basis="unknown", hotel_class=None,\n                location_rating=None, review_count=None):
+                rating=None, adults=1, tax_basis="unknown", hotel_class=None,
+                location_rating=None, review_count=None):
     observed_at = datetime.now(timezone.utc).isoformat()
     try:
         nights = (datetime.strptime(end, "%Y-%m-%d") -
