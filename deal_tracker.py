@@ -284,6 +284,58 @@ def ingest_hotels(source, history_path=HISTORY):
         if row is None:
             continue
         row.update(compare(history, row, "hotel"))
+
+        # Combine independently benchmarked flight and hotel components.
+        # This is an indicative package comparison (sum of component medians),
+        # not a claim that the two historical medians were observed together.
+        try:
+            flight_price = float(item.get("flight_price_gbp"))
+        except (TypeError, ValueError):
+            flight_price = None
+        row["flight_price_gbp"] = flight_price
+        flight_current = observation(
+            "flight", item.get("origin"), item.get("destination"), item.get("country"),
+            item.get("flight_departure_date"), item.get("flight_return_date"), flight_price
+        ) if flight_price is not None else None
+        flight_benchmark = (
+            compare(history, flight_current, "flight")
+            if flight_current is not None else None
+        )
+        row["flight_benchmark_gbp"] = (
+            flight_benchmark["benchmark_gbp"] if flight_benchmark else None
+        )
+        row["flight_discount_percent"] = (
+            flight_benchmark["discount_percent"] if flight_benchmark else None
+        )
+        row["flight_deal_status"] = (
+            flight_benchmark["deal_status"] if flight_benchmark else "missing_flight_price"
+        )
+
+        if row["benchmark_gbp"] is not None and row["flight_benchmark_gbp"] is not None:
+            combined_price = flight_price + float(row["price_gbp"])
+            combined_benchmark = (
+                float(row["flight_benchmark_gbp"]) + float(row["benchmark_gbp"])
+            )
+            combined_discount = (combined_benchmark - combined_price) / combined_benchmark * 100
+            row.update({
+                "combined_price_gbp": round(combined_price, 2),
+                "combined_benchmark_gbp": round(combined_benchmark, 2),
+                "combined_discount_percent": round(combined_discount, 1),
+                "combined_deal_status": (
+                    "strong_deal" if combined_discount >= 15 else
+                    ("below_typical" if combined_discount > 0 else "not_below_typical")
+                ),
+                "combined_benchmark_method": "sum_of_component_medians"
+            })
+        else:
+            row.update({
+                "combined_price_gbp": round(flight_price + float(row["price_gbp"]), 2)
+                    if flight_price is not None else None,
+                "combined_benchmark_gbp": None,
+                "combined_discount_percent": None,
+                "combined_deal_status": "building_component_history",
+                "combined_benchmark_method": "sum_of_component_medians"
+            })
         rows.append(row)
     append_history(history_path, rows)
     return rows
