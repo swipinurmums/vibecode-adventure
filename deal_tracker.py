@@ -27,7 +27,9 @@ def load_history(path=HISTORY):
 
 def classify_accommodation(name, source_type=None):
     label = f"{source_type or ''} {name or ''}".casefold()
-    if "hostel" in label:
+    hostel_terms = ("hostel", "generator", "clink", "jacobs inn",
+                    "abbey court", "gogarty", "a&o hostel", "meininger")
+    if any(term in label for term in hostel_terms):
         return "hostel"
     rental_terms = ("vacation rental", "apartment", "homestay", "guesthouse",
                     "guest house", "holiday home", "holiday rental", "villa",
@@ -95,6 +97,8 @@ def comparable_hotel_value(row, key):
             return int(row.get(key) or 1)
         except (TypeError, ValueError):
             return 1
+    if key == "property_key":
+        return (row.get(key) or row.get("property") or "").strip().casefold()
     return row.get(key)
 
 
@@ -109,6 +113,11 @@ def compare(history, current, kind):
             if any(comparable_hotel_value(row, k) != comparable_hotel_value(current, k)
                    for k in hotel_keys):
                 continue
+            # An unrated property has no defensible cross-property quality match.
+            # Compare it only with its own prior prices, not every unrated listing.
+            if comparable_hotel_value(current, "rating_band") == "unrated":
+                if comparable_hotel_value(row, "property_key") != comparable_hotel_value(current, "property_key"):
+                    continue
         try:
             value = float(row["price_gbp"])
         except (KeyError, TypeError, ValueError):
