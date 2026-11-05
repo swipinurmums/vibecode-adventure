@@ -55,9 +55,42 @@ def rating_band(value):
     return "4_5_plus"
 
 
+def lead_time_band(start, observed_at):
+    """Group fares by how far ahead the outbound date was when observed."""
+    try:
+        departure = datetime.strptime(start, "%Y-%m-%d").date()
+        observed = datetime.fromisoformat(str(observed_at).replace("Z", "+00:00"))
+        if observed.tzinfo is None:
+            observed = observed.replace(tzinfo=timezone.utc)
+        days = (departure - observed.astimezone(timezone.utc).date()).days
+    except (TypeError, ValueError):
+        return "unknown"
+    if days < 0:
+        return "already_departed"
+    if days <= 7:
+        return "0_7_days"
+    if days <= 30:
+        return "8_30_days"
+    if days <= 90:
+        return "31_90_days"
+    if days <= 180:
+        return "91_180_days"
+    if days <= 365:
+        return "181_365_days"
+    return "366_plus_days"
+
+
+def comparable_lead_time_band(row):
+    # Derive the band for older records that predate the explicit field.
+    return row.get("lead_time_band") or lead_time_band(
+        row.get("start_date"), row.get("observed_at")
+    )
+
+
 def observation(kind, origin, destination, country, start, end, price,
                 property_name=None, accommodation_type_value=None,
                 rating=None, adults=1, tax_basis="unknown"):
+    observed_at = datetime.now(timezone.utc).isoformat()
     try:
         nights = (datetime.strptime(end, "%Y-%m-%d") -
                   datetime.strptime(start, "%Y-%m-%d")).days
@@ -70,9 +103,11 @@ def observation(kind, origin, destination, country, start, end, price,
     row = {
         "kind": kind, "origin": origin or "", "destination": destination or "",
         "country": country or "", "travel_month": month, "nights": nights,
-        "property": property_name, "price_gbp": amount,
-        "observed_at": datetime.now(timezone.utc).isoformat()
+        "start_date": start, "property": property_name, "price_gbp": amount,
+        "observed_at": observed_at
     }
+    if kind == "flight":
+        row["lead_time_band"] = lead_time_band(start, observed_at)
     if kind == "hotel":
         try:
             guest_count = int(adults or 1)
@@ -107,12 +142,16 @@ def comparable_hotel_value(row, key):
 
 def compare(history, current, kind):
     keys = ("origin", "destination", "country", "travel_month", "nights")
+    # Flight fares are comparable only when observed at a similar booking
+    # lead time. Legacy rows derive this from their original observation date.
     # Keep at most one observation per UTC day for each hotel property (or
     # per route for flights). Re-running an identical scan must not inflate
     # the benchmark sample count with duplicate same-day prices.
     samples_by_key = {}
     for row in history:
         if row.get("kind") != kind or any(row.get(k) != current.get(k) for k in keys):
+            continue
+        if kind == "flight" and comparable_lead_time_band(row) != comparable_lead_time_band(current):
             continue
         if kind == "hotel":
             hotel_keys = ("accommodation_type", "rating_band", "adults", "tax_basis")
