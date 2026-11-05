@@ -81,7 +81,9 @@ def lead_time_band(start, observed_at):
 
 
 def comparable_lead_time_band(row):
-    # Derive the band for older records that predate the explicit field.
+    # Derive only when a legacy row still has its exact outbound date. Older
+    # records with month-only trip data remain "unknown" and are not mixed
+    # into a dated lead-time benchmark.
     return row.get("lead_time_band") or lead_time_band(
         row.get("start_date"), row.get("observed_at")
     )
