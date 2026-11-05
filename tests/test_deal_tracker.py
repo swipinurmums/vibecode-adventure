@@ -233,5 +233,57 @@ class DealTrackerTests(unittest.TestCase):
             self.assertEqual(rows[0]["review_count"], 150)
 
 
+    def test_hotel_ingestion_scores_combined_flight_and_hotel_value(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source = Path(folder) / "hotels.csv"
+            history_path = Path(folder) / "observations.jsonl"
+            history = []
+            for day, flight_price, hotel_price in (
+                ("2026-11-03T08:00:00+00:00", 200, 300),
+                ("2026-11-04T08:00:00+00:00", 190, 290),
+                ("2026-11-05T08:00:00+00:00", 210, 310),
+            ):
+                flight = observation("flight", "MAN", "Rome", "Italy",
+                                     "2027-05-01", "2027-05-08", flight_price)
+                hotel = observation("hotel", "MAN", "Rome", "Italy",
+                                     "2027-05-01", "2027-05-08", hotel_price,
+                                     "Hotel A", "hotel", 4.2, 2,
+                                     "after_taxes_and_fees", 4, 4.6, 150)
+                flight["observed_at"] = day
+                hotel["observed_at"] = day
+                history.extend((flight, hotel))
+            append_history(history_path, history)
+
+            with source.open("w", newline="", encoding="utf-8") as handle:
+                fields = [
+                    "origin", "destination", "country", "flight_departure_date",
+                    "flight_return_date", "flight_price_gbp", "total_price_gbp",
+                    "property", "accommodation_type", "rating", "adults",
+                    "tax_basis", "hotel_class", "location_rating", "review_count"
+                ]
+                writer = csv.DictWriter(handle, fieldnames=fields)
+                writer.writeheader()
+                writer.writerow({
+                    "origin": "MAN", "destination": "Rome", "country": "Italy",
+                    "flight_departure_date": "2027-05-01",
+                    "flight_return_date": "2027-05-08",
+                    "flight_price_gbp": "100", "total_price_gbp": "100",
+                    "property": "Hotel A", "accommodation_type": "hotel",
+                    "rating": "4.2", "adults": "2",
+                    "tax_basis": "after_taxes_and_fees", "hotel_class": "4",
+                    "location_rating": "4.6", "review_count": "150"
+                })
+
+            rows = ingest_hotels(source, history_path)
+            scored = rows[0]
+            self.assertEqual(scored["flight_benchmark_gbp"], 200)
+            self.assertEqual(scored["benchmark_gbp"], 300)
+            self.assertEqual(scored["combined_price_gbp"], 200)
+            self.assertEqual(scored["combined_benchmark_gbp"], 500)
+            self.assertEqual(scored["combined_discount_percent"], 60.0)
+            self.assertEqual(scored["combined_deal_status"], "strong_deal")
+            self.assertEqual(scored["combined_benchmark_method"], "sum_of_component_medians")
+
+
 if __name__ == "__main__":
     unittest.main()
