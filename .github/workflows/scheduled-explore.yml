@@ -89,7 +89,7 @@ jobs:
       - name: Store observations and rebuild ranked deal feed
         if: success()
         run: |
-          JSON_PATH="data/runs/$(find data/runs -mindepth 2 -maxdepth 2 -name "${{ steps.target.outputs.airport }}_${{ steps.target.outputs.region }}.json" -printf '%h\n' | sort | tail -n 1)/${{ steps.target.outputs.airport }}_${{ steps.target.outputs.region }}.json"
+          JSON_PATH="$(find data/runs -mindepth 2 -maxdepth 2 -name "${{ steps.target.outputs.airport }}_${{ steps.target.outputs.region }}.json" -type f -print | sort | tail -n 1)"
           if [ -f "$JSON_PATH" ]; then python deal_tracker.py ingest-explore --file "$JSON_PATH"; fi
           if [ -d data/hotels ]; then
             HOTEL_CSV="$(find data/hotels -name hotels.csv -type f -print | sort | tail -n 1)"
