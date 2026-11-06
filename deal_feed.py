@@ -100,8 +100,32 @@ def build_feed(history, insights):
                 row.get("origin"), row.get("destination"),
                 row.get("start_date"), row.get("end_date")
             ), insight)
-        ranked = rank_record(row, insight)
         record = dict(row)
+        # When independent route insights exist, prefer the Google Flights
+        # typical-low benchmark for the flight component while retaining the
+        # hotel's own quality-matched historical median.
+        if (record.get("kind") == "hotel" and insight
+                and insight.get("google_flights_lowest_price_gbp") is not None
+                and insight.get("typical_price_low_gbp") is not None
+                and record.get("benchmark_gbp") is not None):
+            current_flight = float(insight["google_flights_lowest_price_gbp"])
+            current_hotel = float(record["price_gbp"])
+            typical_flight = float(insight["typical_price_low_gbp"])
+            typical_hotel = float(record["benchmark_gbp"])
+            combined_current = current_flight + current_hotel
+            combined_benchmark = typical_flight + typical_hotel
+            combined_discount = (combined_benchmark - combined_current) / combined_benchmark * 100
+            record.update({
+                "combined_price_gbp": round(combined_current, 2),
+                "combined_benchmark_gbp": round(combined_benchmark, 2),
+                "combined_discount_percent": round(combined_discount, 1),
+                "combined_deal_status": (
+                    "strong_deal" if combined_discount >= 15 else
+                    ("below_typical" if combined_discount > 0 else "not_below_typical")
+                ),
+                "combined_benchmark_method": "google_flights_typical_low_plus_hotel_historical_median"
+            })
+        ranked = rank_record(record, insight)
         record.update(ranked)
         if insight:
             record["google_flights_price_insights"] = insight
