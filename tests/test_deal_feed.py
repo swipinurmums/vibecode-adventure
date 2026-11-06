@@ -27,7 +27,7 @@ class DealFeedTests(unittest.TestCase):
                "benchmark_gbp":300,"discount_percent":33.3,"sample_count":3}
         insight = {"origin":"MAN","destination":"Rome","departure_date":"2027-05-01",
                    "return_date":"2027-05-08","benchmark_status":"strong_deal",
-                   "discount_vs_typical_low_percent":20,"observed_at":"2026-11-02"}
+                   "google_flights_lowest_price_gbp":80,"typical_price_low_gbp":100,"discount_vs_typical_low_percent":20,"observed_at":"2026-11-02"}
         feed = build_feed([row], {("MAN","Rome","2027-05-01","2027-05-08"):insight})
         self.assertEqual(feed["deal_count"],1)
         self.assertEqual(feed["deals"][0]["deal_status"],"strong_combined_deal")
