@@ -36,7 +36,7 @@ jobs:
             "0 5 * * *"|"0 17 * * *") AIRPORT="MAN" ;;
             "0 11 * * *") AIRPORT="BHX" ;;
             "0 23 * * *") AIRPORT="LBA" ;;
-            *) echo "Unexpected schedule slot: $HOUR"; exit 1 ;;
+            *) echo "Unexpected schedule slot: $SLOT"; exit 1 ;;
           esac
           echo "airport=$AIRPORT" >> "$GITHUB_OUTPUT"
           echo "Scheduled worldwide discovery from $AIRPORT"
@@ -81,7 +81,7 @@ jobs:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
         run: python hotel_scan.py --from-csv "${{ steps.hotel.outputs.csv_path }}" --max-searches 1 --max-flight-price 250
       - name: Store observations and rebuild ranked deal feed
-        if: always()
+        if: success()
         run: |
           JSON_PATH="$(find data/runs -name "${{ steps.target.outputs.airport }}_worldwide.json" -type f -print | sort | tail -n 1)"
           if [ -n "$JSON_PATH" ]; then python deal_tracker.py ingest-explore --file "$JSON_PATH"; fi
