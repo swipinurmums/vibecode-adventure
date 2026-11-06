@@ -1,0 +1,90 @@
+name: Manual Google Flights price insights
+
+on:
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: Departure airport
+        required: true
+        type: choice
+        options:
+          - MAN
+          - BHX
+          - LBA
+        default: MAN
+      destination:
+        description: Destination city or airport
+        required: true
+        type: string
+      destination_id:
+        description: Optional Google destination ID from Explore results
+        required: false
+        type: string
+      outbound_date:
+        description: Outbound date (YYYY-MM-DD)
+        required: true
+        type: string
+      return_date:
+        description: Return date (YYYY-MM-DD)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: serpapi-monthly-ledger
+  cancel-in-progress: false
+
+jobs:
+  price-insights:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Validate date range
+        run: |
+          python - <<'PY'
+          from datetime import date
+          start = date.fromisoformat("${{ inputs.outbound_date }}")
+          end = date.fromisoformat("${{ inputs.return_date }}")
+          if end <= start:
+              raise SystemExit("Return date must be after outbound date")
+          if start <= date.today():
+              raise SystemExit("Outbound date must be in the future")
+          PY
+      - name: Reserve one personal search before API request
+        run: |
+          python credit_ledger.py reserve --category personal --count 1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/usage/monthly.json
+          git commit -m "Reserve manual Google Flights insights search"
+          git push
+      - name: Fetch route-specific price insights
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+        run: |
+          ARGS=(--origin "${{ inputs.origin }}" --destination "${{ inputs.destination }}" --outbound-date "${{ inputs.outbound_date }}" --return-date "${{ inputs.return_date }}")
+          if [ -n "${{ inputs.destination_id }}" ]; then ARGS+=(--destination-id "${{ inputs.destination_id }}"); fi
+          python flight_insights.py "${ARGS[@]}"
+      - name: Rebuild deal feed with latest price insight
+        run: |
+          python deal_feed.py
+          git add data/flight_insights data/deals/deals.json
+          git commit -m "Store manual route price insights and refresh deal feed" || echo "No new insight data to commit"
+          git push
+      - name: Upload price insight results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-flight-insights-${{ github.run_number }}
+          path: data/flight_insights/
+          if-no-files-found: warn
+          retention-days: 14
