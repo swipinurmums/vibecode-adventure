@@ -31,11 +31,11 @@ jobs:
       - name: Select airport for this UTC scan slot
         id: target
         run: |
-          HOUR="$(date -u +%H)"
-          case "$HOUR" in
-            05|17) AIRPORT="MAN" ;;
-            11) AIRPORT="BHX" ;;
-            23) AIRPORT="LBA" ;;
+          SLOT="${{ github.event.schedule }}"
+          case "$SLOT" in
+            "0 5 * * *"|"0 17 * * *") AIRPORT="MAN" ;;
+            "0 11 * * *") AIRPORT="BHX" ;;
+            "0 23 * * *") AIRPORT="LBA" ;;
             *) echo "Unexpected schedule slot: $HOUR"; exit 1 ;;
           esac
           echo "airport=$AIRPORT" >> "$GITHUB_OUTPUT"
@@ -56,7 +56,7 @@ jobs:
       - name: Check whether daily hotel search is due
         id: hotel
         run: |
-          if [ "${{ steps.target.outputs.airport }}" != "MAN" ] || [ "$(date -u +%H)" != "17" ]; then
+          if [ "${{ steps.target.outputs.airport }}" != "MAN" ] || [ "${{ github.event.schedule }}" != "0 17 * * *" ]; then
             echo "eligible=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
