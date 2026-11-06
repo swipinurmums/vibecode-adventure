@@ -34,19 +34,27 @@ def normalise(payload, candidate):
 
 def main():
     parser=argparse.ArgumentParser(description='Fetch route-specific Google Flights price insights for one candidate.')
-    parser.add_argument('--candidate-csv',required=True); parser.add_argument('--output-dir',default='data/flight_insights')
+    parser.add_argument('--candidate-csv'); parser.add_argument('--origin'); parser.add_argument('--destination')
+    parser.add_argument('--destination-id'); parser.add_argument('--outbound-date'); parser.add_argument('--return-date')
+    parser.add_argument('--output-dir',default='data/flight_insights')
     parser.add_argument('--max-flight-price',type=float,default=250); args=parser.parse_args()
     load_dotenv(); secret=os.getenv('SERPAPI_KEY')
     if not secret or secret=='replace_me': raise SystemExit('SERPAPI_KEY is missing')
-    with open(args.candidate_csv,newline='',encoding='utf-8-sig') as handle: rows=list(csv.DictReader(handle))
-    eligible=[]
-    for row in rows:
-        try: price=float(str(row.get('flight_price_gbp','')).replace('£','').replace(',',''))
-        except (TypeError,ValueError): continue
-        if price <= args.max_flight_price and row.get('departure_date') and row.get('return_date'):
-            row['flight_price_gbp']=price; eligible.append(row)
-    if not eligible: raise SystemExit('No eligible flight candidate for price insights')
-    candidate=sorted(eligible,key=lambda r:r['flight_price_gbp'])[0]
+    if args.candidate_csv:
+        with open(args.candidate_csv,newline='',encoding='utf-8-sig') as handle: rows=list(csv.DictReader(handle))
+        eligible=[]
+        for row in rows:
+            try: price=float(str(row.get('flight_price_gbp','')).replace('£','').replace(',',''))
+            except (TypeError,ValueError): continue
+            if price <= args.max_flight_price and row.get('departure_date') and row.get('return_date'):
+                row['flight_price_gbp']=price; eligible.append(row)
+        if not eligible: raise SystemExit('No eligible flight candidate for price insights')
+        candidate=sorted(eligible,key=lambda r:r['flight_price_gbp'])[0]
+    else:
+        required=(args.origin,args.destination,args.outbound_date,args.return_date)
+        if not all(required): raise SystemExit('Provide --candidate-csv or origin, destination, outbound-date and return-date')
+        candidate={'origin':args.origin,'destination':args.destination,'destination_id':args.destination_id,
+                   'departure_date':args.outbound_date,'return_date':args.return_date,'flight_price_gbp':None}
     arrival=candidate.get('destination_id') or candidate.get('destination')
     params={'engine':'google_flights','departure_id':candidate['origin'],'arrival_id':arrival,
             'outbound_date':candidate['departure_date'],'return_date':candidate['return_date'],'type':'1',
