@@ -106,7 +106,7 @@ def observation(kind, origin, destination, country, start, end, price,
     row = {
         "kind": kind, "origin": origin or "", "destination": destination or "",
         "country": country or "", "travel_month": month, "nights": nights,
-        "start_date": start, "property": property_name, "price_gbp": amount,
+        "start_date": start, "end_date": end, "property": property_name, "price_gbp": amount,
         "observed_at": observed_at
     }
     if kind == "flight":
