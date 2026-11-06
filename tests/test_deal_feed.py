@@ -38,6 +38,16 @@ class DealFeedTests(unittest.TestCase):
         self.assertEqual(feed["deals"][0]["combined_benchmark_method"],"google_flights_typical_low_plus_hotel_historical_median")
         self.assertIn("google_flights_price_insights",feed["deals"][0])
 
+    def test_orphan_price_insight_is_included(self):
+        insight = {"origin":"MAN","destination":"Tokyo","departure_date":"2027-06-01",
+                   "return_date":"2027-06-08","google_flights_lowest_price_gbp":400,
+                   "typical_price_low_gbp":600,"discount_vs_typical_low_percent":33.3,
+                   "benchmark_status":"strong_deal","observed_at":"2026-11-06"}
+        feed = build_feed([], {("MAN","Tokyo","2027-06-01","2027-06-08"):insight})
+        self.assertEqual(feed["deal_count"], 1)
+        self.assertEqual(feed["deals"][0]["kind"], "flight_insight")
+        self.assertEqual(feed["deals"][0]["deal_status"], "strong_component_deal")
+
     def test_missing_benchmarks_are_not_called_deals(self):
         result = rank_record({"kind":"hotel","deal_status":"building_history"})
         self.assertEqual(result["deal_status"],"building_history")
