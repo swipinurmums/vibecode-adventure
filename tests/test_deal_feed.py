@@ -32,6 +32,10 @@ class DealFeedTests(unittest.TestCase):
         self.assertEqual(feed["deal_count"],1)
         self.assertEqual(feed["deals"][0]["deal_status"],"strong_combined_deal")
         self.assertEqual(feed["deals"][0]["confidence"],"high")
+        self.assertEqual(feed["deals"][0]["combined_price_gbp"],280.0)
+        self.assertEqual(feed["deals"][0]["combined_benchmark_gbp"],400.0)
+        self.assertEqual(feed["deals"][0]["combined_discount_percent"],30.0)
+        self.assertEqual(feed["deals"][0]["combined_benchmark_method"],"google_flights_typical_low_plus_hotel_historical_median")
         self.assertIn("google_flights_price_insights",feed["deals"][0])
 
     def test_missing_benchmarks_are_not_called_deals(self):
