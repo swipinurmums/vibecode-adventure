@@ -87,6 +87,7 @@ def rank_record(row, insight=None):
 
 def build_feed(history, insights):
     records = []
+    matched_insights = set()
     for row in latest_rows(history):
         insight = insights.get((
             row.get("origin"), row.get("destination"),
@@ -129,6 +130,23 @@ def build_feed(history, insights):
         record.update(ranked)
         if insight:
             record["google_flights_price_insights"] = insight
+            matched_insights.add((row.get("origin"), row.get("destination"), row.get("start_date"), row.get("end_date")))
+        records.append(record)
+    for key, insight in insights.items():
+        if key in matched_insights:
+            continue
+        row = {
+            "kind": "flight_insight", "origin": insight.get("origin"),
+            "destination": insight.get("destination"), "country": insight.get("country"),
+            "start_date": insight.get("departure_date"), "end_date": insight.get("return_date"),
+            "price_gbp": insight.get("google_flights_lowest_price_gbp"),
+            "observed_at": insight.get("observed_at"),
+            "benchmark_gbp": insight.get("typical_price_low_gbp"),
+        }
+        record = dict(row)
+        record.update(rank_record(dict(row, kind="flight"), insight))
+        record["kind"] = "flight_insight"
+        record["google_flights_price_insights"] = insight
         records.append(record)
     records.sort(key=lambda r: (
         r.get("ranking_discount_percent") is None,
