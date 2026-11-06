@@ -1,0 +1,103 @@
+name: Scheduled worldwide bargain discovery
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+    - cron: "0 11 * * *"
+    - cron: "0 17 * * *"
+    - cron: "0 23 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: serpapi-monthly-ledger
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run API-free backend tests
+        run: python -m unittest discover -s tests -v
+      - name: Select airport for this UTC scan slot
+        id: target
+        run: |
+          HOUR="$(date -u +%H)"
+          case "$HOUR" in
+            05|17) AIRPORT="MAN" ;;
+            11) AIRPORT="BHX" ;;
+            23) AIRPORT="LBA" ;;
+            *) echo "Unexpected schedule slot: $HOUR"; exit 1 ;;
+          esac
+          echo "airport=$AIRPORT" >> "$GITHUB_OUTPUT"
+          echo "Scheduled worldwide discovery from $AIRPORT"
+      - name: Reserve flight search before API request
+        run: |
+          python credit_ledger.py reserve --category flight --count 1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/usage/monthly.json
+          git commit -m "Reserve scheduled flight discovery search"
+          git push
+      - name: Scan worldwide destinations and future dates
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+        run: |
+          python explore_scan.py --airport "${{ steps.target.outputs.airport }}" --region worldwide
+      - name: Check whether daily hotel search is due
+        id: hotel
+        run: |
+          if [ "${{ steps.target.outputs.airport }}" != "MAN" ] || [ "$(date -u +%H)" != "17" ]; then
+            echo "eligible=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          CSV_PATH="$(find data/runs -name destinations.csv -type f -print | sort | tail -n 1)"
+          if [ -z "$CSV_PATH" ]; then
+            echo "eligible=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          COUNT="$(python -c 'import sys; from hotel_scan import load_flight_candidates; print(len(load_flight_candidates(sys.argv[1],250)))' "$CSV_PATH")"
+          echo "csv_path=$CSV_PATH" >> "$GITHUB_OUTPUT"
+          if [ "$COUNT" -gt 0 ]; then echo "eligible=true" >> "$GITHUB_OUTPUT"; else echo "eligible=false" >> "$GITHUB_OUTPUT"; fi
+      - name: Reserve daily hotel search before API request
+        if: steps.hotel.outputs.eligible == 'true'
+        run: |
+          python credit_ledger.py reserve --category hotel --count 1
+          git add data/usage/monthly.json
+          git commit -m "Reserve scheduled hotel comparison search"
+          git push
+      - name: Search one promising destination's hotels
+        if: steps.hotel.outputs.eligible == 'true'
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+        run: python hotel_scan.py --from-csv "${{ steps.hotel.outputs.csv_path }}" --max-searches 1 --max-flight-price 250
+      - name: Store observations and rebuild ranked deal feed
+        if: always()
+        run: |
+          JSON_PATH="$(find data/runs -name "${{ steps.target.outputs.airport }}_worldwide.json" -type f -print | sort | tail -n 1)"
+          if [ -n "$JSON_PATH" ]; then python deal_tracker.py ingest-explore --file "$JSON_PATH"; fi
+          HOTEL_CSV="$(find data/hotels -name hotels.csv -type f -print | sort | tail -n 1)"
+          if [ -n "$HOTEL_CSV" ] && [ "${{ steps.hotel.outputs.eligible }}" = "true" ]; then
+            python deal_tracker.py ingest-hotels --file "$HOTEL_CSV"
+          fi
+          python deal_feed.py
+          git add data/history/observations.jsonl data/deals/deals.json
+          git commit -m "Update historical prices and ranked deal feed" || echo "No new deal data to commit"
+          git push
+      - name: Upload discovery and deal results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-deals-${{ steps.target.outputs.airport }}-${{ github.run_number }}
+          path: data/
+          if-no-files-found: warn
+          retention-days: 14
