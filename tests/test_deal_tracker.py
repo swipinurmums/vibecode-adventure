@@ -285,5 +285,12 @@ class DealTrackerTests(unittest.TestCase):
             self.assertEqual(scored["combined_benchmark_method"], "sum_of_component_medians")
 
 
+    def test_observation_retains_exact_return_date_for_insight_matching(self):
+        row = observation("flight", "MAN", "Rome", "Italy",
+                          "2027-05-01", "2027-05-08", 100)
+        self.assertEqual(row["start_date"], "2027-05-01")
+        self.assertEqual(row["end_date"], "2027-05-08")
+
+
 if __name__ == "__main__":
     unittest.main()
