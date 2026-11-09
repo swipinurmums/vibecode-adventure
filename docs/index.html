@@ -249,12 +249,12 @@ function pointForRow(row){
 }
 function mapRecordStatus(row){
  const statuses=[];
- const add=(s,discount,price,kind)=>{if(s)statuses.push({s,discount:Number.isFinite(Number(discount))?Number(discount):null,price,kind});};
+ const add=(s,discount,price,kind)=>{if(s)statuses.push({s,discount:discount!==null&&discount!==undefined&&discount!==""&&Number.isFinite(Number(discount))?Number(discount):null,price,kind});};
  if(mode==="flight"){add(row.flight_deal_status||row.deal_status,row.flight_discount_percent??row.ranking_discount_percent,row.price_gbp,"flight");}
  else if(mode==="hotel"){add(row.hotel_deal_status||row.deal_status,row.hotel_discount_percent??row.ranking_discount_percent,row.price_gbp,"hotel");}
  else if(mode==="combined"){add(row.combined_deal_status,row.combined_discount_percent,row.combined_price_gbp,"combined");}
  else {
-  add(row.flight_deal_status,row.flight_discount_percent,row.price_gbp,"flight");
+  add(row.flight_deal_status,row.flight_discount_percent,row.flight_price_gbp??row.flight_benchmark_price_gbp??row.price_gbp,"flight");
   add(row.hotel_deal_status,row.hotel_discount_percent,row.price_gbp,"hotel");
   add(row.combined_deal_status,row.combined_discount_percent,row.combined_price_gbp,"combined");
   if(!statuses.length)add(row.deal_status,row.ranking_discount_percent,row.price_gbp,row.kind==="hotel"?"hotel":"flight");
@@ -343,10 +343,8 @@ function selectMapEntry(entry,xy){
 function jumpToDeal(row){
  const key=recordKey(row);
  let card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);
- if(!card){
-  if(mode!=="saved"){mode=row.kind==="hotel"?"hotel":"flight";document.querySelectorAll(".mode button").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));render();}
-  card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);
- }
+ if(!card){visible=Math.max(visible,filtered().length);render();card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);}
+ if(!card&&mode!=="saved"){mode=row.kind==="hotel"?"hotel":"flight";document.querySelectorAll(".mode button").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));visible=Math.max(visible,filtered().length);render();card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);}
  $("map-popover").hidden=true;mapSelectedKey=null;
  if(card){card.scrollIntoView({behavior:"smooth",block:"center"});card.classList.add("map-target");setTimeout(()=>card.classList.remove("map-target"),1900);}
 }
