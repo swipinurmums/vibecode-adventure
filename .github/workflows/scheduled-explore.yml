@@ -4,6 +4,7 @@ on:
   schedule:
     - cron: "0 5 * * *"
     - cron: "0 11 * * *"
+    - cron: "0 14 * * *"
     - cron: "0 17 * * *"
     - cron: "0 23 * * *"
 
@@ -35,6 +36,7 @@ jobs:
           case "$SLOT" in
             "0 5 * * *") AIRPORT="MAN"; SLOT_INDEX=0 ;;
             "0 11 * * *") AIRPORT="BHX"; SLOT_INDEX=1 ;;
+            "0 14 * * *") AIRPORT="BHX"; SLOT_INDEX=4 ;;
             "0 17 * * *") AIRPORT="MAN"; SLOT_INDEX=2 ;;
             "0 23 * * *") AIRPORT="LBA"; SLOT_INDEX=3 ;;
             *) echo "Unexpected schedule slot: $SLOT"; exit 1 ;;
@@ -45,8 +47,10 @@ jobs:
           REGION="${REGIONS[$REGION_INDEX]}"
           echo "airport=$AIRPORT" >> "$GITHUB_OUTPUT"
           echo "region=$REGION" >> "$GITHUB_OUTPUT"
+          echo "slot_index=$SLOT_INDEX" >> "$GITHUB_OUTPUT"
           echo "Scheduled $REGION discovery from $AIRPORT"
-      - name: Reserve flight search before API request
+      - name: Reserve regular flight search before API request
+        if: steps.target.outputs.slot_index != '4'
         run: |
           python credit_ledger.py reserve --category flight --count 1
           git config user.name "github-actions[bot]"
@@ -54,8 +58,20 @@ jobs:
           git add data/usage/monthly.json
           git commit -m "Reserve scheduled flight discovery search"
           git push
+      - name: Reserve extra worldwide coverage search
+        id: coverage_reserve
+        if: steps.target.outputs.slot_index == '4'
+        continue-on-error: true
+        run: |
+          python credit_ledger.py reserve --category coverage --count 1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/usage/monthly.json
+          git commit -m "Reserve extra worldwide coverage search"
+          git push
       - name: Scan rotating continent and future dates
         id: explore
+        if: steps.target.outputs.slot_index != '4' || steps.coverage_reserve.outcome == 'success'
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
         run: |
