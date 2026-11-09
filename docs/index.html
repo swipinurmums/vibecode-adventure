@@ -194,6 +194,7 @@ radial-gradient(1px 1px at 3% 11%,#e8f5ff 98%,transparent),radial-gradient(1px 1
 background-size:100% 100%;opacity:.88;animation:starfield-twinkle 9s ease-in-out infinite;transform:translate3d(calc(var(--star-drift-x,0px) + var(--globe-drift-x,0px)),calc(var(--star-drift-y,0px) + var(--globe-drift-y,0px)),0) scale(1.06);transition:transform .22s cubic-bezier(.2,.7,.2,1)}
 @keyframes starfield-twinkle{0%,100%{opacity:.68}50%{opacity:1}}
 .maplibregl-canvas-container{position:relative;z-index:1;background:transparent!important}
+.maplibregl-popup{z-index:5!important;pointer-events:auto}
 .maplibregl-canvas{background:transparent;filter:drop-shadow(0 0 22px #4c83ad35)}
 .maplibregl-ctrl-attrib{background:#071426d9!important;color:#a9c3d2!important;border-radius:5px 0 0 0;padding:2px 5px!important}
 .maplibregl-ctrl-attrib a{color:#d4e7f0!important}
