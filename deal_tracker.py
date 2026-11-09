@@ -307,6 +307,9 @@ def ingest_hotels(source, history_path=HISTORY):
         row["flight_benchmark_gbp"] = (
             flight_benchmark["benchmark_gbp"] if flight_benchmark else None
         )
+        row["flight_sample_count"] = (
+            flight_benchmark["sample_count"] if flight_benchmark else 0
+        )
         row["flight_discount_percent"] = (
             flight_benchmark["discount_percent"] if flight_benchmark else None
         )
