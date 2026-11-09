@@ -148,7 +148,8 @@ def main():
         city = flight["destination"]
         country = flight.get("country", "")
         start, end = flight["departure_date"], flight["return_date"]
-        print(f"\n[{index}/{len(selected)}] {city}, {country} | flight £{flight['flight_price_gbp']:.0f} | {start} to {end}")
+        label = "hotel-only search" if flight.get("flight_price_gbp") is None else "flight £" + str(round(float(flight["flight_price_gbp"])))
+        print("\n[" + str(index) + "/" + str(len(selected)) + "] " + city + ", " + country + " | " + label + " | " + start + " to " + end)
         payload = fetch_one(key, flight, args.adults)
         folder = root / f"{index:02d}-{city.lower().replace(' ', '-')}"
         folder.mkdir(parents=True, exist_ok=True)
