@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 PATH = Path("data/usage/monthly.json")
-CAPS = {"flight": 120, "personal": 50, "hotel": 80}
+CAPS = {"flight": 120, "personal": 50, "hotel": 50, "research": 30}
 TOTAL_CAP = 250
 
 def month_key():
@@ -24,7 +24,7 @@ def save(data):
 def current(data):
     return data.setdefault("months", {}).setdefault(month_key(), {
         "baseline_used": None,
-        "reserved": {"flight": 0, "personal": 0, "hotel": 0}
+        "reserved": {"flight": 0, "personal": 0, "hotel": 0, "research": 0}
     })
 
 def status(data):
@@ -49,7 +49,7 @@ def reconcile(baseline_used):
     # Prior unclassified usage is conservatively charged to the flight bucket,
     # preserving the 50 personal and 80 hotel allocations.
     month["baseline_used"] = baseline_used
-    month["reserved"] = {"flight": baseline_used, "personal": 0, "hotel": 0}
+    month["reserved"] = {"flight": baseline_used, "personal": 0, "hotel": 0, "research": 0}
     data["reconciled"] = True
     save(data)
     print(f"Saved opening baseline of {baseline_used} searches for {month_key()}.")
