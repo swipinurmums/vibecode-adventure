@@ -83,7 +83,8 @@ def normalise(payload, flight, adults):
             "flight_price_gbp": flight.get("flight_price_gbp"),
             "flight_stops": flight.get("stops"),
             "flight_airline": flight.get("airline"),
-            "nights": nights, "adults": adults,\n            "flexible_month_search": bool(flight.get("flexible_month_search", False)),
+            "nights": nights, "adults": adults,
+            "flexible_month_search": bool(flight.get("flexible_month_search", False)),
             "property": p.get("name"), "accommodation_type": classify_accommodation(
                 p.get("name"), p.get("type")),
             "rating": p.get("overall_rating"),
@@ -219,12 +220,14 @@ def main():
     print(f"Hotel search candidates: {len(candidates)}; hotel searches allowed this run: {args.max_searches}")
     root = Path("data/hotels") / datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     root.mkdir(parents=True, exist_ok=True)
-    all_rows = []\n    for index, flight in enumerate(selected, 1):
+    all_rows = []
+    for index, flight in enumerate(selected, 1):
         city = flight["destination"]
         country = flight.get("country", "")
         start, end = flight["departure_date"], flight["return_date"]
         label = "hotel-only search" if flight.get("flight_price_gbp") is None else "flight £" + str(round(float(flight["flight_price_gbp"])))
-        print("\n[" + str(index) + "/" + str(len(selected)) + "] " + city + ", " + country + " | " + label + " | " + start + " to " + end)
+        print("
+[" + str(index) + "/" + str(len(selected)) + "] " + city + ", " + country + " | " + label + " | " + start + " to " + end)
         payload = fetch_one(key, flight, args.adults)
         folder = root / f"{index:02d}-{city.lower().replace(' ', '-')}"
         folder.mkdir(parents=True, exist_ok=True)
@@ -249,7 +252,12 @@ def main():
                 print(f"   {row['url']}")
         if not priced:
             print("No whole-stay property totals returned; nightly prices were not converted into totals.")
-    if all_rows:\n        with (root / "hotels.csv").open("w", newline="", encoding="utf-8") as handle:\n            writer = csv.DictWriter(handle, fieldnames=list(all_rows[0]))\n            writer.writeheader()\n            writer.writerows(all_rows)\n    print(f"Hotel results saved under {root}")
+    if all_rows:
+        with (root / "hotels.csv").open("w", newline="", encoding="utf-8") as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(all_rows[0]))
+            writer.writeheader()
+            writer.writerows(all_rows)
+    print(f"Hotel results saved under {root}")
     return 0
 
 
