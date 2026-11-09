@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a dashboard-ready, ranked feed from historical observations."""
+"""Build independent flight, hotel and combined-holiday deal signals."""
 import argparse
 import json
 from datetime import datetime, timezone
@@ -46,42 +46,58 @@ def load_insights(folder):
     return found
 
 
+def status_for(discount, component):
+    if not isinstance(discount, (int, float)):
+        return f"building_{component}_benchmark"
+    if discount >= 15:
+        return f"strong_{component}_deal"
+    if discount > 0:
+        return f"below_typical_{component}"
+    return f"not_below_typical_{component}"
+
+
 def rank_record(row, insight=None):
-    flight_discount = (insight or {}).get("discount_vs_typical_low_percent")
-    if flight_discount is None:
-        flight_discount = row.get("flight_discount_percent", row.get("discount_percent") if row.get("kind") == "flight" else None)
-    hotel_discount = row.get("discount_percent") if row.get("kind") == "hotel" else None
-    combined = row.get("combined_discount_percent") if row.get("kind") == "hotel" else None
-    available = [x for x in (flight_discount, hotel_discount) if isinstance(x, (int, float))]
-    ranking_discount = combined if isinstance(combined, (int, float)) else (sum(available) / len(available) if available else None)
-
-    if combined is not None and combined >= 15:
-        status = "strong_combined_deal"
-    elif (insight or {}).get("benchmark_status") == "strong_deal" and hotel_discount is not None and hotel_discount >= 15:
-        status = "strong_combined_deal"
-    elif ranking_discount is not None and ranking_discount >= 15:
-        status = "strong_component_deal"
-    elif ranking_discount is not None and ranking_discount > 0:
-        status = "below_typical"
-    elif ranking_discount is not None:
-        status = "not_below_typical"
+    """Rank a flight or hotel on its own component; expose package value separately."""
+    is_hotel = row.get("kind") == "hotel"
+    if is_hotel:
+        hotel_discount = row.get("discount_percent")
+        flight_discount = (insight or {}).get("discount_vs_typical_low_percent")
+        if flight_discount is None:
+            flight_discount = row.get("flight_discount_percent")
+        component_discount = hotel_discount
+        component = "hotel"
     else:
-        status = "building_history"
+        flight_discount = (insight or {}).get("discount_vs_typical_low_percent")
+        if flight_discount is None:
+            flight_discount = row.get("discount_percent", row.get("flight_discount_percent"))
+        hotel_discount = None
+        component_discount = flight_discount
+        component = "flight"
 
-    if insight and row.get("kind") == "hotel" and row.get("benchmark_gbp") is not None:
-        confidence = "high" if row.get("sample_count", 0) >= 3 else "medium"
-    elif insight or row.get("benchmark_gbp") is not None:
-        confidence = "medium"
-    else:
-        confidence = "low"
-
+    combined = row.get("combined_discount_percent") if is_hotel else None
+    modes = [component]
+    if is_hotel and isinstance(combined, (int, float)):
+        modes.append("combined")
     return {
-        "deal_status": status,
-        "ranking_discount_percent": round(ranking_discount, 1) if ranking_discount is not None else None,
+        "deal_status": status_for(component_discount, component),
+        "ranking_discount_percent": round(component_discount, 1) if isinstance(component_discount, (int, float)) else None,
         "flight_discount_percent": flight_discount,
         "hotel_discount_percent": hotel_discount,
         "combined_discount_percent": combined,
-        "confidence": confidence,
+        "flight_deal_status": status_for(flight_discount, "flight"),
+        "hotel_deal_status": status_for(hotel_discount, "hotel") if is_hotel else None,
+        "combined_deal_status": status_for(combined, "combined") if is_hotel else None,
+        "combined_ranking_discount_percent": round(combined, 1) if isinstance(combined, (int, float)) else None,
+        "deal_modes": modes,
+        "benchmark_source": (
+            "google_flights_price_insights" if insight and flight_discount is not None
+            else ("personal_historical_median" if row.get("benchmark_gbp") is not None
+                  else "insufficient_comparable_history")
+        ),
+        "confidence": (
+            "high" if is_hotel and row.get("sample_count", 0) >= 3
+            else ("medium" if (insight or row.get("benchmark_gbp") is not None) else "low")
+        ),
     }
 
 
@@ -89,49 +105,64 @@ def build_feed(history, insights):
     records = []
     matched_insights = set()
     for row in latest_rows(history):
-        insight = insights.get((
-            row.get("origin"), row.get("destination"),
-            row.get("start_date"), row.get("end_date")
-        ))
-        if row.get("kind") == "hotel":
-            # Historical hotel rows store trip length, while insight records
-            # store both exact dates. Match by trip identity and derive dates
-            # only when they are available on the history row.
-            insight = insights.get((
-                row.get("origin"), row.get("destination"),
-                row.get("start_date"), row.get("end_date")
-            ), insight)
+        key = (row.get("origin"), row.get("destination"), row.get("start_date"), row.get("end_date"))
+        insight = insights.get(key)
         record = dict(row)
-        # When independent route insights exist, prefer the Google Flights
-        # typical-low benchmark for the flight component while retaining the
-        # hotel's own quality-matched historical median.
-        if (record.get("kind") == "hotel" and insight
-                and insight.get("google_flights_lowest_price_gbp") is not None
-                and insight.get("typical_price_low_gbp") is not None
-                and record.get("benchmark_gbp") is not None):
-            current_flight = float(insight["google_flights_lowest_price_gbp"])
-            current_hotel = float(record["price_gbp"])
-            typical_flight = float(insight["typical_price_low_gbp"])
-            typical_hotel = float(record["benchmark_gbp"])
-            combined_current = current_flight + current_hotel
-            combined_benchmark = typical_flight + typical_hotel
-            combined_discount = (combined_benchmark - combined_current) / combined_benchmark * 100
-            record.update({
-                "combined_price_gbp": round(combined_current, 2),
-                "combined_benchmark_gbp": round(combined_benchmark, 2),
-                "combined_discount_percent": round(combined_discount, 1),
-                "combined_deal_status": (
-                    "strong_deal" if combined_discount >= 15 else
-                    ("below_typical" if combined_discount > 0 else "not_below_typical")
-                ),
-                "combined_benchmark_method": "google_flights_typical_low_plus_hotel_historical_median"
-            })
+
+        # Package value is calculated only when both components have credible
+        # benchmarks. Use the actual flight fare attached to this hotel search
+        # as the current package price, and Google's typical-low fare as the
+        # market reference when available.
+        if record.get("kind") == "hotel":
+            try:
+                current_flight = float(record.get("flight_price_gbp"))
+                current_hotel = float(record.get("price_gbp"))
+            except (TypeError, ValueError):
+                current_flight = current_hotel = None
+            typical_flight = None
+            if insight:
+                typical_flight = insight.get("typical_price_low_gbp")
+            if typical_flight is None:
+                typical_flight = record.get("flight_benchmark_gbp")
+            hotel_benchmark = record.get("benchmark_gbp")
+            if (current_flight is not None and current_hotel is not None
+                    and typical_flight is not None and hotel_benchmark is not None
+                    and float(typical_flight) > 0 and float(hotel_benchmark) > 0):
+                combined_current = current_flight + current_hotel
+                combined_benchmark = float(typical_flight) + float(hotel_benchmark)
+                combined_discount = (combined_benchmark - combined_current) / combined_benchmark * 100
+                record.update({
+                    "combined_price_gbp": round(combined_current, 2),
+                    "combined_benchmark_gbp": round(combined_benchmark, 2),
+                    "combined_discount_percent": round(combined_discount, 1),
+                    "combined_deal_status": status_for(combined_discount, "combined"),
+                    "combined_benchmark_method": (
+                        "google_flights_typical_low_plus_hotel_historical_median"
+                        if insight and insight.get("typical_price_low_gbp") is not None
+                        else "historical_flight_median_plus_hotel_median"
+                    ),
+                })
+            else:
+                record.update({
+                    "combined_price_gbp": (
+                        round(current_flight + current_hotel, 2)
+                        if current_flight is not None and current_hotel is not None else None
+                    ),
+                    "combined_benchmark_gbp": None,
+                    "combined_discount_percent": None,
+                    "combined_deal_status": "building_combined_benchmark",
+                    "combined_benchmark_method": None,
+                })
+
         ranked = rank_record(record, insight)
         record.update(ranked)
         if insight:
             record["google_flights_price_insights"] = insight
-            matched_insights.add((row.get("origin"), row.get("destination"), row.get("start_date"), row.get("end_date")))
+            matched_insights.add(key)
         records.append(record)
+
+    # A route insight is a standalone flight opportunity even if no hotel was
+    # searched for that destination or date.
     for key, insight in insights.items():
         if key in matched_insights:
             continue
@@ -148,16 +179,19 @@ def build_feed(history, insights):
         record["kind"] = "flight_insight"
         record["google_flights_price_insights"] = insight
         records.append(record)
+
     records.sort(key=lambda r: (
         r.get("ranking_discount_percent") is None,
         -(r.get("ranking_discount_percent") or 0),
         r.get("observed_at") or ""
     ))
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "deal_count": len(records),
-        "strong_deal_count": sum(r["deal_status"] in ("strong_combined_deal", "strong_component_deal") for r in records),
+        "strong_deal_count": sum(
+            str(r.get("deal_status", "")).startswith("strong_") for r in records
+        ),
         "deals": records,
     }
 
@@ -172,7 +206,7 @@ def main():
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(feed, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"Deal feed built: {feed['deal_count']} records, {feed['strong_deal_count']} strong deal signals")
+    print(f"Deal feed built: {feed['deal_count']} records, {feed['strong_deal_count']} strong component deals")
     print(f"Saved to {output}")
 
 
