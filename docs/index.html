@@ -27,6 +27,7 @@ h1{font-size:clamp(30px,4vw,44px);line-height:1.1;letter-spacing:-.04em;margin:7
 .mode{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:15px}
 .mode button{border:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 13px;border-radius:9px;font-weight:700;cursor:pointer}
 .mode button.active{background:var(--green);color:#10180d;border-color:var(--green)}
+.mode button .saved-count{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:4px;border-radius:99px;background:#29352c;color:var(--green2);font-size:10px}.mode button.active .saved-count{background:#10180d;color:var(--green)}
 .filter-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr auto;gap:10px;align-items:end}
 label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin:0 0 6px}
 input,select{width:100%;background:#101612;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px 11px;font:inherit;font-size:13px;min-width:0}
@@ -36,7 +37,7 @@ input:focus,select:focus{outline:2px solid #8ec84d;outline-offset:1px}
 .result-head strong{font-size:14px}.result-head span{font-size:12px;color:var(--muted)}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 .deal{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px;min-width:0;display:flex;flex-direction:column;gap:12px}
-.deal-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.deal-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.deal-actions{display:flex;align-items:center;gap:8px}.bookmark{width:30px;height:30px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);font-size:17px;line-height:1;cursor:pointer;display:grid;place-items:center}.bookmark:hover,.bookmark.saved{color:var(--green);border-color:#647b4d;background:#202b1e}.bookmark.saved{font-size:18px}
 .kind{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .pill{font-size:10px;font-weight:800;border-radius:100px;padding:5px 8px;background:#27312a;color:var(--muted);white-space:nowrap}
 .pill.strong{background:#263b1c;color:var(--green2)}.pill.below{background:#24372d;color:#a9e6bb}.pill.typical{background:#332d20;color:var(--amber)}.pill.building{background:#282e34;color:#bdc9d4}
@@ -81,7 +82,7 @@ footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-s
   </section>
   <section class="filters">
     <div class="mode" role="tablist" aria-label="Deal type">
-      <button class="active" data-mode="all">All</button><button data-mode="flight">Flights</button><button data-mode="hotel">Hotels</button><button data-mode="combined">Combined holidays</button>
+      <button class="active" data-mode="all">All</button><button data-mode="flight">Flights</button><button data-mode="hotel">Hotels</button><button data-mode="combined">Combined holidays</button><button data-mode="saved" aria-label="Saved locations">▮ Saved locations <span class="saved-count" id="saved-count">0</span></button>
     </div>
     <div class="filter-grid">
       <div class="searchbox"><label for="search">Search destination or property</label><input id="search" type="search" placeholder="e.g. Tokyo, Italy, Bangkok hotel"></div>
@@ -108,7 +109,14 @@ const continentCountries={
  "South America":["Argentina","Bolivia","Brazil","Chile","Colombia","Ecuador","Falkland Islands","French Guiana","Guyana","Paraguay","Peru","Suriname","Uruguay","Venezuela"],
  Oceania:["Australia","Cook Islands","Fiji","French Polynesia","Guam","Kiribati","Marshall Islands","Micronesia","Nauru","New Caledonia","New Zealand","Norfolk Island","Palau","Papua New Guinea","Samoa","Solomon Islands","Tonga","Tuvalu","Vanuatu"]
 };
-let deals=[],history=null,mode="all",visible=30;
+let deals=[],history=null,mode="all",visible=30,savedTrips=loadSavedTrips();
+const SAVED_KEY="hunter-saved-trips-v1";
+function loadSavedTrips(){try{const value=JSON.parse(localStorage.getItem("hunter-saved-trips-v1")||"[]");return Array.isArray(value)?value:[];}catch{return [];}}
+function saveSavedTrips(){try{localStorage.setItem(SAVED_KEY,JSON.stringify(savedTrips));}catch(e){$("feed-status").textContent="Could not save bookmarks in this browser";}updateSavedCount();}
+function recordKey(row){return [row.kind,row.origin,row.destination,row.country,row.property,row.start_date,row.end_date,row.travel_month,row.nights].map(x=>norm(x)).join("|");}
+function isSaved(row){return savedTrips.some(x=>x.key===recordKey(row));}
+function toggleSaved(row){const key=recordKey(row);if(isSaved(row))savedTrips=savedTrips.filter(x=>x.key!==key);else savedTrips.unshift({key,row,saved_at:new Date().toISOString()});saveSavedTrips();render();}
+function updateSavedCount(){$("saved-count").textContent=String(savedTrips.length);}
 const $=id=>document.getElementById(id);
 const norm=s=>String(s||"").trim().toLocaleLowerCase();
 function continentOf(country){const c=norm(country);for(const [name,list] of Object.entries(continentCountries))if(list.some(x=>norm(x)===c))return name;return "";}
@@ -123,11 +131,12 @@ function cssStatus(s){return s.startsWith("strong_")?"strong":s.startsWith("belo
 function priceFor(row,m){return m==="flight"?(row.kind==="flight_insight"?row.price_gbp:row.price_gbp):m==="hotel"?row.price_gbp:m==="combined"?row.combined_price_gbp:row.price_gbp;}
 function discountFor(row,m){return m==="flight"?(row.flight_discount_percent??row.ranking_discount_percent):m==="hotel"?(row.hotel_discount_percent??row.ranking_discount_percent):m==="combined"?row.combined_discount_percent:row.ranking_discount_percent;}
 function benchmarkFor(row,m){return m==="flight"?(row.benchmark_gbp??row.flight_benchmark_reference_gbp??row.flight_benchmark_gbp):m==="hotel"?row.benchmark_gbp:m==="combined"?row.combined_benchmark_gbp:row.benchmark_gbp;}
-function matchesMode(r){if(mode==="all")return true;if(mode==="flight")return r.kind==="flight"||r.kind==="flight_insight";if(mode==="hotel")return r.kind==="hotel";return Array.isArray(r.deal_modes)&&r.deal_modes.includes("combined")&&r.combined_price_gbp!=null;}
+function matchesMode(r){if(mode==="saved")return true;if(mode==="all")return true;if(mode==="flight")return r.kind==="flight"||r.kind==="flight_insight";if(mode==="hotel")return r.kind==="hotel";return Array.isArray(r.deal_modes)&&r.deal_modes.includes("combined")&&r.combined_price_gbp!=null;}
 function filtered(){
  const q=norm($("search").value),cont=$("continent").value,country=$("country").value,ready=$("ready").checked;
- let list=deals.filter(r=>{
-  if(!matchesMode(r))return false;
+ let source=mode==="saved"?savedTrips.map(x=>x.row):deals;
+ let list=source.filter(r=>{
+  if(mode==="saved"?!isSaved(r):!matchesMode(r))return false;
   if(q&&!norm([r.destination,r.country,r.property,r.origin].join(" ")).includes(q))return false;
   if(cont&&continentOf(r.country)!==cont)return false;
   if(country&&norm(r.country)!==norm(country))return false;
@@ -150,13 +159,14 @@ function card(row){
  const conf=m==="combined"?"Flight: "+(row.flight_confidence||"low")+" · Hotel: "+(row.confidence||"low"):(m==="flight"?(row.flight_confidence||row.confidence||"low"):(row.confidence||"low"));
  const discount=typeof disc==="number"?(disc>=0?disc.toFixed(1)+"% below":" "+Math.abs(disc).toFixed(1)+"% above"):"Not established";
  const div=document.createElement("article");div.className="deal";
- div.innerHTML='<div class="deal-top"><span class="kind">'+(m==="combined"?"Combined holiday":row.kind==="hotel"?"Hotel":"Flight")+'</span><span class="pill '+cssStatus(st)+'">'+labelStatus(st)+'</span></div>'+
+ div.innerHTML='<div class="deal-top"><span class="kind">'+(m==="combined"?"Combined holiday":row.kind==="hotel"?"Hotel":"Flight")+'</span><div class="deal-actions"><span class="pill '+cssStatus(st)+'">'+labelStatus(st)+'</span><button class="bookmark '+(isSaved(row)?"saved":"")+'" type="button" aria-label="'+(isSaved(row)?"Remove saved trip":"Save trip")+'" title="'+(isSaved(row)?"Remove saved trip":"Save trip")+'">'+(isSaved(row)?"▮":"▯")+'</button></div></div>'+
  '<div><div class="destination">'+esc(title)+'</div><div class="property">'+esc(subtitle)+'</div></div>'+
  '<div class="price-row"><div class="price">'+fmt(price)+' <small>'+(m==="hotel"?"total stay":m==="combined"?"flight + stay":"return")+'</small></div><div class="discount '+(typeof disc==="number"?"":"none")+'">'+esc(discount)+'</div></div>'+
  '<div class="compare"><span>Typical benchmark</span><b>'+fmt(bench)+'</b></div>'+
  '<div class="mini"><div><b>'+esc(dateLine)+'</b><span>Travel dates · '+(row.nights||"—")+' nights</span></div><div><b>'+esc(row.country||"Country unavailable")+'</b><span>'+(row.origin&&row.origin!=="HOTEL_ONLY"?"From "+esc(row.origin):"Destination")+'</span></div></div>'+
  '<div class="card-foot"><span class="conf">'+(bench!=null?(m==="combined"?"Flight "+(row.flight_sample_count||0)+" samples · Hotel "+n+" samples · "+conf:" "+n+" comparable samples · "+conf+" confidence"): "Benchmark not established yet")+'</span><button class="detail" type="button">Price history ↗</button></div><div class="chartbox"><div class="charttitle">Observed price history · dates shown below</div><div class="chart-note">Loading history…</div></div>';
- const button=div.querySelector(".detail"),box=div.querySelector(".chartbox");
+ const button=div.querySelector(".detail"),box=div.querySelector(".chartbox"),bookmark=div.querySelector(".bookmark");
+ bookmark.addEventListener("click",()=>toggleSaved(row));
  button.addEventListener("click",async()=>{box.classList.toggle("open");if(box.dataset.loaded||!box.classList.contains("open"))return;await drawHistory(row,box);box.dataset.loaded="1";});
  return div;
 }
@@ -182,7 +192,7 @@ async function drawHistory(row,box){
  }catch(e){box.querySelector(".chart-note").textContent="Could not load price history right now.";}
 }
 function render(){
- const list=filtered(),root=$("results");root.innerHTML="";
+ updateSavedCount();const list=filtered(),root=$("results");root.innerHTML="";
  $("result-count").textContent=list.length.toLocaleString("en-GB")+" matching opportunities";
  $("result-note").textContent=mode==="combined"?"Only packages with both component benchmarks are shown.":"GBP · flight fares are return prices; hotel prices are whole-stay totals.";
  if(!list.length){root.innerHTML='<div class="empty" style="grid-column:1/-1"><b>No matching opportunities yet.</b><br>Try another destination or switch off “Benchmarked only”. New observations continue to build the comparisons.</div>';$("more").hidden=true;return;}
@@ -220,6 +230,7 @@ document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",
 ["search","country","sort","ready"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",()=>{visible=30;render();}));
 $("continent").addEventListener("change",()=>{updateCountries();visible=30;render();});
 $("more").addEventListener("click",()=>{visible+=30;render();});
+updateSavedCount();
 load();
 </script>
 </body>
