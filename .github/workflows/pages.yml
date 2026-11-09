@@ -1,4 +1,5 @@
 name: Deploy Hunter dashboard
+# Keep push deployment available as a fallback if GitHub's manual dispatch UI errors.
 
 on:
   push:
