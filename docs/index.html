@@ -162,9 +162,9 @@ html{scroll-behavior:smooth}
 body{background:linear-gradient(180deg,#eaf5fa 0%,#f4f9fb 100%)}
 main.wrap{max-width:none;width:100%;padding:10px 18px 30px}
 .map-toolbar{max-width:1700px;margin:0 auto 8px;min-height:42px}
-.map-panel{border-radius:16px;background:radial-gradient(ellipse at 50% 45%,#d8edf6 0%,#b8d9e9 58%,#9fc6da 100%);box-shadow:0 18px 55px #174d6720}
-.map-stage{height:calc(100svh - 174px);min-height:560px;max-height:none;background:radial-gradient(ellipse at 50% 47%,#d5eaf4 0%,#b5d6e7 70%,#9fc6d9 100%)}
-#world-map{touch-action:none;overflow:visible}
+.map-panel{border:0;border-radius:0;background:#dcecf3;box-shadow:none;overflow:hidden}
+.map-stage{height:calc(100svh - 174px);min-height:560px;max-height:none;background:#dcecf3}
+#world-map{touch-action:none;overflow:hidden;background:#dcecf3}
 .map-sphere{fill:url(#ocean-fill);stroke:#d5edf7;stroke-width:2;filter:url(#sphere-shadow)}
 .map-graticule{stroke:#a8d0e0;stroke-width:.55;opacity:.3}
 .country-shape{fill:url(#land-fill);stroke:#f5fbff;stroke-width:.85;stroke-linejoin:round;vector-effect:non-scaling-stroke}
@@ -185,6 +185,14 @@ main.wrap{max-width:none;width:100%;padding:10px 18px 30px}
 @media(max-width:560px){main.wrap{padding:8px 9px 24px}.map-toolbar{gap:7px}.map-stage{height:calc(100svh - 225px);min-height:430px;max-height:none}.map-legend{left:8px;top:8px;gap:7px;padding:6px 7px;font-size:9px}.map-hint{display:none}.projection-toggle{right:9px;bottom:9px;padding:8px 10px}.compact-filters{margin-top:7px}.filter-grid{justify-content:flex-start;gap:8px}.filter-grid>div{width:42%}.grid{grid-template-columns:1fr}}
 
 
+/* Satellite globe refinements */
+.map-panel{border:0!important;border-radius:0!important;box-shadow:none!important;background:#dcecf3!important}
+.map-stage{background:#dcecf3!important}
+#world-map{background:#dcecf3!important;overflow:hidden!important}
+.maplibregl-canvas{background:transparent}
+.maplibregl-ctrl-attrib{background:#e8f2f6cc!important;color:#456574!important;border-radius:5px 0 0 0;padding:2px 5px!important}
+.maplibregl-ctrl-attrib a{color:#315f73!important}
+@media(min-width:901px){.map-panel{margin-left:-18px;margin-right:-18px}}
 </style>
 </head>
 <body>
@@ -262,7 +270,7 @@ const cityCoordinates={
  "cairo":[31.2357,30.0444],"marrakech":[-7.9811,31.6295],"casablanca":[-7.5898,33.5731],"cape town":[18.4241,-33.9249],"johannesburg":[28.0473,-26.2041],"nairobi":[36.8219,-1.2921],"zanzibar":[39.2083,-6.1659],"lagos":[3.3792,6.5244],"accra":[-0.187,5.6037],"addis ababa":[38.7578,8.9806],"mauritius":[57.5522,-20.3484],"seychelles":[55.492,-4.6796],"tunis":[10.1815,36.8065]
 };
 function aliasCountry(name){const n=norm(name);return ({"united states of america":"united states","russian federation":"russia","republic of korea":"south korea","korea, republic of":"south korea","democratic people's republic of korea":"north korea","viet nam":"vietnam","czech republic":"czechia","congo":"republic of the congo","türkiye":"turkiye","turkey":"turkiye","syrian arab republic":"syria","brunei darussalam":"brunei","united republic of tanzania":"tanzania","moldova, republic of":"moldova","palestine, state of":"palestine"})[n]||n;}
-function mapCountryContinent(name){const target=aliasCountry(name);for(const [continent,countries] of Object.entries(continentCountries)){if(countries.some(c=>aliasCountry(c)===target))return continent;}return "";}
+function mapCountryContinent(name){const target=aliasCountry(name);if(!target)return "";for(const continent of ["Europe","Asia","Africa","North America","South America","Oceania"]){const countries=continentCountries[continent]||[];if(countries.some(c=>aliasCountry(c)===target))return continent;}return "";}
 function selectedContinent(){return $("continent")?.value||"";}
 function featureName(feature){return feature?.properties?.name||"";}
 function setupMapFeatures(topology){mapFeatures=topojson.feature(topology,topology.objects.countries).features;mapCentroids.clear();for(const feature of mapFeatures){const name=featureName(feature);if(name)mapCentroids.set(aliasCountry(name),d3.geoCentroid(feature));}}
@@ -338,17 +346,17 @@ async function initMap(){
   setupMapFeatures(await response.json());
   mapInstance=new maplibregl.Map({
    container:"world-map",projection:{type:"globe"},center:[12,24],zoom:1.45,minZoom:1.15,maxZoom:14,
-   style:{version:8,projection:{type:"globe"},sky:{"sky-color":"#071426","horizon-color":"#b8d9ec","fog-color":"#b8d9ec","sky-horizon-blend":0.35,"horizon-fog-blend":0.7,"fog-ground-blend":0.5,"atmosphere-blend":0.8},
+   style:{version:8,projection:{type:"globe"},sky:{"sky-color":"#dcecf3","horizon-color":"#dcecf3","fog-color":"#dcecf3","sky-horizon-blend":0,"horizon-fog-blend":0,"fog-ground-blend":0,"atmosphere-blend":0},
     sources:{
      "blue-marble":{type:"raster",tiles:["https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg"],tileSize:256,maxzoom:8,attribution:"NASA Blue Marble"},
-     "sentinel":{type:"raster",tiles:["https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"],tileSize:256,minzoom:5,maxzoom:14,attribution:"Sentinel-2 cloudless © EOX / Copernicus"},
+     "sentinel":{type:"raster",tiles:["https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"],tileSize:256,minzoom:3,maxzoom:14,attribution:"Sentinel-2 cloudless © EOX / Copernicus"},
      "terrain":{type:"raster-dem",url:"https://tiles.mapterhorn.com/tilejson.json",tileSize:256},
     },
     terrain:{source:"terrain",exaggeration:1},
     light:{anchor:"map",position:[1.5,210,35],intensity:0.45},
     layers:[
      {id:"blue-marble",type:"raster",source:"blue-marble"},
-     {id:"sentinel",type:"raster",source:"sentinel",minzoom:5,paint:{"raster-opacity":["interpolate",["linear"],["zoom"],5,0,7,1],"raster-saturation":0.05,"raster-contrast":0.08}},
+     {id:"sentinel",type:"raster",source:"sentinel",minzoom:3,paint:{"raster-opacity":["interpolate",["linear"],["zoom"],2.5,0,4,0.72,6,1],"raster-saturation":0.18,"raster-contrast":0.12}},
     ]
    },
    attributionControl:true,dragRotate:true,scrollZoom:true,renderWorldCopies:false
@@ -357,18 +365,19 @@ async function initMap(){
   mapInstance.on("load",()=>{
    mapInstance.setTerrain({source:"terrain",exaggeration:1});
    mapInstance.addSource("country-polygons",{type:"geojson",data:{type:"FeatureCollection",features:mapFeatures.map(f=>({type:"Feature",geometry:f.geometry,properties:{name:featureName(f),continent:mapCountryContinent(featureName(f))}}))}});
-   mapInstance.addLayer({id:"selected-continent-fill",type:"fill",source:"country-polygons",paint:{"fill-color":"#f6c96c","fill-opacity":0.15},filter:["==",["get","continent"],"__none__"]});
-   mapInstance.addLayer({id:"country-borders",type:"line",source:"country-polygons",paint:{"line-color":"#ffffff","line-width":["interpolate",["linear"],["zoom"],1,0.35,5,0.8,9,1.15],"line-opacity":0.78}});
+   mapInstance.addLayer({id:"selected-continent-fill",type:"fill",source:"country-polygons",paint:{"fill-color":"#ffd34f","fill-opacity":0.34},filter:["==",["get","continent"],"__none__"]});
+   mapInstance.addLayer({id:"country-borders",type:"line",source:"country-polygons",paint:{"line-color":"#d8e7ec","line-width":["interpolate",["linear"],["zoom"],1,0.25,5,0.48,9,0.7],"line-opacity":0.48}});
    mapInstance.addLayer({id:"country-labels",type:"symbol",source:"country-polygons",minzoom:2.1,layout:{"text-field":["get","name"],"text-font":["Open Sans Semibold","Arial Unicode MS Bold"],"text-size":["interpolate",["linear"],["zoom"],2,9,5,12,8,14],"text-allow-overlap":false},paint:{"text-color":"#ffffff","text-halo-color":"#1a3545","text-halo-width":1.3}});
    mapInstance.addSource("deal-points",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
    mapInstance.addLayer({id:"deal-glow",type:"circle",source:"deal-points",filter:["==",["get","kind"],"strong"],paint:{"circle-radius":10,"circle-color":"#ed454e","circle-opacity":0.22,"circle-blur":0.7}});
+   mapInstance.addLayer({id:"deal-hit-targets",type:"circle",source:"deal-points",paint:{"circle-radius":13,"circle-color":"#ffffff","circle-opacity":0.015,"circle-stroke-width":0}});
    mapInstance.addLayer({id:"deal-markers",type:"circle",source:"deal-points",paint:{"circle-radius":["match",["get","kind"],"strong",6.3,"deal",5.2,"building",3.5,3.8],"circle-color":["match",["get","kind"],"strong","#e54850","deal","#e45a60","building","#8c9ba2","#9aaeb7"],"circle-stroke-color":"#ffffff","circle-stroke-width":1.5,"circle-opacity":["match",["get","kind"],"building",0.7,1]}});
    mapReady=true;syncMapData();$("map-hint").textContent="Drag to rotate · Scroll to zoom · Select a dot to preview";
   });
-  mapInstance.on("click","deal-markers",e=>{const key=e.features?.[0]?.properties?.key,entry=mapEntriesByKey.get(key);if(entry)selectMapEntry(entry,e.lngLat);});
-  mapInstance.on("mouseenter","deal-markers",()=>mapInstance.getCanvas().style.cursor="pointer");
-  mapInstance.on("mouseleave","deal-markers",()=>mapInstance.getCanvas().style.cursor="grab");
-  mapInstance.on("click",e=>{if(!mapInstance.queryRenderedFeatures(e.point,{layers:["deal-markers"]}).length){mapSelectedKey=null;if(mapPopup){mapPopup.remove();mapPopup=null;}}});
+  mapInstance.on("click","deal-hit-targets",e=>{const key=e.features?.[0]?.properties?.key,entry=mapEntriesByKey.get(key);if(entry)selectMapEntry(entry,e.lngLat);});
+  mapInstance.on("mouseenter","deal-hit-targets",()=>mapInstance.getCanvas().style.cursor="pointer");
+  mapInstance.on("mouseleave","deal-hit-targets",()=>mapInstance.getCanvas().style.cursor="grab");
+  mapInstance.on("click",e=>{if(!mapInstance.queryRenderedFeatures(e.point,{layers:["deal-hit-targets"]}).length){mapSelectedKey=null;if(mapPopup){mapPopup.remove();mapPopup=null;}}});
   window.addEventListener("resize",()=>mapInstance?.resize());
  }catch(e){$("map-hint").textContent="Satellite globe could not load. Refresh to try again.";console.error(e);}
 }
@@ -494,7 +503,7 @@ async function load(){
 document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.mode;visible=9;pinnedDealKey=null;mapSelectedKey=null;if(mapPopup){mapPopup.remove();mapPopup=null;}render();}));
 ["search","country","sort","ready"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",()=>{visible=9;pinnedDealKey=null;render();}));
 $("projection-toggle").addEventListener("click",()=>{mapProjectionMode=mapProjectionMode==="globe"?"atlas":"globe";if(mapInstance){mapInstance.setProjection({type:mapProjectionMode==="globe"?"globe":"mercator"});mapInstance.easeTo({zoom:mapProjectionMode==="globe"?1.45:1.2,duration:650});}$("projection-toggle").innerHTML=mapProjectionMode==="globe"?"Flatten map <span>↘</span>":"3D globe <span>↗</span>";$("map-hint").textContent=mapProjectionMode==="globe"?"Drag to rotate · Scroll to zoom · Select a dot to preview":"Flat atlas · Scroll to zoom · Select a dot to preview";mapSelectedKey=null;if(mapPopup){mapPopup.remove();mapPopup=null;}});
-$("continent").addEventListener("change",()=>{updateCountries();visible=9;pinnedDealKey=null;mapSelectedKey=null;$("map-popover").hidden=true;render();});
+$("continent").addEventListener("change",()=>{updateCountries();visible=9;pinnedDealKey=null;mapSelectedKey=null;$("map-popover").hidden=true;render();const targets={"Europe":[18,53,2.05],"Asia":[92,31,1.75],"Africa":[20,2,1.9],"North America":[-102,39,1.8],"South America":[-61,-17,1.9],"Oceania":[145,-22,1.85]};const target=targets[$("continent").value];if(mapInstance){if(target)mapInstance.flyTo({center:[target[0],target[1]],zoom:target[2],duration:1350,essential:true});else mapInstance.flyTo({center:[12,24],zoom:1.45,duration:1100,essential:true});}});
 $("more").addEventListener("click",()=>{visible+=9;render();});
 updateSavedCount();
 initMap();
