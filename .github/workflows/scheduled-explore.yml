@@ -42,7 +42,7 @@ jobs:
             *) echo "Unexpected schedule slot: $SLOT"; exit 1 ;;
           esac
           DAY_OF_YEAR="$(date -u +%j)"
-          REGION_INDEX=$(( ((10#$DAY_OF_YEAR - 1) * 4 + SLOT_INDEX) % 6 ))
+          REGION_INDEX=$(( ((10#$DAY_OF_YEAR - 1) * 5 + SLOT_INDEX) % 6 ))
           REGIONS=(europe asia africa north_america south_america oceania)
           REGION="${REGIONS[$REGION_INDEX]}"
           echo "airport=$AIRPORT" >> "$GITHUB_OUTPUT"
