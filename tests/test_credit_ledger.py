@@ -22,19 +22,27 @@ class CreditLedgerTests(unittest.TestCase):
     def test_opening_usage_is_charged_to_flight_and_preserves_other_buckets(self):
         credit_ledger.reconcile(15)
         month = credit_ledger.load()["months"][credit_ledger.month_key()]
-        self.assertEqual(month["reserved"], {"flight":15,"personal":0,"hotel":0})
+        self.assertEqual(month["reserved"], {"flight":15,"personal":0,"hotel":0,"research":0})
         credit_ledger.reserve("personal", 1)
         self.assertEqual(credit_ledger.load()["months"][credit_ledger.month_key()]["reserved"]["personal"], 1)
 
     def test_reserves_and_enforces_category_cap(self):
         data = {"schema_version":1,"reconciled":True,"months":{
-            credit_ledger.month_key():{"baseline_used":0,"reserved":{"flight":119,"personal":0,"hotel":0}}}}
+            credit_ledger.month_key():{"baseline_used":0,"reserved":{"flight":119,"personal":0,"hotel":0,"research":0}}}}
         credit_ledger.save(data)
         with self.assertRaises(RuntimeError):
             credit_ledger.reserve("flight", 2)
         credit_ledger.reserve("flight", 1)
         saved = credit_ledger.load()
         self.assertEqual(saved["months"][credit_ledger.month_key()]["reserved"]["flight"],120)
+
+    def test_research_budget_is_separate_from_hotel_and_personal_buckets(self):
+        credit_ledger.reconcile(0)
+        credit_ledger.reserve("research", 1)
+        saved = credit_ledger.load()["months"][credit_ledger.month_key()]["reserved"]
+        self.assertEqual(saved["research"], 1)
+        self.assertEqual(saved["hotel"], 0)
+        self.assertEqual(saved["personal"], 0)
 
     def test_enforces_global_cap_including_opening_baseline(self):
         credit_ledger.reconcile(249)
