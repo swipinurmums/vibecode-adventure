@@ -258,7 +258,7 @@ const continentCountries={
  "South America":["Argentina","Bolivia","Brazil","Chile","Colombia","Ecuador","Falkland Islands","French Guiana","Guyana","Paraguay","Peru","Suriname","Uruguay","Venezuela"],
  Oceania:["Australia","Cook Islands","Fiji","French Polynesia","Guam","Kiribati","Marshall Islands","Micronesia","Nauru","New Caledonia","New Zealand","Norfolk Island","Palau","Papua New Guinea","Samoa","Solomon Islands","Tonga","Tuvalu","Vanuatu"]
 };
-let deals=[],history=null,mode="all",visible=30,savedTrips=loadSavedTrips();
+let deals=[],history=null,mode="all",visible=30,savedTrips=loadSavedTrips(),countryTopology=null;
 
 let pinnedDealKey=null,mapProjectionMode="globe",mapFeatures=[],mapCentroids=new Map(),mapInstance=null,mapReady=false,mapSelectedKey=null,mapPopup=null,mapEntriesByKey=new Map();
 const cityCoordinates={
@@ -275,7 +275,7 @@ function aliasCountry(name){const n=String(name||"").normalize("NFD").replace(/[
 function mapCountryContinent(name){const target=aliasCountry(name);if(!target)return "";const membership=["Europe","Asia","Africa","North America","South America","Oceania"].filter(continent=>(continentCountries[continent]||[]).some(c=>aliasCountry(c)===target));if(membership.length===1)return membership[0];if(membership.length>1){if(target==="russia")return "Asia";if(target==="turkiye"||target==="cyprus")return "Europe";return membership[0];}return "";}
 function selectedContinent(){return $("continent")?.value||"";}
 function featureName(feature){return feature?.properties?.name||"";}
-function setupMapFeatures(topology){mapFeatures=topojson.feature(topology,topology.objects.countries).features;mapCentroids.clear();for(const feature of mapFeatures){const name=featureName(feature);if(name)mapCentroids.set(aliasCountry(name),d3.geoCentroid(feature));}}
+function setupMapFeatures(topology){countryTopology=topology;mapFeatures=topojson.feature(topology,topology.objects.countries).features;mapCentroids.clear();for(const feature of mapFeatures){const name=featureName(feature);if(name)mapCentroids.set(aliasCountry(name),d3.geoCentroid(feature));}}
 function pointForRow(row){
  const lng=Number(row.longitude??row.lon??row.lng),lat=Number(row.latitude??row.lat);
  if(Number.isFinite(lng)&&Number.isFinite(lat))return [lng,lat];
