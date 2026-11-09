@@ -318,6 +318,7 @@ function syncMapData(){
  const chosen=selectedContinent();
  if(mapInstance.getSource("country-polygons")){
   mapInstance.setFilter("selected-continent-boundaries",chosen?["==",["get","continent"],chosen]:["==",["get","continent"],"__none__"]);
+  mapInstance.setFilter("selected-continent-boundary-glow",chosen?["==",["get","continent"],chosen]:["==",["get","continent"],"__none__"]);
  }
 }
 function selectMapEntry(entry,lngLat){
@@ -379,8 +380,8 @@ async function initMap(){
    mapInstance.addSource("shared-country-borders",{type:"geojson",data:{type:"Feature",geometry:sharedBorders,properties:{}}});
    mapInstance.addSource("continent-border-meshes",{type:"geojson",data:{type:"FeatureCollection",features:borderFeatures}});
    mapInstance.addLayer({id:"country-borders",type:"line",source:"shared-country-borders",paint:{"line-color":"#d9e9f2","line-opacity":0.55,"line-width":["interpolate",["linear"],["zoom"],0,0.3,2,0.45,5,0.7,8,0.9]}});
-   mapInstance.addLayer({id:"selected-continent-boundary-glow",type:"line",source:"continent-border-meshes",filter:["==",["get","continent"],"__none__"],paint:{"line-color":"#f4bd4f","line-opacity":0.34,"line-blur":3.2,"line-width":["interpolate",["linear"],["zoom"],0,3,2,4.5,5,6,8,7]}});
-   mapInstance.addLayer({id:"selected-continent-boundaries",type:"line",source:"continent-border-meshes",filter:["==",["get","continent"],"__none__"],paint:{"line-color":"#ffd36b","line-opacity":1,"line-width":["interpolate",["linear"],["zoom"],0,0.85,2,1.25,5,1.7,8,2.2]}});
+   mapInstance.addLayer({id:"selected-continent-boundary-glow",type:"line",source:"continent-border-meshes",filter:["==",["get","continent"],"__none__"],paint:{"line-color":"#f4bd4f","line-opacity":0.24,"line-blur":4.8,"line-width":["interpolate",["linear"],["zoom"],0,4.5,2,6,5,7.5,8,9]}});
+   mapInstance.addLayer({id:"selected-continent-boundaries",type:"line",source:"continent-border-meshes",filter:["==",["get","continent"],"__none__"],paint:{"line-color":"#ffd987","line-opacity":0.96,"line-width":["interpolate",["linear"],["zoom"],0,1.15,2,1.6,5,2.1,8,2.7]}});
    mapInstance.addLayer({id:"country-labels",type:"symbol",source:"country-polygons",minzoom:2.1,layout:{"text-field":["get","name"],"text-font":["Open Sans Semibold","Arial Unicode MS Bold"],"text-size":["interpolate",["linear"],["zoom"],2,9,5,12,8,14],"text-allow-overlap":false},paint:{"text-color":"#ffffff","text-halo-color":"#1a3545","text-halo-width":1.3}});
    mapInstance.addSource("deal-points",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
    mapInstance.addLayer({id:"deal-glow",type:"circle",source:"deal-points",filter:["==",["get","kind"],"strong"],paint:{"circle-radius":10,"circle-color":"#ed454e","circle-opacity":0.22,"circle-blur":0.7}});
