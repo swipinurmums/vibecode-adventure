@@ -77,8 +77,17 @@ main.wrap{padding-top:15px;padding-bottom:38px}
 .map-controls input:focus,.map-controls select:focus,.compact-filters select:focus{outline:2px solid #a9d5e5;outline-offset:1px}
 .map-panel{position:relative;background:radial-gradient(ellipse at 50% 45%,#e6f5fa 0%,#d7edf5 55%,#d0e6ef 100%);border:1px solid #d3e6ed;border-radius:19px;overflow:hidden;box-shadow:0 12px 35px #47798a12}
 .map-stage{height:min(66vh,690px);min-height:440px;position:relative;overflow:hidden}
-#world-map{display:block;width:100%;height:100%;touch-action:pan-y;cursor:grab}
-#world-map:active{cursor:grabbing}
+#world-map{position:absolute;inset:0;width:100%;height:100%;background:#020817;touch-action:pan-x pan-y;cursor:grab}
+#world-map canvas{outline:none}
+.maplibregl-ctrl-bottom-right{right:8px;bottom:5px}
+.maplibregl-ctrl-attrib{font-size:9px!important;opacity:.82}
+.maplibregl-ctrl-group{border-radius:9px!important;overflow:hidden;box-shadow:0 2px 9px #00152235!important}
+.maplibregl-popup-content{font:12px Inter,ui-sans-serif,system-ui,sans-serif;padding:11px 13px;border-radius:10px;box-shadow:0 9px 28px #071e2c55}
+.maplibregl-popup-content strong{display:block;font-size:13px;color:#183c4b;line-height:1.3}
+.maplibregl-popup-content .popup-price{font-size:19px;font-weight:850;color:#d94a50;letter-spacing:-.04em;margin-top:2px}
+.maplibregl-popup-content small{display:block;color:#718894;font-size:10px;margin-top:2px}
+.maplibregl-popup-close-button{font-size:17px;color:#6b8793;padding:3px 7px}
+
 .map-sphere{fill:#eaf7fb;stroke:#b7d8e5;stroke-width:1.3}
 .map-graticule{fill:none;stroke:#b9d9e5;stroke-width:.65;opacity:.7}
 .country-shape{fill:#c8dfe8;stroke:#a9cbd9;stroke-width:.65;transition:fill .2s}
@@ -190,7 +199,7 @@ main.wrap{max-width:none;width:100%;padding:10px 18px 30px}
   </section>
   <section class="map-panel" aria-label="Interactive travel opportunities map">
     <div class="map-stage" id="map-stage">
-      <svg id="world-map" viewBox="0 0 1000 560" role="img" aria-label="Interactive globe showing travel opportunities"></svg>
+      <div id="world-map" role="application" aria-label="Interactive satellite globe showing travel opportunities"></div>
       <div class="map-popover" id="map-popover" hidden></div>
       <div class="map-legend">
         <span><i class="legend-dot strong"></i> Best deals</span>
@@ -224,7 +233,8 @@ main.wrap{max-width:none;width:100%;padding:10px 18px 30px}
     <span class="footer-links"><a href="https://github.com/swipinurmums/vibecode-adventure/actions/workflows/manual-flight-insights.yml" target="_blank" rel="noopener">Flight search ↗</a><a href="https://github.com/swipinurmums/vibecode-adventure/actions/workflows/manual-hotel-only.yml" target="_blank" rel="noopener">Hotel search ↗</a><span id="feed-status">Connecting to live deal feed…</span></span>
   </div>
 </footer>
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script>
 const FEED_URL="https://raw.githubusercontent.com/swipinurmums/vibecode-adventure/main/data/deals/deals.json";
@@ -239,182 +249,135 @@ const continentCountries={
 };
 let deals=[],history=null,mode="all",visible=30,savedTrips=loadSavedTrips();
 
-let mapZoomScale=1.08,pinnedDealKey=null;
-let mapProjectionMode="globe",mapFeatures=[],mapCentroids=new Map(),mapSvg=null,mapLayer=null,mapDotLayer=null,mapProjection=null,mapPath=null,mapRotation=[0,-12,0],mapSelectedKey=null,mapReady=false;
+let pinnedDealKey=null,mapProjectionMode="globe",mapFeatures=[],mapCentroids=new Map(),mapInstance=null,mapReady=false,mapSelectedKey=null,mapPopup=null,mapEntriesByKey=new Map();
 const cityCoordinates={
- "wroclaw":[17.0385,51.1079],"poznan":[16.9252,52.4064],"rovinj":[13.6387,45.0812],"rovaniemi":[25.7294,66.5039],
- "bangkok":[100.5018,13.7563],"tokyo":[139.6917,35.6895],"osaka":[135.5023,34.6937],"kyoto":[135.7681,35.0116],"seoul":[126.978,37.5665],
- "singapore":[103.8198,1.3521],"kuala lumpur":[101.6869,3.139],"penang":[100.3327,5.4141],"phuket":[98.3923,7.8804],"chiang mai":[98.9817,18.7061],
- "hanoi":[105.8342,21.0278],"ho chi minh city":[106.6297,10.8231],"da nang":[108.2022,16.0544],"jakarta":[106.8456,-6.2088],"bali":[115.1889,-8.4095],
- "manila":[120.9842,14.5995],"cebu":[123.8854,10.3157],"hong kong":[114.1694,22.3193],"taipei":[121.5654,25.033],"shanghai":[121.4737,31.2304],"beijing":[116.4074,39.9042],
- "delhi":[77.209,28.6139],"new delhi":[77.209,28.6139],"mumbai":[72.8777,19.076],"goa":[73.8278,15.2993],"colombo":[79.8612,6.9271],"kathmandu":[85.324,27.7172],
- "dubai":[55.2708,25.2048],"abu dhabi":[54.3773,24.4539],"doha":[51.531,25.2854],"riyadh":[46.6753,24.7136],"istanbul":[28.9784,41.0082],
- "paris":[2.3522,48.8566],"london":[-0.1276,51.5072],"rome":[12.4964,41.9028],"milan":[9.19,45.4642],"barcelona":[2.1734,41.3851],"madrid":[-3.7038,40.4168],
- "lisbon":[-9.1393,38.7223],"porto":[-8.6291,41.1579],"amsterdam":[4.9041,52.3676],"berlin":[13.405,52.52],"prague":[14.4378,50.0755],"budapest":[19.0402,47.4979],
- "athens":[23.7275,37.9838],"santorini":[25.4615,36.3932],"reykjavik":[-21.9426,64.1466],"tallinn":[24.7536,59.437],"warsaw":[21.0122,52.2297],
- "new york":[-74.006,40.7128],"los angeles":[-118.2437,34.0522],"san francisco":[-122.4194,37.7749],"miami":[-80.1918,25.7617],"orlando":[-81.3792,28.5383],
- "toronto":[-79.3832,43.6532],"vancouver":[-123.1207,49.2827],"montreal":[-73.5673,45.5019],"mexico city":[-99.1332,19.4326],"cancun":[-86.8515,21.1619],
- "havana":[-82.3666,23.1136],"san jose":[-84.0907,9.9281],"panama city":[-79.5199,8.9824],"kingston":[-76.7936,17.9712],
- "rio de janeiro":[-43.1729,-22.9068],"sao paulo":[-46.6333,-23.5505],"buenos aires":[-58.3816,-34.6037],"santiago":[-70.6693,-33.4489],
- "lima":[-77.0428,-12.0464],"cusco":[-71.9675,-13.5319],"bogota":[-74.0721,4.711],"medellin":[-75.5812,6.2442],"cartagena":[-75.5144,10.391],
- "sydney":[151.2093,-33.8688],"melbourne":[144.9631,-37.8136],"brisbane":[153.0251,-27.4698],"perth":[115.8605,-31.9505],"auckland":[174.7633,-36.8485],
- "queenstown":[168.6626,-45.0312],"nadi":[177.4505,-17.7765],"papeete":[-149.5665,-17.5516],
- "cairo":[31.2357,30.0444],"marrakech":[-7.9811,31.6295],"casablanca":[-7.5898,33.5731],"cape town":[18.4241,-33.9249],"johannesburg":[28.0473,-26.2041],
- "nairobi":[36.8219,-1.2921],"zanzibar":[39.2083,-6.1659],"lagos":[3.3792,6.5244],"accra":[-0.187,5.6037],"addis ababa":[38.7578,8.9806],
- "mauritius":[57.5522,-20.3484],"seychelles":[55.492,-4.6796],"tunis":[10.1815,36.8065],"algiers":[3.0588,36.7538]
+ "wroclaw":[17.0385,51.1079],"poznan":[16.9252,52.4064],"rovaniemi":[25.7294,66.5039],"bangkok":[100.5018,13.7563],"tokyo":[139.6917,35.6895],"osaka":[135.5023,34.6937],"kyoto":[135.7681,35.0116],"seoul":[126.978,37.5665],
+ "singapore":[103.8198,1.3521],"kuala lumpur":[101.6869,3.139],"penang":[100.3327,5.4141],"phuket":[98.3923,7.8804],"chiang mai":[98.9817,18.7061],"hanoi":[105.8342,21.0278],"ho chi minh city":[106.6297,10.8231],"da nang":[108.2022,16.0544],"jakarta":[106.8456,-6.2088],"bali":[115.1889,-8.4095],"manila":[120.9842,14.5995],"cebu":[123.8854,10.3157],"hong kong":[114.1694,22.3193],"taipei":[121.5654,25.033],"shanghai":[121.4737,31.2304],"beijing":[116.4074,39.9042],
+ "delhi":[77.209,28.6139],"new delhi":[77.209,28.6139],"mumbai":[72.8777,19.076],"goa":[73.8278,15.2993],"colombo":[79.8612,6.9271],"kathmandu":[85.324,27.7172],"dubai":[55.2708,25.2048],"abu dhabi":[54.3773,24.4539],"doha":[51.531,25.2854],"istanbul":[28.9784,41.0082],
+ "paris":[2.3522,48.8566],"london":[-0.1276,51.5072],"rome":[12.4964,41.9028],"milan":[9.19,45.4642],"barcelona":[2.1734,41.3851],"madrid":[-3.7038,40.4168],"lisbon":[-9.1393,38.7223],"porto":[-8.6291,41.1579],"amsterdam":[4.9041,52.3676],"berlin":[13.405,52.52],"prague":[14.4378,50.0755],"budapest":[19.0402,47.4979],"athens":[23.7275,37.9838],"reykjavik":[-21.9426,64.1466],"warsaw":[21.0122,52.2297],
+ "new york":[-74.006,40.7128],"los angeles":[-118.2437,34.0522],"san francisco":[-122.4194,37.7749],"miami":[-80.1918,25.7617],"orlando":[-81.3792,28.5383],"toronto":[-79.3832,43.6532],"vancouver":[-123.1207,49.2827],"montreal":[-73.5673,45.5019],"mexico city":[-99.1332,19.4326],"cancun":[-86.8515,21.1619],"havana":[-82.3666,23.1136],"san jose":[-84.0907,9.9281],"panama city":[-79.5199,8.9824],
+ "rio de janeiro":[-43.1729,-22.9068],"sao paulo":[-46.6333,-23.5505],"buenos aires":[-58.3816,-34.6037],"santiago":[-70.6693,-33.4489],"lima":[-77.0428,-12.0464],"cusco":[-71.9675,-13.5319],"bogota":[-74.0721,4.711],"medellin":[-75.5812,6.2442],"cartagena":[-75.5144,10.391],
+ "sydney":[151.2093,-33.8688],"melbourne":[144.9631,-37.8136],"brisbane":[153.0251,-27.4698],"perth":[115.8605,-31.9505],"auckland":[174.7633,-36.8485],"queenstown":[168.6626,-45.0312],"nadi":[177.4505,-17.7765],"papeete":[-149.5665,-17.5516],
+ "cairo":[31.2357,30.0444],"marrakech":[-7.9811,31.6295],"casablanca":[-7.5898,33.5731],"cape town":[18.4241,-33.9249],"johannesburg":[28.0473,-26.2041],"nairobi":[36.8219,-1.2921],"zanzibar":[39.2083,-6.1659],"lagos":[3.3792,6.5244],"accra":[-0.187,5.6037],"addis ababa":[38.7578,8.9806],"mauritius":[57.5522,-20.3484],"seychelles":[55.492,-4.6796],"tunis":[10.1815,36.8065]
 };
-function aliasCountry(name){const n=norm(name);return ({"united states of america":"united states","russian federation":"russia","republic of korea":"south korea","korea, republic of":"south korea","democratic people's republic of korea":"north korea","viet nam":"vietnam","czech republic":"czechia","republic of the congo":"republic of the congo","congo":"republic of the congo","türkiye":"turkiye","turkey":"turkiye","syrian arab republic":"syria","iran (islamic republic of)":"iran","lao people's democratic republic":"laos","brunei darussalam":"brunei","united republic of tanzania":"tanzania","bolivia (plurinational state of)":"bolivia","venezuela (bolivarian republic of)":"venezuela","moldova, republic of":"moldova","palestine, state of":"palestine"})[n]||n;}
+function aliasCountry(name){const n=norm(name);return ({"united states of america":"united states","russian federation":"russia","republic of korea":"south korea","korea, republic of":"south korea","democratic people's republic of korea":"north korea","viet nam":"vietnam","czech republic":"czechia","congo":"republic of the congo","türkiye":"turkiye","turkey":"turkiye","syrian arab republic":"syria","brunei darussalam":"brunei","united republic of tanzania":"tanzania","moldova, republic of":"moldova","palestine, state of":"palestine"})[n]||n;}
 function mapCountryContinent(name){const target=aliasCountry(name);for(const [continent,countries] of Object.entries(continentCountries)){if(countries.some(c=>aliasCountry(c)===target))return continent;}return "";}
 function selectedContinent(){return $("continent")?.value||"";}
 function featureName(feature){return feature?.properties?.name||"";}
-function setupMapFeatures(topology){mapFeatures=topojson.feature(topology,topology.objects.countries).features;mapCentroids.clear();for(const feature of mapFeatures){const name=featureName(feature);if(name){mapCentroids.set(aliasCountry(name),d3.geoCentroid(feature));}}}
+function setupMapFeatures(topology){mapFeatures=topojson.feature(topology,topology.objects.countries).features;mapCentroids.clear();for(const feature of mapFeatures){const name=featureName(feature);if(name)mapCentroids.set(aliasCountry(name),d3.geoCentroid(feature));}}
 function pointForRow(row){
  const lng=Number(row.longitude??row.lon??row.lng),lat=Number(row.latitude??row.lat);
  if(Number.isFinite(lng)&&Number.isFinite(lat))return [lng,lat];
- const city=norm(row.destination);
- if(cityCoordinates[city])return cityCoordinates[city];
- const c=aliasCountry(row.country||"");
- return mapCentroids.get(c)||null;
+ const city=norm(row.destination);if(cityCoordinates[city])return cityCoordinates[city];
+ return mapCentroids.get(aliasCountry(row.country||""))||null;
 }
 function mapRecordStatus(row){
- const statuses=[];
- const add=(s,discount,price,kind)=>{if(s)statuses.push({s,discount:discount!==null&&discount!==undefined&&discount!==""&&Number.isFinite(Number(discount))?Number(discount):null,price,kind});};
- if(mode==="flight"){add(row.flight_deal_status||row.deal_status,row.flight_discount_percent??row.ranking_discount_percent,row.price_gbp,"flight");}
- else if(mode==="hotel"){add(row.hotel_deal_status||row.deal_status,row.hotel_discount_percent??row.ranking_discount_percent,row.price_gbp,"hotel");}
- else if(mode==="combined"){add(row.combined_deal_status,row.combined_discount_percent,row.combined_price_gbp,"combined");}
- else {
-  if(row.kind==="hotel"){
-   add(row.hotel_deal_status,row.hotel_discount_percent,row.price_gbp,"hotel");
-   add(row.combined_deal_status,row.combined_discount_percent,row.combined_price_gbp,"combined");
-  }else{
-   add(row.flight_deal_status||row.deal_status,row.flight_discount_percent??row.ranking_discount_percent,row.price_gbp,"flight");
-  }
-  if(!statuses.length)add(row.deal_status,row.ranking_discount_percent,row.price_gbp,row.kind==="hotel"?"hotel":"flight");
- }
+ const statuses=[],add=(s,discount,price,kind)=>{if(s)statuses.push({s,discount:discount!==null&&discount!==undefined&&discount!==""&&Number.isFinite(Number(discount))?Number(discount):null,price,kind});};
+ if(mode==="flight")add(row.flight_deal_status||row.deal_status,row.flight_discount_percent??row.ranking_discount_percent,row.price_gbp,"flight");
+ else if(mode==="hotel")add(row.hotel_deal_status||row.deal_status,row.hotel_discount_percent??row.ranking_discount_percent,row.price_gbp,"hotel");
+ else if(mode==="combined")add(row.combined_deal_status,row.combined_discount_percent,row.combined_price_gbp,"combined");
+ else if(row.kind==="hotel"){add(row.hotel_deal_status,row.hotel_discount_percent,row.price_gbp,"hotel");add(row.combined_deal_status,row.combined_discount_percent,row.combined_price_gbp,"combined");}
+ else add(row.flight_deal_status||row.deal_status,row.flight_discount_percent??row.ranking_discount_percent,row.price_gbp,"flight");
  const rank=s=>s.startsWith("strong_")?4:s.startsWith("below_typical_")?3:s.startsWith("building_")?2:1;
  statuses.sort((a,b)=>rank(b.s)-rank(a.s)||(b.discount??-999)-(a.discount??-999));
  return statuses[0]||{s:"building_benchmark",discount:null,price:row.price_gbp,kind:row.kind};
 }
 function mapEntries(){
- let source=mode==="saved"?savedTrips.map(x=>x.row):deals;
- const q=norm($("search")?.value),cont=selectedContinent(),country=norm($("country")?.value),ready=$("ready")?.checked;
- const grouped=new Map();
+ const source=mode==="saved"?savedTrips.map(x=>x.row):deals;
+ const q=norm($("search")?.value),cont=selectedContinent(),country=norm($("country")?.value),ready=$("ready")?.checked,grouped=new Map();
  for(const row of source){
   if(mode!=="saved"&&!matchesMode(row))continue;
   if(q&&!norm([row.destination,row.country,row.property,row.origin].join(" ")).includes(q))continue;
   if(cont&&mapCountryContinent(row.country)!==cont)continue;
   if(country&&norm(row.country)!==country)continue;
-  const m=mode==="saved"?(savedTrips.find(x=>x.key===recordKey(row))?.viewMode||(row.kind==="hotel"?"hotel":"flight")):mode;
-  const signal=mapRecordStatus(row);
-  if(ready&&signal.discount===null)continue;
+  const signal=mapRecordStatus(row);if(ready&&signal.discount===null)continue;
   const coords=pointForRow(row);if(!coords)continue;
-  const key=norm(row.destination)+"|"+norm(row.country);
-  const entry={key,row,coords,signal};
-  const old=grouped.get(key);
-  const score=s=>s.startsWith("strong_")?4:s.startsWith("below_typical_")?3:s.startsWith("building_")?2:1;
+  const key=norm(row.destination)+"|"+norm(row.country),entry={key,row,coords,signal},old=grouped.get(key);
+  const score=x=>x.startsWith("strong_")?4:x.startsWith("below_typical_")?3:x.startsWith("building_")?2:1;
   if(!old||score(signal.s)>score(old.signal.s)||(score(signal.s)===score(old.signal.s)&&(signal.discount??-999)>(old.signal.discount??-999)))grouped.set(key,entry);
  }
  return [...grouped.values()];
 }
-function projectionForMode(){
- if(mapProjectionMode==="globe")return d3.geoOrthographic().translate([500,280]).scale(260*mapZoomScale).clipAngle(90).rotate(mapRotation);
- const p=d3.geoEqualEarth().fitExtent([[24,28],[976,532]],{type:"Sphere"});
- return p.scale(p.scale()*mapZoomScale);
-}
-function visibleOnGlobe(coords){
- if(mapProjectionMode!=="globe")return true;
- const centre=[-mapRotation[0],-mapRotation[1]];
- return d3.geoDistance(coords,centre)<=Math.PI/2+0.015;
-}
 function mapClass(entry){const s=entry.signal.s;return s.startsWith("strong_")?"strong":s.startsWith("below_typical_")?"deal":s.startsWith("building_")?"building":"neutral";}
-function drawMap(){
- if(!mapReady||!mapSvg)return;
- mapProjection=projectionForMode();mapPath=d3.geoPath(mapProjection);
- mapSvg.selectAll("*").remove();
- const defs=mapSvg.append("defs");
- const ocean=defs.append("radialGradient").attr("id","ocean-fill").attr("cx","38%").attr("cy","32%").attr("r","72%");
- ocean.append("stop").attr("offset","0%").attr("stop-color","#2d83a8");ocean.append("stop").attr("offset","55%").attr("stop-color","#12638b");ocean.append("stop").attr("offset","100%").attr("stop-color","#063b63");
- const land=defs.append("linearGradient").attr("id","land-fill").attr("x1","15%").attr("y1","5%").attr("x2","85%").attr("y2","100%");
- land.append("stop").attr("offset","0%").attr("stop-color","#a8bd86");land.append("stop").attr("offset","52%").attr("stop-color","#829e75");land.append("stop").attr("offset","100%").attr("stop-color","#b39a70");
- const shadow=defs.append("filter").attr("id","sphere-shadow").attr("x","-35%").attr("y","-35%").attr("width","170%").attr("height","180%");
- shadow.append("feGaussianBlur").attr("in","SourceAlpha").attr("stdDeviation","11").attr("result","blur");shadow.append("feOffset").attr("in","blur").attr("dx","9").attr("dy","15").attr("result","offset");
- const mergeShadow=shadow.append("feMerge");mergeShadow.append("feMergeNode").attr("in","offset");mergeShadow.append("feMergeNode").attr("in","SourceGraphic");
- const filter=defs.append("filter").attr("id","red-glow").attr("x","-100%").attr("y","-100%").attr("width","300%").attr("height","300%");
- filter.append("feGaussianBlur").attr("stdDeviation","3").attr("result","blur");
- const merge=filter.append("feMerge");merge.append("feMergeNode").attr("in","blur");merge.append("feMergeNode").attr("in","SourceGraphic");
- mapSvg.append("path").datum({type:"Sphere"}).attr("class","map-sphere").attr("d",mapPath);
- mapSvg.append("path").datum(d3.geoGraticule10()).attr("class","map-graticule").attr("d",mapPath);
- mapLayer=mapSvg.append("g").attr("class","countries");
+function syncMapData(){
+ if(!mapReady||!mapInstance||!mapInstance.getSource("deal-points"))return;
+ const entries=mapEntries();mapEntriesByKey=new Map(entries.map(e=>[e.key,e]));
+ const features=entries.map(e=>({type:"Feature",geometry:{type:"Point",coordinates:e.coords},properties:{key:e.key,kind:mapClass(e)}}));
+ mapInstance.getSource("deal-points").setData({type:"FeatureCollection",features});
  const chosen=selectedContinent();
- mapLayer.selectAll("path").data(mapFeatures).join("path")
-  .attr("class",d=>"country-shape"+(chosen&&mapCountryContinent(featureName(d))===chosen?" selected-continent":""))
-  .attr("d",mapPath);
- if(mapZoomScale>1.28){
-  const labels=mapSvg.append("g").attr("class","country-labels");
-  mapFeatures.forEach(feature=>{
-   const name=featureName(feature),coords=d3.geoCentroid(feature);
-   if(!name||!visibleOnGlobe(coords))return;
-   const xy=mapProjection(coords);if(!xy||xy[0]<30||xy[0]>970||xy[1]<25||xy[1]>535)return;
-   if(Math.abs(d3.geoArea(feature))<0.00045)return;
-   labels.append("text").attr("class","country-label").attr("x",xy[0]).attr("y",xy[1]).attr("font-size",Math.max(7,Math.min(11,7+mapZoomScale))).text(name.toUpperCase());
-  });
+ if(mapInstance.getSource("country-polygons")){
+  const features=mapFeatures.map(f=>({type:"Feature",id:f.id,geometry:f.geometry,properties:{name:featureName(f),continent:mapCountryContinent(featureName(f))}}));
+  mapInstance.getSource("country-polygons").setData({type:"FeatureCollection",features});
+  mapInstance.setFilter("selected-continent-fill",chosen?["==",["get","continent"],chosen]:["==",["get","continent"],"__none__"]);
  }
- mapDotLayer=mapSvg.append("g").attr("class","map-dots");
- const entries=mapEntries();
- for(const entry of entries){
-  if(!visibleOnGlobe(entry.coords))continue;
-  const xy=mapProjection(entry.coords);if(!xy)continue;
-  const cls=mapClass(entry),radius=cls==="strong"?5.8:cls==="deal"?4.6:cls==="building"?3.0:3.5;
-  const g=mapDotLayer.append("g").attr("transform","translate("+xy[0]+","+xy[1]+")").attr("class","map-marker").style("cursor","pointer");
-  if(cls==="strong")g.append("circle").attr("r",radius+1.7).attr("class","map-dot-pulse");
-  g.append("circle").attr("r",radius).attr("class","map-dot "+cls).on("click",(event)=>{event.stopPropagation();selectMapEntry(entry,xy);});
-  g.append("circle").attr("r",Math.max(8,radius+4)).attr("fill","transparent").on("click",(event)=>{event.stopPropagation();selectMapEntry(entry,xy);});
- }
- mapSvg.on("wheel.zoom-map",(event)=>{event.preventDefault();mapZoomScale=Math.max(.55,Math.min(2.35,mapZoomScale*Math.exp(-event.deltaY*.0012)));drawMap();},{passive:false});
- mapSvg.on("click",()=>{mapSelectedKey=null;$("map-popover").hidden=true;});
- if(mapProjectionMode==="globe"){
-  mapSvg.call(d3.drag().on("start",()=>{mapSvg.style("cursor","grabbing");}).on("drag",(event)=>{
-   mapRotation=[mapRotation[0]+event.dx*.28,Math.max(-75,Math.min(75,mapRotation[1]-event.dy*.28)),mapRotation[2]];
-   drawMap();
-  }).on("end",()=>mapSvg.style("cursor","grab")));
- }else{mapSvg.on(".drag",null);}
 }
-function selectMapEntry(entry,xy){
+function selectMapEntry(entry,lngLat){
  if(mapSelectedKey===entry.key){jumpToDeal(entry.row,entry.signal.kind);return;}
  mapSelectedKey=entry.key;
- const pop=$("map-popover"),stage=$("map-stage");
  const city=(entry.row.destination||"Unknown place")+(entry.row.country?", "+entry.row.country:"");
- const price=entry.signal.price;
- pop.innerHTML="<strong>"+esc(city)+"</strong><div class=\"popup-price\">"+fmt(price)+"</div><small>Click this dot again to view the opportunity ↓</small>";
- pop.hidden=false;
- const left=Math.max(105,Math.min(stage.clientWidth-105,xy[0]/1000*stage.clientWidth));
- const top=Math.max(100,Math.min(stage.clientHeight-50,xy[1]/560*stage.clientHeight));
- pop.style.left=left+"px";pop.style.top=top+"px";
+ const html="<strong>"+esc(city)+"</strong><div class=\"popup-price\">"+fmt(entry.signal.price)+"</div><small>Click this dot again to view the opportunity ↓</small>";
+ if(mapPopup)mapPopup.remove();
+ mapPopup=new maplibregl.Popup({closeButton:false,closeOnClick:false,offset:13,maxWidth:"240px"}).setLngLat(lngLat).setHTML(html).addTo(mapInstance);
 }
 function jumpToDeal(row,signalKind){
  const key=recordKey(row);
- let card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);
- if(!card&&mode!=="saved"){
+ if(mode!=="saved"&&!filtered().some(r=>recordKey(r)===key)){
   mode=signalKind==="combined"?"combined":signalKind==="hotel"||row.kind==="hotel"?"hotel":"flight";
   document.querySelectorAll(".mode button").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
   $("continent").value="";$("country").value="";$("search").value="";$("ready").checked=false;
  }
  pinnedDealKey=key;visible=9;render();
- $("map-popover").hidden=true;mapSelectedKey=null;
- card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);
+ if(mapPopup){mapPopup.remove();mapPopup=null;}mapSelectedKey=null;
+ const card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);
  if(card){$("result-count").parentElement.scrollIntoView({behavior:"smooth",block:"start"});card.classList.add("map-target");setTimeout(()=>card.classList.remove("map-target"),2500);}
 }
 async function initMap(){
- mapSvg=d3.select("#world-map");
  try{
-  const response=await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
-  if(!response.ok)throw Error("World map data unavailable");
-  setupMapFeatures(await response.json());mapReady=true;drawMap();
- }catch(e){
-  $("map-hint").textContent="Map data could not load. Check your connection and refresh.";
- }
+  const response=await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");if(!response.ok)throw Error("World boundaries unavailable");
+  setupMapFeatures(await response.json());
+  mapInstance=new maplibregl.Map({
+   container:"world-map",projection:{type:"globe"},center:[12,24],zoom:1.45,minZoom:1.15,maxZoom:14,
+   style:{version:8,projection:{type:"globe"},sky:{"sky-color":"#071426","horizon-color":"#b8d9ec","fog-color":"#b8d9ec","sky-horizon-blend":0.35,"horizon-fog-blend":0.7,"fog-ground-blend":0.5,"atmosphere-blend":0.8},
+    sources:{
+     "blue-marble":{type:"raster",tiles:["https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg"],tileSize:256,maxzoom:8,attribution:"NASA Blue Marble"},
+     "sentinel":{type:"raster",tiles:["https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"],tileSize:256,minzoom:5,maxzoom:14,attribution:"Sentinel-2 cloudless © EOX / Copernicus"},
+     "terrain":{type:"raster-dem",url:"https://tiles.mapterhorn.com/tilejson.json",tileSize:256},
+     "country-polygons":{type:"geojson",data:{type:"FeatureCollection",features:[]}},
+     "deal-points":{type:"geojson",data:{type:"FeatureCollection",features:[]}}
+    },
+    terrain:{source:"terrain",exaggeration:1},
+    light:{anchor:"map",position:[1.5,210,35],intensity:0.45},
+    layers:[
+     {id:"blue-marble",type:"raster",source:"blue-marble"},
+     {id:"sentinel",type:"raster",source:"sentinel",minzoom:5,paint:{"raster-opacity":["interpolate",["linear"],["zoom"],5,0,7,1],"raster-saturation":0.05,"raster-contrast":0.08}},
+     {id:"selected-continent-fill",type:"fill",source:"country-polygons",paint:{"fill-color":"#f6c96c","fill-opacity":0.15},filter:["==",["get","continent"],"__none__"]},
+     {id:"country-borders",type:"line",source:"country-polygons",paint:{"line-color":"#ffffff","line-width":["interpolate",["linear"],["zoom"],1,0.35,5,0.8,9,1.15],"line-opacity":0.78}},
+     {id:"country-labels",type:"symbol",source:"country-polygons",minzoom:2.1,layout:{"text-field":["get","name"],"text-font":["Open Sans Semibold","Arial Unicode MS Bold"],"text-size":["interpolate",["linear"],["zoom"],2,9,5,12,8,14],"text-allow-overlap":false,"symbol-placement":"point"},paint:{"text-color":"#ffffff","text-halo-color":"#1a3545","text-halo-width":1.3}},
+     {id:"deal-glow",type:"circle",source:"deal-points",filter:["==",["get","kind"],"strong"],paint:{"circle-radius":10,"circle-color":"#ed454e","circle-opacity":0.22,"circle-blur":0.7}},
+     {id:"deal-markers",type:"circle",source:"deal-points",paint:{"circle-radius":["match",["get","kind"],"strong",6.3,"deal",5.2,"building",3.5,3.8],"circle-color":["match",["get","kind"],"strong","#e54850","deal","#e45a60","building","#8c9ba2","#9aaeb7"],"circle-stroke-color":"#ffffff","circle-stroke-width":1.5,"circle-opacity":["match",["get","kind"],"building",0.7,1]}}
+    ]
+   },
+   attributionControl:true,dragRotate:true,scrollZoom:true,renderWorldCopies:false
+  });
+  mapInstance.addControl(new maplibregl.NavigationControl({showCompass:true,showZoom:true}),"top-right");
+  mapInstance.on("load",()=>{
+   mapInstance.setTerrain({source:"terrain",exaggeration:1});
+   mapInstance.addSource("country-polygons",{type:"geojson",data:{type:"FeatureCollection",features:mapFeatures.map(f=>({type:"Feature",geometry:f.geometry,properties:{name:featureName(f),continent:mapCountryContinent(featureName(f))}}))}});
+   mapInstance.addLayer({id:"selected-continent-fill",type:"fill",source:"country-polygons",paint:{"fill-color":"#f6c96c","fill-opacity":0.15},filter:["==",["get","continent"],"__none__"]});
+   mapInstance.addLayer({id:"country-borders",type:"line",source:"country-polygons",paint:{"line-color":"#ffffff","line-width":["interpolate",["linear"],["zoom"],1,0.35,5,0.8,9,1.15],"line-opacity":0.78}});
+   mapInstance.addLayer({id:"country-labels",type:"symbol",source:"country-polygons",minzoom:2.1,layout:{"text-field":["get","name"],"text-font":["Open Sans Semibold","Arial Unicode MS Bold"],"text-size":["interpolate",["linear"],["zoom"],2,9,5,12,8,14],"text-allow-overlap":false},paint:{"text-color":"#ffffff","text-halo-color":"#1a3545","text-halo-width":1.3}});
+   mapInstance.addSource("deal-points",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
+   mapInstance.addLayer({id:"deal-glow",type:"circle",source:"deal-points",filter:["==",["get","kind"],"strong"],paint:{"circle-radius":10,"circle-color":"#ed454e","circle-opacity":0.22,"circle-blur":0.7}});
+   mapInstance.addLayer({id:"deal-markers",type:"circle",source:"deal-points",paint:{"circle-radius":["match",["get","kind"],"strong",6.3,"deal",5.2,"building",3.5,3.8],"circle-color":["match",["get","kind"],"strong","#e54850","deal","#e45a60","building","#8c9ba2","#9aaeb7"],"circle-stroke-color":"#ffffff","circle-stroke-width":1.5,"circle-opacity":["match",["get","kind"],"building",0.7,1]}});
+   mapReady=true;syncMapData();$("map-hint").textContent="Drag to rotate · Scroll to zoom · Select a dot to preview";
+  });
+  mapInstance.on("click","deal-markers",e=>{const key=e.features?.[0]?.properties?.key,entry=mapEntriesByKey.get(key);if(entry)selectMapEntry(entry,e.lngLat);});
+  mapInstance.on("mouseenter","deal-markers",()=>mapInstance.getCanvas().style.cursor="pointer");
+  mapInstance.on("mouseleave","deal-markers",()=>mapInstance.getCanvas().style.cursor="grab");
+  mapInstance.on("click",e=>{if(!mapInstance.queryRenderedFeatures(e.point,{layers:["deal-markers"]}).length){mapSelectedKey=null;if(mapPopup){mapPopup.remove();mapPopup=null;}}});
+  window.addEventListener("resize",()=>mapInstance?.resize());
+ }catch(e){$("map-hint").textContent="Satellite globe could not load. Refresh to try again.";console.error(e);}
 }
-
 const SAVED_KEY="hunter-saved-trips-v1";
 function loadSavedTrips(){try{const value=JSON.parse(localStorage.getItem("hunter-saved-trips-v1")||"[]");return Array.isArray(value)?value:[];}catch{return [];}}
 function saveSavedTrips(){try{localStorage.setItem(SAVED_KEY,JSON.stringify(savedTrips));}catch(e){$("feed-status").textContent="Could not save bookmarks in this browser";}updateSavedCount();}
@@ -504,7 +467,7 @@ function render(){
  $("result-note").textContent=mode==="combined"?"Only packages with both component benchmarks are shown.":"GBP · flight fares are return prices; hotel prices are whole-stay totals.";
  if(!list.length){root.innerHTML='<div class="empty" style="grid-column:1/-1"><b>No matching opportunities yet.</b><br>Try another destination or switch off “Benchmarked only”. New observations continue to build the comparisons.</div>';drawMap();$("more").hidden=true;return;}
  list.slice(0,visible).forEach(r=>{const node=card(r);node.dataset.mapKey=recordKey(r);if(recordKey(r)===pinnedDealKey)node.classList.add("map-target");root.appendChild(node);});
- drawMap();
+ syncMapData();
  $("more").hidden=visible>=list.length;$("more").textContent="Show more ("+(list.length-visible)+" remaining)";
 }
 function updateCountries(){
@@ -534,9 +497,9 @@ async function load(){
   $("feed-status").textContent="Updated "+new Date(feed.generated_at).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"});
  }catch(e){$("feed-status").textContent="Feed unavailable";$("results").innerHTML='<div class="empty" style="grid-column:1/-1">Could not load the latest deal feed. Refresh in a moment or check the <a href="https://github.com/swipinurmums/vibecode-adventure/actions">GitHub Actions runs</a>.</div>';}
 }
-document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.mode;visible=9;pinnedDealKey=null;mapSelectedKey=null;$("map-popover").hidden=true;render();}));
+document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.mode;visible=9;pinnedDealKey=null;mapSelectedKey=null;if(mapPopup){mapPopup.remove();mapPopup=null;}render();}));
 ["search","country","sort","ready"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",()=>{visible=9;pinnedDealKey=null;render();}));
-$("projection-toggle").addEventListener("click",()=>{mapProjectionMode=mapProjectionMode==="globe"?"atlas":"globe";mapZoomScale=1.08;$("projection-toggle").innerHTML=mapProjectionMode==="globe"?"Flatten map <span>↘</span>":"3D globe <span>↗</span>";$("map-hint").textContent=mapProjectionMode==="globe"?"Drag to explore · Select a dot to preview a deal":"Drag to explore · Select a dot to preview a deal";mapSelectedKey=null;$("map-popover").hidden=true;drawMap();});
+$("projection-toggle").addEventListener("click",()=>{mapProjectionMode=mapProjectionMode==="globe"?"atlas":"globe";if(mapInstance){mapInstance.setProjection({type:mapProjectionMode==="globe"?"globe":"mercator"});mapInstance.easeTo({zoom:mapProjectionMode==="globe"?1.45:1.2,duration:650});}$("projection-toggle").innerHTML=mapProjectionMode==="globe"?"Flatten map <span>↘</span>":"3D globe <span>↗</span>";$("map-hint").textContent=mapProjectionMode==="globe"?"Drag to rotate · Scroll to zoom · Select a dot to preview":"Flat atlas · Scroll to zoom · Select a dot to preview";mapSelectedKey=null;if(mapPopup){mapPopup.remove();mapPopup=null;}});
 $("continent").addEventListener("change",()=>{updateCountries();visible=9;pinnedDealKey=null;mapSelectedKey=null;$("map-popover").hidden=true;render();});
 $("more").addEventListener("click",()=>{visible+=9;render();});
 updateSavedCount();
