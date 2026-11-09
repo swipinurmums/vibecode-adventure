@@ -234,6 +234,8 @@ main.wrap{max-width:none;width:100%;padding:10px 18px 30px}
   </div>
 </footer>
 <link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script>
@@ -342,19 +344,12 @@ async function initMap(){
      "blue-marble":{type:"raster",tiles:["https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg"],tileSize:256,maxzoom:8,attribution:"NASA Blue Marble"},
      "sentinel":{type:"raster",tiles:["https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"],tileSize:256,minzoom:5,maxzoom:14,attribution:"Sentinel-2 cloudless © EOX / Copernicus"},
      "terrain":{type:"raster-dem",url:"https://tiles.mapterhorn.com/tilejson.json",tileSize:256},
-     "country-polygons":{type:"geojson",data:{type:"FeatureCollection",features:[]}},
-     "deal-points":{type:"geojson",data:{type:"FeatureCollection",features:[]}}
     },
     terrain:{source:"terrain",exaggeration:1},
     light:{anchor:"map",position:[1.5,210,35],intensity:0.45},
     layers:[
      {id:"blue-marble",type:"raster",source:"blue-marble"},
      {id:"sentinel",type:"raster",source:"sentinel",minzoom:5,paint:{"raster-opacity":["interpolate",["linear"],["zoom"],5,0,7,1],"raster-saturation":0.05,"raster-contrast":0.08}},
-     {id:"selected-continent-fill",type:"fill",source:"country-polygons",paint:{"fill-color":"#f6c96c","fill-opacity":0.15},filter:["==",["get","continent"],"__none__"]},
-     {id:"country-borders",type:"line",source:"country-polygons",paint:{"line-color":"#ffffff","line-width":["interpolate",["linear"],["zoom"],1,0.35,5,0.8,9,1.15],"line-opacity":0.78}},
-     {id:"country-labels",type:"symbol",source:"country-polygons",minzoom:2.1,layout:{"text-field":["get","name"],"text-font":["Open Sans Semibold","Arial Unicode MS Bold"],"text-size":["interpolate",["linear"],["zoom"],2,9,5,12,8,14],"text-allow-overlap":false,"symbol-placement":"point"},paint:{"text-color":"#ffffff","text-halo-color":"#1a3545","text-halo-width":1.3}},
-     {id:"deal-glow",type:"circle",source:"deal-points",filter:["==",["get","kind"],"strong"],paint:{"circle-radius":10,"circle-color":"#ed454e","circle-opacity":0.22,"circle-blur":0.7}},
-     {id:"deal-markers",type:"circle",source:"deal-points",paint:{"circle-radius":["match",["get","kind"],"strong",6.3,"deal",5.2,"building",3.5,3.8],"circle-color":["match",["get","kind"],"strong","#e54850","deal","#e45a60","building","#8c9ba2","#9aaeb7"],"circle-stroke-color":"#ffffff","circle-stroke-width":1.5,"circle-opacity":["match",["get","kind"],"building",0.7,1]}}
     ]
    },
    attributionControl:true,dragRotate:true,scrollZoom:true,renderWorldCopies:false
