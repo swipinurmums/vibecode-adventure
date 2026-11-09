@@ -6,11 +6,21 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 PATH = Path("data/usage/monthly.json")
-CAPS = {"flight": 120, "personal": 50, "hotel": 50, "research": 30}
+# SerpApi renews on the 4th of each month (the 2026-12-04 renewal
+# follows a 2026-11-04 cycle start). Keep the ledger aligned to that cycle.
+BILLING_CYCLE_DAY = 4
+CAPS = {"flight": 142, "personal": 20, "hotel": 45, "research": 28, "coverage": 15}
 TOTAL_CAP = 250
 
-def month_key():
-    return datetime.now(timezone.utc).strftime("%Y-%m")
+def month_key(now=None):
+    now = now or datetime.now(timezone.utc)
+    year, month = now.year, now.month
+    if now.day < BILLING_CYCLE_DAY:
+        if month == 1:
+            year, month = year - 1, 12
+        else:
+            month -= 1
+    return f"{year:04d}-{month:02d}-{BILLING_CYCLE_DAY:02d}"
 
 def load():
     if not PATH.exists():
@@ -22,7 +32,14 @@ def save(data):
     PATH.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
 
 def current(data):
-    return data.setdefault("months", {}).setdefault(month_key(), {
+    months = data.setdefault("months", {})
+    key = month_key()
+    # One-time migration from the old calendar-month ledger without discarding
+    # any reservations already recorded for the active provider billing cycle.
+    legacy_key = key[:7]
+    if key not in months and legacy_key in months:
+        months[key] = months.pop(legacy_key)
+    return months.setdefault(key, {
         "baseline_used": None,
         "reserved": {"flight": 0, "personal": 0, "hotel": 0, "research": 0}
     })
@@ -31,7 +48,7 @@ def status(data):
     month = current(data)
     reserved = month.get("reserved", {})
     counted = sum(int(reserved.get(k, 0)) for k in CAPS)
-    print(f"UTC month: {month_key()}")
+    print(f"UTC billing cycle: {month_key()} (renews on day {BILLING_CYCLE_DAY})")
     print(f"Reconciled: {month.get('baseline_used') is not None}")
     print(f"Opening usage baseline (charged to flight allocation): {month.get('baseline_used')}")
     print(f"Counted monthly usage incl. baseline: {counted}/{TOTAL_CAP}")
@@ -52,7 +69,7 @@ def reconcile(baseline_used):
     month["reserved"] = {"flight": baseline_used, "personal": 0, "hotel": 0, "research": 0}
     data["reconciled"] = True
     save(data)
-    print(f"Saved opening baseline of {baseline_used} searches for {month_key()}.")
+    print(f"Saved opening baseline of {baseline_used} searches for billing cycle {month_key()}.")
     status(data)
 
 def reserve(category, count=1):
