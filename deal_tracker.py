@@ -286,7 +286,7 @@ def ingest_hotels(source, history_path=HISTORY):
         )
         if row is None:
             continue
-        row.update(compare(history, row, "hotel"))
+        row["flexible_month_search"] = str(item.get("flexible_month_search", "")).strip().casefold() in ("1", "true", "yes")\n        row.update(compare(history, row, "hotel"))
 
         # Combine independently benchmarked flight and hotel components.
         # This is an indicative package comparison (sum of component medians),
