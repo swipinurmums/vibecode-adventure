@@ -22,6 +22,8 @@ def latest_rows(rows):
             continue
         identity = trip_key(row)
         if row.get("kind") == "hotel":
+            # A hotel's price is destination/date-specific, not departure-airport-specific.
+            identity = tuple(row.get(k) for k in ("destination", "country", "start_date", "end_date", "nights"))
             identity += ((row.get("property_key") or row.get("property") or "").casefold(),)
         key = (row.get("kind"),) + identity
         stamp = str(row.get("observed_at") or "")
@@ -89,7 +91,7 @@ def rank_record(row, insight=None):
         "high" if component_source == historical_source and samples >= 5
         else ("medium" if component_source != "insufficient_comparable_history" else "low")
     )
-    flight_samples = row.get("flight_sample_count", 0) or 0
+    flight_samples = (row.get("flight_sample_count", 0) or 0) if is_hotel else samples
     flight_confidence = (
         "medium" if flight_source == insight_source
         else ("high" if flight_source == historical_source and flight_samples >= 5
