@@ -346,6 +346,31 @@ function jumpToDeal(row,signalKind){
  const card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);
  if(card){$("result-count").parentElement.scrollIntoView({behavior:"smooth",block:"start"});card.classList.add("map-target");setTimeout(()=>card.classList.remove("map-target"),2500);}
 }
+function solarPositionAt(date){
+ const jd=date.getTime()/86400000+2440587.5,n=jd-2451545;
+ const rad=d=>d*Math.PI/180,deg=r=>r*180/Math.PI,wrap=d=>((d%360)+360)%360;
+ const meanLon=wrap(280.46+0.9856474*n);
+ const anomaly=rad(wrap(357.528+0.9856003*n));
+ const eclipticLon=rad(meanLon+1.915*Math.sin(anomaly)+0.02*Math.sin(2*anomaly));
+ const obliquity=rad(23.439-0.0000004*n);
+ const rightAscension=Math.atan2(Math.cos(obliquity)*Math.sin(eclipticLon),Math.cos(eclipticLon));
+ const declination=Math.asin(Math.sin(obliquity)*Math.sin(eclipticLon));
+ const t=jd-2451545;
+ const gmst=wrap(280.46061837+360.98564736629*t+0.000387933*t*t-t*t*t/38710000);
+ return {latitude:deg(declination),longitude:((deg(rightAscension)-gmst+540)%360)-180};
+}
+function nightHemisphere(date){
+ const sun=solarPositionAt(date),lat1=-sun.latitude*Math.PI/180,lon1=((sun.longitude+180+540)%360-180)*Math.PI/180;
+ const radius=Math.PI/2,ring=[];
+ for(let i=360;i>=0;i--){
+  const bearing=i*Math.PI/180;
+  const lat2=Math.asin(Math.sin(lat1)*Math.cos(radius)+Math.cos(lat1)*Math.sin(radius)*Math.cos(bearing));
+  const lon2=lon1+Math.atan2(Math.sin(bearing)*Math.sin(radius)*Math.cos(lat1),Math.cos(radius)-Math.sin(lat1)*Math.sin(lat2));
+  const lon=((lon2*180/Math.PI+540)%360)-180;
+  ring.push([lon,lat2*180/Math.PI]);
+ }
+ return {type:"FeatureCollection",features:[{type:"Feature",properties:{},geometry:{type:"Polygon",coordinates:[ring]}}]};
+}
 async function initMap(){
  try{
   const response=await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");if(!response.ok)throw Error("World boundaries unavailable");
@@ -399,6 +424,10 @@ async function initMap(){
    }
    mapInstance.addSource("shared-country-borders",{type:"geojson",data:{type:"Feature",geometry:sharedBorders,properties:{}}});
    mapInstance.addSource("continent-border-meshes",{type:"geojson",data:{type:"FeatureCollection",features:borderFeatures}});
+   // Shade the hemisphere facing away from the Sun. Recomputed from UTC solar
+   // position so the terminator matches the real date and time.
+   mapInstance.addSource("night-hemisphere",{type:"geojson",data:nightHemisphere(new Date())});
+   mapInstance.addLayer({id:"night-side-shade",type:"fill",source:"night-hemisphere",paint:{"fill-color":"#061426","fill-opacity":0.3,"fill-antialias":true}});
    mapInstance.addLayer({id:"country-borders",type:"line",source:"shared-country-borders",paint:{"line-color":"#d9e9f2","line-opacity":0.55,"line-width":["interpolate",["linear"],["zoom"],0,0.3,2,0.45,5,0.7,8,0.9]}});
    mapInstance.addLayer({id:"selected-continent-boundary-glow",type:"line",source:"continent-border-meshes",filter:["==",["get","continent"],"__none__"],paint:{"line-color":"#f4bd4f","line-opacity":0.24,"line-blur":4.8,"line-width":["interpolate",["linear"],["zoom"],0,4.5,2,6,5,7.5,8,9]}});
    mapInstance.addLayer({id:"selected-continent-boundaries",type:"line",source:"continent-border-meshes",filter:["==",["get","continent"],"__none__"],paint:{"line-color":"#ffd987","line-opacity":0.96,"line-width":["interpolate",["linear"],["zoom"],0,1.15,2,1.6,5,2.1,8,2.7]}});
@@ -407,6 +436,10 @@ async function initMap(){
    mapInstance.addLayer({id:"deal-glow",type:"circle",source:"deal-points",filter:["==",["get","kind"],"strong"],paint:{"circle-radius":10,"circle-color":"#ed454e","circle-opacity":0.22,"circle-blur":0.7}});
    mapInstance.addLayer({id:"deal-hit-targets",type:"circle",source:"deal-points",paint:{"circle-radius":13,"circle-color":"#ffffff","circle-opacity":0.015,"circle-stroke-width":0}});
    mapInstance.addLayer({id:"deal-markers",type:"circle",source:"deal-points",paint:{"circle-radius":["match",["get","kind"],"strong",6.3,"deal",5.2,"building",3.5,3.8],"circle-color":["match",["get","kind"],"strong","#e54850","deal","#e45a60","building","#8c9ba2","#9aaeb7"],"circle-stroke-color":"#ffffff","circle-stroke-width":1.5,"circle-opacity":["match",["get","kind"],"building",0.7,1]}});
+   // Keep the day/night boundary current while the dashboard remains open.
+   const refreshSunlight=()=>{const source=mapInstance.getSource("night-hemisphere");if(source)source.setData(nightHemisphere(new Date()));};
+   refreshSunlight();
+   window.setInterval(refreshSunlight,60000);
    mapReady=true;syncMapData();$("map-hint").textContent="Drag to rotate · Scroll to zoom · Select a dot to preview";
   });
   mapInstance.on("click","deal-hit-targets",e=>{const key=e.features?.[0]?.properties?.key,entry=mapEntriesByKey.get(key);if(entry)selectMapEntry(entry,e.lngLat);});
