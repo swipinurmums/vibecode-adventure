@@ -379,6 +379,7 @@ def rebuild_history(path=HISTORY):
                 }
                 flight_result = compare(rebuilt, flight_current, "flight")
                 row["flight_benchmark_gbp"] = flight_result["benchmark_gbp"]
+                row["flight_sample_count"] = flight_result["sample_count"]
                 row["flight_discount_percent"] = flight_result["discount_percent"]
                 row["flight_deal_status"] = flight_result["deal_status"]
             if row.get("benchmark_gbp") is not None and row.get("flight_benchmark_gbp") is not None:
