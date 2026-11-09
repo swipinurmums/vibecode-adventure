@@ -411,8 +411,7 @@ def rebuild_history(path=HISTORY):
         rebuilt.append(row)
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text("".join(json.dumps(row, ensure_ascii=False) + "
-" for row in rebuilt),
+    p.write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rebuilt),
                  encoding="utf-8")
     return rebuilt
 
