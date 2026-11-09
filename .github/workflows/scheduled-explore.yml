@@ -42,9 +42,22 @@ jobs:
             *) echo "Unexpected schedule slot: $SLOT"; exit 1 ;;
           esac
           DAY_OF_YEAR="$(date -u +%j)"
-          REGION_INDEX=$(( ((10#$DAY_OF_YEAR - 1) * 5 + SLOT_INDEX) % 6 ))
-          REGIONS=(europe asia africa north_america south_america oceania)
-          REGION="${REGIONS[$REGION_INDEX]}"
+          SCAN_INDEX=$(( (10#$DAY_OF_YEAR - 1) * 5 + SLOT_INDEX ))
+          # A 37-step permutation spreads each 100-scan weighted cycle evenly.
+          WEIGHTED_INDEX=$(( (SCAN_INDEX * 37) % 100 ))
+          if [ "$WEIGHTED_INDEX" -lt 30 ]; then
+            REGION="asia"
+          elif [ "$WEIGHTED_INDEX" -lt 50 ]; then
+            REGION="north_america"
+          elif [ "$WEIGHTED_INDEX" -lt 75 ]; then
+            REGION="south_america"
+          elif [ "$WEIGHTED_INDEX" -lt 88 ]; then
+            REGION="oceania"
+          elif [ "$WEIGHTED_INDEX" -lt 98 ]; then
+            REGION="africa"
+          else
+            REGION="europe"
+          fi
           echo "airport=$AIRPORT" >> "$GITHUB_OUTPUT"
           echo "region=$REGION" >> "$GITHUB_OUTPUT"
           echo "slot_index=$SLOT_INDEX" >> "$GITHUB_OUTPUT"
