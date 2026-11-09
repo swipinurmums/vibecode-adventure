@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - "deal_tracker.py"
+      - "deal_feed.py"
+      - "flight_insights.py"
       - "hotel_scan.py"
       - "explore_scan.py"
       - "credit_ledger.py"
