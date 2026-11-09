@@ -97,6 +97,7 @@ jobs:
               python deal_tracker.py ingest-hotels --file "$HOTEL_CSV"
             fi
           fi
+          python deal_tracker.py rebuild-history
           python deal_feed.py
           git add data/history/observations.jsonl data/deals/deals.json
           git commit -m "Update historical prices and ranked deal feed" || echo "No new deal data to commit"
