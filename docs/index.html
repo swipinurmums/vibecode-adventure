@@ -191,10 +191,16 @@ function render(){
 }
 function updateCountries(){
  const cont=$("continent").value,sel=$("country"),previous=sel.value;
- const found=[...new Set(deals.map(x=>x.country).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
- const items=found.filter(c=>!cont||continentOf(c)===cont);
- sel.innerHTML='<option value="">All countries</option>'+items.map(c=>'<option>'+esc(c)+'</option>').join("");
- if(items.some(x=>norm(x)===norm(previous)))sel.value=previous;
+ // Offer the full country list, not just countries that already have observations.
+ // This lets users filter for places such as India or Romania while history is still building.
+ const groups=cont?[[cont,continentCountries[cont]||[]]]:Object.entries(continentCountries);
+ const canonical=new Map();
+ for(const [,countries] of groups){for(const country of countries){const key=norm(country);if(key&&!canonical.has(key))canonical.set(key,country);}}
+ // Include any feed country not yet present in the reference list, but collapse casing variants.
+ for(const row of deals){const country=String(row.country||"").trim();const key=norm(country);if(key&&!canonical.has(key))canonical.set(key,country);}
+ const items=[...canonical.values()].sort((a,b)=>a.localeCompare(b));
+ sel.innerHTML='<option value="">All countries</option>'+items.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+ if(items.some(x=>norm(x)===norm(previous)))sel.value=items.find(x=>norm(x)===norm(previous));
 }
 function setStats(){
  $("stat-total").textContent=deals.length.toLocaleString("en-GB");
