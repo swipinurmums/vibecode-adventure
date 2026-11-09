@@ -3,12 +3,23 @@ name: Manual hotel-only search
 on:
   workflow_dispatch:
     inputs:
-      destination:
-        description: Destination city
+      continent:
+        description: Continent to search
         required: true
-        type: string
+        type: choice
+        options:
+          - Africa
+          - Asia
+          - Europe
+          - North America
+          - South America
+          - Oceania
       country:
-        description: Country (helps identify the destination)
+        description: Optional country to narrow the search
+        required: false
+        type: string
+      destination:
+        description: Optional city or destination to narrow the search
         required: false
         type: string
       check_in:
@@ -77,13 +88,14 @@ jobs:
       - name: Search hotels without requiring a flight
         env:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          CONTINENT: ${{ inputs.continent }}
           DESTINATION: ${{ inputs.destination }}
           COUNTRY: ${{ inputs.country }}
           CHECK_IN: ${{ inputs.check_in }}
           CHECK_OUT: ${{ inputs.check_out }}
           ADULTS: ${{ inputs.adults }}
         run: |
-          python hotel_scan.py --destination "$DESTINATION" --country "$COUNTRY" --check-in "$CHECK_IN" --check-out "$CHECK_OUT" --adults "$ADULTS"
+          python hotel_scan.py --continent "$CONTINENT" --destination "$DESTINATION" --country "$COUNTRY" --check-in "$CHECK_IN" --check-out "$CHECK_OUT" --adults "$ADULTS"
       - name: Store hotel observations and refresh deal feed
         run: |
           HOTEL_CSV="$(find data/hotels -name hotels.csv -type f -print | sort | tail -n 1)"
