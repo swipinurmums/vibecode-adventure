@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101411">
 <title>Hunter — Travel deal finder</title>
+<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#0e120f;--panel:#171d19;--panel2:#1d2520;--line:#303b33;--muted:#9aa89d;--text:#edf3ee;--green:#b7f36b;--green2:#d6ffa2;--amber:#f5c46b;--red:#f08e82;--blue:#91c8ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
@@ -233,11 +234,9 @@ main.wrap{max-width:none;width:100%;padding:10px 18px 30px}
     <span class="footer-links"><a href="https://github.com/swipinurmums/vibecode-adventure/actions/workflows/manual-flight-insights.yml" target="_blank" rel="noopener">Flight search ↗</a><a href="https://github.com/swipinurmums/vibecode-adventure/actions/workflows/manual-hotel-only.yml" target="_blank" rel="noopener">Hotel search ↗</a><span id="feed-status">Connecting to live deal feed…</span></span>
   </div>
 </footer>
-<link href="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script src="https://unpkg.com/maplibre-gl@5.6.0/dist/maplibre-gl.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script>
 const FEED_URL="https://raw.githubusercontent.com/swipinurmums/vibecode-adventure/main/data/deals/deals.json";
 const HISTORY_URL="https://raw.githubusercontent.com/swipinurmums/vibecode-adventure/main/data/history/observations.jsonl";
