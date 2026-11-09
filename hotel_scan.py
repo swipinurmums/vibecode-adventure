@@ -157,6 +157,10 @@ def main():
     ap.add_argument("--country", default="", help="Optional country to narrow a hotel-only search")
     ap.add_argument("--check-in", help="Hotel-only check-in date (YYYY-MM-DD)")
     ap.add_argument("--check-out", help="Hotel-only check-out date (YYYY-MM-DD)")
+    ap.add_argument("--check-in-month", help="Flexible check-in month (YYYY-MM)")
+    ap.add_argument("--check-out-month", help="Flexible check-out month (YYYY-MM)")
+    ap.add_argument("--min-nights", type=int, default=3)
+    ap.add_argument("--max-nights", type=int, default=7)
     ap.add_argument("--max-searches", type=int, default=1,
                     help="Maximum hotel API calls in this run; keep at 1 for the integration test.")
     ap.add_argument("--max-flight-price", type=float, default=250,
@@ -236,6 +240,7 @@ def main():
             writer = csv.DictWriter(handle, fieldnames=fields)
             writer.writeheader()
             writer.writerows(rows)
+        all_rows.extend(rows)
         priced = [r for r in rows if r["total_price_gbp"] is not None]
         print(f"Properties: {len(rows)} | whole-stay prices: {len(priced)}")
         for rank, row in enumerate(priced[:5], 1):
