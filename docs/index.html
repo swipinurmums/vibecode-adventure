@@ -186,12 +186,14 @@ main.wrap{max-width:none;width:100%;padding:10px 18px 30px}
 
 
 /* Satellite globe refinements */
-.map-panel{border:0!important;border-radius:0!important;box-shadow:none!important;background:#dcecf3!important}
-.map-stage{background:#dcecf3!important}
-#world-map{background:#dcecf3!important;overflow:hidden!important}
+.map-panel{border:0!important;border-radius:0!important;box-shadow:none!important;background:#020817!important}
+.map-stage{background:#020817!important}
+#world-map{background:#020817!important;overflow:hidden!important}
 .maplibregl-canvas{background:transparent}
-.maplibregl-ctrl-attrib{background:#e8f2f6cc!important;color:#456574!important;border-radius:5px 0 0 0;padding:2px 5px!important}
-.maplibregl-ctrl-attrib a{color:#315f73!important}
+.maplibregl-ctrl-attrib{background:#071426d9!important;color:#a9c3d2!important;border-radius:5px 0 0 0;padding:2px 5px!important}
+.maplibregl-ctrl-attrib a{color:#d4e7f0!important}
+.maplibregl-ctrl-group button{background:#102337!important;color:#e3f0f6!important}
+.maplibregl-ctrl-group button+button{border-top-color:#294253!important}
 @media(min-width:901px){.map-panel{margin-left:-18px;margin-right:-18px}}
 </style>
 </head>
@@ -269,8 +271,8 @@ const cityCoordinates={
  "sydney":[151.2093,-33.8688],"melbourne":[144.9631,-37.8136],"brisbane":[153.0251,-27.4698],"perth":[115.8605,-31.9505],"auckland":[174.7633,-36.8485],"queenstown":[168.6626,-45.0312],"nadi":[177.4505,-17.7765],"papeete":[-149.5665,-17.5516],
  "cairo":[31.2357,30.0444],"marrakech":[-7.9811,31.6295],"casablanca":[-7.5898,33.5731],"cape town":[18.4241,-33.9249],"johannesburg":[28.0473,-26.2041],"nairobi":[36.8219,-1.2921],"zanzibar":[39.2083,-6.1659],"lagos":[3.3792,6.5244],"accra":[-0.187,5.6037],"addis ababa":[38.7578,8.9806],"mauritius":[57.5522,-20.3484],"seychelles":[55.492,-4.6796],"tunis":[10.1815,36.8065]
 };
-function aliasCountry(name){const n=norm(name);return ({"united states of america":"united states","russian federation":"russia","republic of korea":"south korea","korea, republic of":"south korea","democratic people's republic of korea":"north korea","viet nam":"vietnam","czech republic":"czechia","congo":"republic of the congo","türkiye":"turkiye","turkey":"turkiye","syrian arab republic":"syria","brunei darussalam":"brunei","united republic of tanzania":"tanzania","moldova, republic of":"moldova","palestine, state of":"palestine"})[n]||n;}
-function mapCountryContinent(name){const target=aliasCountry(name);if(!target)return "";for(const continent of ["Europe","Asia","Africa","North America","South America","Oceania"]){const countries=continentCountries[continent]||[];if(countries.some(c=>aliasCountry(c)===target))return continent;}return "";}
+function aliasCountry(name){const n=String(name||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLocaleLowerCase().replace(/&/g,"and").replace(/[’'‘`]/g,"").replace(/[^a-z0-9]+/g," ").trim();return ({"united states of america":"united states","russian federation":"russia","republic of korea":"south korea","korea republic of":"south korea","democratic peoples republic of korea":"north korea","viet nam":"vietnam","czech republic":"czechia","congo":"republic of the congo","dem rep congo":"democratic republic of the congo","dr congo":"democratic republic of the congo","türkiye":"turkiye","turkey":"turkiye","syrian arab republic":"syria","brunei darussalam":"brunei","united republic of tanzania":"tanzania","moldova republic of":"moldova","palestine state of":"palestine","ivory coast":"cote d ivoire","cote divoire":"cote d ivoire","cote d ivoire":"cote d ivoire"})[n]||n;}
+function mapCountryContinent(name){const target=aliasCountry(name);if(!target)return "";const membership=["Europe","Asia","Africa","North America","South America","Oceania"].filter(continent=>(continentCountries[continent]||[]).some(c=>aliasCountry(c)===target));if(membership.length===1)return membership[0];if(membership.length>1){if(target==="russia")return "Asia";if(target==="turkiye"||target==="cyprus")return "Europe";return membership[0];}return "";}
 function selectedContinent(){return $("continent")?.value||"";}
 function featureName(feature){return feature?.properties?.name||"";}
 function setupMapFeatures(topology){mapFeatures=topojson.feature(topology,topology.objects.countries).features;mapCentroids.clear();for(const feature of mapFeatures){const name=featureName(feature);if(name)mapCentroids.set(aliasCountry(name),d3.geoCentroid(feature));}}
@@ -346,17 +348,17 @@ async function initMap(){
   setupMapFeatures(await response.json());
   mapInstance=new maplibregl.Map({
    container:"world-map",projection:{type:"globe"},center:[12,24],zoom:1.45,minZoom:1.15,maxZoom:14,
-   style:{version:8,projection:{type:"globe"},sky:{"sky-color":"#dcecf3","horizon-color":"#dcecf3","fog-color":"#dcecf3","sky-horizon-blend":0,"horizon-fog-blend":0,"fog-ground-blend":0,"atmosphere-blend":0},
+   style:{version:8,projection:{type:"globe"},
     sources:{
      "blue-marble":{type:"raster",tiles:["https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg"],tileSize:256,maxzoom:8,attribution:"NASA Blue Marble"},
-     "sentinel":{type:"raster",tiles:["https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"],tileSize:256,minzoom:3,maxzoom:14,attribution:"Sentinel-2 cloudless © EOX / Copernicus"},
+     "sentinel":{type:"raster",tiles:["https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg"],tileSize:256,minzoom:0,maxzoom:14,attribution:"Sentinel-2 cloudless © EOX / Copernicus"},
      "terrain":{type:"raster-dem",url:"https://tiles.mapterhorn.com/tilejson.json",tileSize:256},
     },
     terrain:{source:"terrain",exaggeration:1},
     light:{anchor:"map",position:[1.5,210,35],intensity:0.45},
     layers:[
-     {id:"blue-marble",type:"raster",source:"blue-marble"},
-     {id:"sentinel",type:"raster",source:"sentinel",minzoom:3,paint:{"raster-opacity":["interpolate",["linear"],["zoom"],2.5,0,4,0.72,6,1],"raster-saturation":0.18,"raster-contrast":0.12}},
+     {id:"blue-marble",type:"raster",source:"blue-marble",paint:{"raster-saturation":0.42,"raster-contrast":0.2,"raster-brightness-min":0.015,"raster-brightness-max":0.96}},
+     {id:"sentinel",type:"raster",source:"sentinel",minzoom:0,paint:{"raster-opacity":["interpolate",["linear"],["zoom"],0,0.52,1.5,0.58,3.5,0.78,6,0.96],"raster-saturation":0.32,"raster-contrast":0.14}},
     ]
    },
    attributionControl:true,dragRotate:true,scrollZoom:true,renderWorldCopies:false
@@ -366,7 +368,7 @@ async function initMap(){
    mapInstance.setTerrain({source:"terrain",exaggeration:1});
    mapInstance.addSource("country-polygons",{type:"geojson",data:{type:"FeatureCollection",features:mapFeatures.map(f=>({type:"Feature",geometry:f.geometry,properties:{name:featureName(f),continent:mapCountryContinent(featureName(f))}}))}});
    mapInstance.addLayer({id:"selected-continent-fill",type:"fill",source:"country-polygons",paint:{"fill-color":"#ffd34f","fill-opacity":0.34},filter:["==",["get","continent"],"__none__"]});
-   mapInstance.addLayer({id:"country-borders",type:"line",source:"country-polygons",paint:{"line-color":"#d8e7ec","line-width":["interpolate",["linear"],["zoom"],1,0.25,5,0.48,9,0.7],"line-opacity":0.48}});
+   // Country boundary strokes removed: they were creating global seam artefacts in globe and flat projections.
    mapInstance.addLayer({id:"country-labels",type:"symbol",source:"country-polygons",minzoom:2.1,layout:{"text-field":["get","name"],"text-font":["Open Sans Semibold","Arial Unicode MS Bold"],"text-size":["interpolate",["linear"],["zoom"],2,9,5,12,8,14],"text-allow-overlap":false},paint:{"text-color":"#ffffff","text-halo-color":"#1a3545","text-halo-width":1.3}});
    mapInstance.addSource("deal-points",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
    mapInstance.addLayer({id:"deal-glow",type:"circle",source:"deal-points",filter:["==",["get","kind"],"strong"],paint:{"circle-radius":10,"circle-color":"#ed454e","circle-opacity":0.22,"circle-blur":0.7}});
@@ -501,7 +503,9 @@ async function load(){
  }catch(e){$("feed-status").textContent="Feed unavailable";$("results").innerHTML='<div class="empty" style="grid-column:1/-1">Could not load the latest deal feed. Refresh in a moment or check the <a href="https://github.com/swipinurmums/vibecode-adventure/actions">GitHub Actions runs</a>.</div>';}
 }
 document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.mode;visible=9;pinnedDealKey=null;mapSelectedKey=null;if(mapPopup){mapPopup.remove();mapPopup=null;}render();}));
-["search","country","sort","ready"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",()=>{visible=9;pinnedDealKey=null;render();}));
+function focusMapSearch(){if(!mapInstance)return;const query=aliasCountry($("search").value);if(!query||query.length<3)return;let point=null,zoom=4.2;const city=cityCoordinates[query];if(city)point=city;else{const match=mapFeatures.find(feature=>aliasCountry(featureName(feature))===query);if(match){point=mapCentroids.get(query)||d3.geoCentroid(match);zoom=2.5;}}if(point)mapInstance.flyTo({center:point,zoom,duration:1050,essential:true});}
+let mapSearchFocusTimer=null;
+["search","country","sort","ready"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",()=>{visible=9;pinnedDealKey=null;render();if(id==="search"){clearTimeout(mapSearchFocusTimer);mapSearchFocusTimer=setTimeout(focusMapSearch,650);}}));
 $("projection-toggle").addEventListener("click",()=>{mapProjectionMode=mapProjectionMode==="globe"?"atlas":"globe";if(mapInstance){mapInstance.setProjection({type:mapProjectionMode==="globe"?"globe":"mercator"});mapInstance.easeTo({zoom:mapProjectionMode==="globe"?1.45:1.2,duration:650});}$("projection-toggle").innerHTML=mapProjectionMode==="globe"?"Flatten map <span>↘</span>":"3D globe <span>↗</span>";$("map-hint").textContent=mapProjectionMode==="globe"?"Drag to rotate · Scroll to zoom · Select a dot to preview":"Flat atlas · Scroll to zoom · Select a dot to preview";mapSelectedKey=null;if(mapPopup){mapPopup.remove();mapPopup=null;}});
 $("continent").addEventListener("change",()=>{updateCountries();visible=9;pinnedDealKey=null;mapSelectedKey=null;$("map-popover").hidden=true;render();const targets={"Europe":[18,53,2.05],"Asia":[92,31,1.75],"Africa":[20,2,1.9],"North America":[-102,39,1.8],"South America":[-61,-17,1.9],"Oceania":[145,-22,1.85]};const target=targets[$("continent").value];if(mapInstance){if(target)mapInstance.flyTo({center:[target[0],target[1]],zoom:target[2],duration:1350,essential:true});else mapInstance.flyTo({center:[12,24],zoom:1.45,duration:1100,essential:true});}});
 $("more").addEventListener("click",()=>{visible+=9;render();});
