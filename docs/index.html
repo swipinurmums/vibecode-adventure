@@ -317,8 +317,6 @@ function syncMapData(){
  mapInstance.getSource("deal-points").setData({type:"FeatureCollection",features});
  const chosen=selectedContinent();
  if(mapInstance.getSource("country-polygons")){
-  const features=mapFeatures.map(f=>({type:"Feature",id:f.id,geometry:f.geometry,properties:{name:featureName(f),continent:mapCountryContinent(featureName(f))}}));
-  mapInstance.getSource("country-polygons").setData({type:"FeatureCollection",features});
   mapInstance.setFilter("selected-continent-boundaries",chosen?["==",["get","continent"],chosen]:["==",["get","continent"],"__none__"]);
  }
 }
@@ -367,11 +365,19 @@ async function initMap(){
   mapInstance.on("load",()=>{
    mapInstance.setTerrain({source:"terrain",exaggeration:1});
    mapInstance.addSource("country-polygons",{type:"geojson",data:{type:"FeatureCollection",features:mapFeatures.map(f=>({type:"Feature",geometry:f.geometry,properties:{name:featureName(f),continent:mapCountryContinent(featureName(f))}}))}});
-   // Highlight selected continents with boundary strokes only. Globe-projected polygon
-   // fills can wrap across the horizon and create large translucent geometric artefacts.
-   // Individual country polygons avoid long false arcs from merged meshes on the globe.
-   mapInstance.addLayer({id:"country-borders",type:"line",source:"country-polygons",paint:{"line-color":"#d9e9f2","line-opacity":0.58,"line-width":["interpolate",["linear"],["zoom"],0,0.35,2,0.55,5,0.8,8,1.0]}});
-   mapInstance.addLayer({id:"selected-continent-boundaries",type:"line",source:"country-polygons",filter:["==",["get","continent"],"__none__"],paint:{"line-color":"#f4cf79","line-opacity":0.88,"line-width":["interpolate",["linear"],["zoom"],0,0.8,2,1.15,5,1.6,8,2.0]}});
+   // Draw shared borders only. Drawing each GeoJSON polygon outline also draws
+   // every coastline and outer ring; on globe projection those rings can produce
+   // long wrapping arcs. A TopoJSON mesh contains only shared country boundaries.
+   const sharedBorders=topojson.mesh(countryTopology,countryTopology.objects.countries,(a,b)=>a!==b);
+   const borderFeatures=[];
+   for(const continent of Object.keys(continentCountries)){
+    const geometry=topojson.mesh(countryTopology,countryTopology.objects.countries,(a,b)=>a!==b&&mapCountryContinent(a.properties?.name)===continent&&mapCountryContinent(b.properties?.name)===continent);
+    if(geometry)borderFeatures.push({type:"Feature",properties:{continent},geometry});
+   }
+   mapInstance.addSource("shared-country-borders",{type:"geojson",data:{type:"Feature",geometry:sharedBorders,properties:{}}});
+   mapInstance.addSource("continent-border-meshes",{type:"geojson",data:{type:"FeatureCollection",features:borderFeatures}});
+   mapInstance.addLayer({id:"country-borders",type:"line",source:"shared-country-borders",paint:{"line-color":"#d9e9f2","line-opacity":0.55,"line-width":["interpolate",["linear"],["zoom"],0,0.3,2,0.45,5,0.7,8,0.9]}});
+   mapInstance.addLayer({id:"selected-continent-boundaries",type:"line",source:"continent-border-meshes",filter:["==",["get","continent"],"__none__"],paint:{"line-color":"#f4cf79","line-opacity":0.62,"line-width":["interpolate",["linear"],["zoom"],0,0.45,2,0.7,5,1.0,8,1.25]}});
    mapInstance.addLayer({id:"country-labels",type:"symbol",source:"country-polygons",minzoom:2.1,layout:{"text-field":["get","name"],"text-font":["Open Sans Semibold","Arial Unicode MS Bold"],"text-size":["interpolate",["linear"],["zoom"],2,9,5,12,8,14],"text-allow-overlap":false},paint:{"text-color":"#ffffff","text-halo-color":"#1a3545","text-halo-width":1.3}});
    mapInstance.addSource("deal-points",{type:"geojson",data:{type:"FeatureCollection",features:[]}});
    mapInstance.addLayer({id:"deal-glow",type:"circle",source:"deal-points",filter:["==",["get","kind"],"strong"],paint:{"circle-radius":10,"circle-color":"#ed454e","circle-opacity":0.22,"circle-blur":0.7}});
