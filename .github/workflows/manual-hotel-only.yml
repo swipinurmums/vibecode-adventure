@@ -121,8 +121,11 @@ jobs:
           CONTINENT: ${{ inputs.continent }}
           DESTINATION: ${{ inputs.destination }}
           COUNTRY: ${{ inputs.country }}
-          CHECK_IN: ${{ inputs.check_in }}
-          CHECK_OUT: ${{ inputs.check_out }}
+          CHECK_IN_MONTH: ${{ inputs.check_in_month }}
+          CHECK_OUT_MONTH: ${{ inputs.check_out_month }}
+          MIN_NIGHTS: ${{ inputs.min_nights }}
+          MAX_NIGHTS: ${{ inputs.max_nights }}
+          MAX_SEARCHES: ${{ inputs.max_searches }}
           ADULTS: ${{ inputs.adults }}
         run: |
           python hotel_scan.py --continent "$CONTINENT" --destination "$DESTINATION" --country "$COUNTRY" --check-in-month "$CHECK_IN_MONTH" --check-out-month "$CHECK_OUT_MONTH" --min-nights "$MIN_NIGHTS" --max-nights "$MAX_NIGHTS" --max-searches "$MAX_SEARCHES" --adults "$ADULTS"
