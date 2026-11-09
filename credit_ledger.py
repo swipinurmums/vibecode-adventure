@@ -9,7 +9,7 @@ PATH = Path("data/usage/monthly.json")
 # SerpApi renews on the 4th of each month (the 2026-12-04 renewal
 # follows a 2026-11-04 cycle start). Keep the ledger aligned to that cycle.
 BILLING_CYCLE_DAY = 4
-CAPS = {"flight": 142, "personal": 20, "hotel": 45, "research": 28, "coverage": 15}
+CAPS = {"flight": 142, "personal": 25, "hotel": 45, "research": 28, "coverage": 10}
 TOTAL_CAP = 250
 
 def month_key(now=None):
