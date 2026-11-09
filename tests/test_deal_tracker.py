@@ -64,7 +64,25 @@ class DealTrackerTests(unittest.TestCase):
         self.assertEqual(result["benchmark_gbp"], 140)
         self.assertEqual(result["deal_status"], "strong_deal")
 
-    def test_flexible_hotel_search_benchmarks_same_month_and_stay_length(self):\n        current = observation("hotel", "HOTEL_ONLY", "Rome", "Italy",\n                              "2027-06-18", "2027-06-25", 100, "Hotel A",\n                              "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)\n        current["flexible_month_search"] = True\n        history = [\n            observation("hotel", "HOTEL_ONLY", "Rome", "Italy", start, end, price,\n                        "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)\n            for start, end, price in ((\n                "2027-06-02", "2027-06-09", 160),\n                ("2027-06-10", "2027-06-17", 150),\n                ("2027-06-22", "2027-06-29", 140))\n        ]\n        result = compare(history, current, "hotel")\n        self.assertEqual(result["sample_count"], 3)\n        self.assertEqual(result["benchmark_gbp"], 150)\n        self.assertEqual(result["deal_status"], "strong_deal")\n\n    def test_hotel_comparison_excludes_different_type_rating_and_guest_count(self):
+    def test_flexible_hotel_search_benchmarks_same_month_and_stay_length(self):
+        current = observation("hotel", "HOTEL_ONLY", "Rome", "Italy",
+                              "2027-06-18", "2027-06-25", 100, "Hotel A",
+                              "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)
+        current["flexible_month_search"] = True
+        history = [
+            observation("hotel", "HOTEL_ONLY", "Rome", "Italy", start, end, price,
+                        "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)
+            for start, end, price in ((
+                "2027-06-02", "2027-06-09", 160),
+                ("2027-06-10", "2027-06-17", 150),
+                ("2027-06-22", "2027-06-29", 140))
+        ]
+        result = compare(history, current, "hotel")
+        self.assertEqual(result["sample_count"], 3)
+        self.assertEqual(result["benchmark_gbp"], 150)
+        self.assertEqual(result["deal_status"], "strong_deal")
+
+    def test_hotel_comparison_excludes_different_type_rating_and_guest_count(self):
         current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
                               100, "Hotel A", "hotel", 4.2, 2)
         history = [
