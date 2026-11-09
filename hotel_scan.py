@@ -105,8 +105,13 @@ def load_flight_candidates(path, max_flight_price):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Search hotels using dates discovered by the flight scanner.")
-    ap.add_argument("--from-csv", required=True, help="Explore scanner destinations.csv")
+    ap = argparse.ArgumentParser(description="Search hotels from flight candidates or independently by destination and stay dates.")
+    source = ap.add_mutually_exclusive_group(required=True)
+    source.add_argument("--from-csv", help="Explore scanner destinations.csv")
+    source.add_argument("--destination", help="Destination city for a hotel-only search")
+    ap.add_argument("--country", default="", help="Country, used with --destination")
+    ap.add_argument("--check-in", help="Hotel-only check-in date (YYYY-MM-DD)")
+    ap.add_argument("--check-out", help="Hotel-only check-out date (YYYY-MM-DD)")
     ap.add_argument("--max-searches", type=int, default=1,
                     help="Maximum hotel API calls in this run; keep at 1 for the integration test.")
     ap.add_argument("--max-flight-price", type=float, default=250,
@@ -119,7 +124,19 @@ def main():
     key = os.getenv("SERPAPI_KEY")
     if not key or key == "replace_me":
         raise SystemExit("SERPAPI_KEY is missing")
-    candidates = load_flight_candidates(args.from_csv, args.max_flight_price)
+    if args.destination:
+        if not args.check_in or not args.check_out or not valid_nights(args.check_in, args.check_out):
+            ap.error("--destination requires valid --check-in and --check-out dates")
+        candidates = [{
+            "origin": "HOTEL_ONLY", "destination": args.destination.strip(),
+            "country": args.country.strip(), "departure_date": args.check_in,
+            "return_date": args.check_out, "flight_price_gbp": None,
+            "stops": None, "airline": None,
+        }]
+    else:
+        if args.check_in or args.check_out:
+            ap.error("--check-in/--check-out are only used with --destination")
+        candidates = load_flight_candidates(args.from_csv, args.max_flight_price)
     if not candidates:
         print("No eligible priced flight rows with valid future trip dates. No hotel searches made.")
         return 0
