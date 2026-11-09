@@ -11,7 +11,7 @@ from deal_tracker import load_history
 def trip_key(row):
     return (
         row.get("origin"), row.get("destination"), row.get("country"),
-        row.get("start_date"), row.get("nights")
+        row.get("start_date"), row.get("end_date"), row.get("nights")
     )
 
 
