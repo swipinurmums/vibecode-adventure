@@ -178,9 +178,13 @@ def build_feed(history, insights):
         record.update(ranked)
         if insight:
             record["google_flights_price_insights"] = insight
-            if record.get("kind") == "flight":
-                record["benchmark_price_gbp"] = insight.get("google_flights_lowest_price_gbp")
-                record["benchmark_reference_gbp"] = insight.get("typical_price_low_gbp")
+            record["flight_benchmark_price_gbp"] = insight.get("google_flights_lowest_price_gbp")
+            record["flight_benchmark_reference_gbp"] = insight.get("typical_price_low_gbp")
+            record["flight_price_benchmark_source"] = "google_flights_price_insights"
+            if record.get("kind") == "flight" and insight.get("google_flights_lowest_price_gbp") is not None:
+                record["explore_price_gbp"] = record.get("price_gbp")
+                record["price_gbp"] = insight.get("google_flights_lowest_price_gbp")
+                record["price_source"] = "google_flights_price_insights"
             matched_insights.add(key)
         records.append(record)
 
