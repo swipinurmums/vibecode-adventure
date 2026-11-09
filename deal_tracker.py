@@ -171,7 +171,10 @@ def comparable_hotel_value(row, key):
 
 
 def compare(history, current, kind):
-    keys = ("origin", "destination", "country", "travel_month", "nights", "start_date", "end_date")
+    # Hotel prices are independent of departure airport; flight fares are not.
+    keys = ("destination", "country", "travel_month", "nights", "start_date", "end_date")
+    if kind == "flight":
+        keys = ("origin",) + keys
     # Flight fares are comparable only when observed at a similar booking
     # lead time. Legacy rows derive this from their original observation date.
     # Keep at most one observation per UTC day for each hotel property (or
