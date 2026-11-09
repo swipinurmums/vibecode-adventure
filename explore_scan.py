@@ -47,7 +47,15 @@ def fetch_explore(
 
     metadata = payload.get("search_metadata", {})
     if metadata.get("status") == "Error" or payload.get("error"):
-        raise RuntimeError(payload.get("error") or "SerpApi reported an error")
+        error = str(payload.get("error") or "SerpApi reported an error")
+        # Google Travel Explore can return this specific response when a
+        # departure airport has no matches in a region. Preserve it as a
+        # successful empty scan; genuine API/auth errors still fail the job.
+        if error.startswith("Empty results for departure_id:"):
+            payload["_empty_results_reason"] = error
+            payload["destinations"] = []
+            return payload
+        raise RuntimeError(error)
 
     return payload
 
@@ -175,6 +183,8 @@ def main() -> int:
             )
             rows = normalise_destinations(payload, airport)
             all_rows.extend(rows)
+            if payload.get("_empty_results_reason"):
+                print(f"  No matching destinations for this airport/region: {payload['_empty_results_reason']}")
             print_summary(rows, airport, args.region)
         except (requests.RequestException, ValueError, RuntimeError) as exc:
             errors += 1
