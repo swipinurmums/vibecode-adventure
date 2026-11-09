@@ -171,7 +171,7 @@ def comparable_hotel_value(row, key):
 
 
 def compare(history, current, kind):
-    keys = ("origin", "destination", "country", "travel_month", "nights")
+    keys = ("origin", "destination", "country", "travel_month", "nights", "start_date", "end_date")
     # Flight fares are comparable only when observed at a similar booking
     # lead time. Legacy rows derive this from their original observation date.
     # Keep at most one observation per UTC day for each hotel property (or
@@ -341,6 +341,71 @@ def ingest_hotels(source, history_path=HISTORY):
     return rows
 
 
+
+def rebuild_history(path=HISTORY):
+    """Re-score saved observations chronologically using strict exact-date matches."""
+    rows = sorted(load_history(path), key=lambda r: str(r.get("observed_at") or ""))
+    rebuilt = []
+    for original in rows:
+        row = dict(original)
+        kind = row.get("kind")
+        if kind not in ("flight", "hotel"):
+            rebuilt.append(row)
+            continue
+        row.update(compare(rebuilt, row, kind))
+        if kind == "hotel":
+            try:
+                flight_price = float(row.get("flight_price_gbp"))
+            except (TypeError, ValueError):
+                flight_price = None
+            row["flight_benchmark_gbp"] = None
+            row["flight_discount_percent"] = None
+            row["flight_deal_status"] = "missing_flight_price"
+            if flight_price is not None and row.get("start_date") and row.get("end_date"):
+                flight_current = {
+                    "kind": "flight", "origin": row.get("origin"),
+                    "destination": row.get("destination"), "country": row.get("country"),
+                    "travel_month": row.get("travel_month"), "nights": row.get("nights"),
+                    "start_date": row.get("start_date"), "end_date": row.get("end_date"),
+                    "observed_at": row.get("observed_at"),
+                    "lead_time_band": lead_time_band(row.get("start_date"), row.get("observed_at")),
+                    "price_gbp": flight_price,
+                }
+                flight_result = compare(rebuilt, flight_current, "flight")
+                row["flight_benchmark_gbp"] = flight_result["benchmark_gbp"]
+                row["flight_discount_percent"] = flight_result["discount_percent"]
+                row["flight_deal_status"] = flight_result["deal_status"]
+            if row.get("benchmark_gbp") is not None and row.get("flight_benchmark_gbp") is not None:
+                combined_price = flight_price + float(row["price_gbp"])
+                combined_benchmark = float(row["flight_benchmark_gbp"]) + float(row["benchmark_gbp"])
+                discount = (combined_benchmark - combined_price) / combined_benchmark * 100
+                row.update({
+                    "combined_price_gbp": round(combined_price, 2),
+                    "combined_benchmark_gbp": round(combined_benchmark, 2),
+                    "combined_discount_percent": round(discount, 1),
+                    "combined_deal_status": (
+                        "strong_deal" if discount >= 15 else
+                        ("below_typical" if discount > 0 else "not_below_typical")
+                    ),
+                    "combined_benchmark_method": "sum_of_component_medians",
+                })
+            else:
+                row.update({
+                    "combined_price_gbp": round(flight_price + float(row["price_gbp"]), 2)
+                        if flight_price is not None else None,
+                    "combined_benchmark_gbp": None,
+                    "combined_discount_percent": None,
+                    "combined_deal_status": "building_component_history",
+                    "combined_benchmark_method": "sum_of_component_medians",
+                })
+        rebuilt.append(row)
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text("".join(json.dumps(row, ensure_ascii=False) + "\\n" for row in rebuilt),
+                 encoding="utf-8")
+    return rebuilt
+
+
 def report(rows):
     print(f"Historical observations added: {len(rows)}")
     for row in rows[:20]:
@@ -371,7 +436,13 @@ def main():
     explore.add_argument("--file", required=True)
     hotels = commands.add_parser("ingest-hotels")
     hotels.add_argument("--file", required=True)
+    commands.add_parser("rebuild-history", help="Re-score saved history using strict exact-date comparisons")
     args = parser.parse_args()
+    if args.command == "rebuild-history":
+        rows = rebuild_history()
+        print(f"Re-scored {len(rows)} historical observations using exact outbound and return dates.")
+        report(rows[-20:])
+        return
     rows = ingest_explore(args.file) if args.command == "ingest-explore" else ingest_hotels(args.file)
     report(rows)
 
