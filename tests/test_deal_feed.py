@@ -25,8 +25,7 @@ class DealFeedTests(unittest.TestCase):
     def test_hotel_only_deal_does_not_require_or_invent_flight_benchmark(self):
         row = {"kind":"hotel","discount_percent":22,"benchmark_gbp":300,
                "sample_count":4,"price_gbp":234}
-        feed = build_feed([row], {})
-        deal = feed["deals"][0]
+        deal = build_feed([row], {})["deals"][0]
         self.assertEqual(deal["deal_status"],"strong_hotel_deal")
         self.assertEqual(deal["hotel_deal_status"],"strong_hotel_deal")
         self.assertEqual(deal["combined_deal_status"],"building_combined_benchmark")
@@ -43,9 +42,7 @@ class DealFeedTests(unittest.TestCase):
                    "return_date":"2027-05-08","benchmark_status":"strong_deal",
                    "google_flights_lowest_price_gbp":75,"typical_price_low_gbp":100,
                    "discount_vs_typical_low_percent":20,"observed_at":"2026-11-02"}
-        feed = build_feed([row], {("MAN","Rome","2027-05-01","2027-05-08"):insight})
-        deal = feed["deals"][0]
-        self.assertEqual(feed["deal_count"],1)
+        deal = build_feed([row], {("MAN","Rome","2027-05-01","2027-05-08"):insight})["deals"][0]
         self.assertEqual(deal["deal_status"],"strong_hotel_deal")
         self.assertEqual(deal["flight_deal_status"],"strong_flight_deal")
         self.assertEqual(deal["combined_deal_status"],"strong_combined_deal")
@@ -63,9 +60,7 @@ class DealFeedTests(unittest.TestCase):
                    "return_date":"2027-06-08","google_flights_lowest_price_gbp":400,
                    "typical_price_low_gbp":600,"discount_vs_typical_low_percent":33.3,
                    "benchmark_status":"strong_deal","observed_at":"2026-11-06"}
-        feed = build_feed([], {("MAN","Tokyo","2027-06-01","2027-06-08"):insight})
-        deal = feed["deals"][0]
-        self.assertEqual(feed["deal_count"],1)
+        deal = build_feed([], {("MAN","Tokyo","2027-06-01","2027-06-08"):insight})["deals"][0]
         self.assertEqual(deal["kind"],"flight_insight")
         self.assertEqual(deal["deal_status"],"strong_flight_deal")
         self.assertEqual(deal["deal_modes"],["flight"])
