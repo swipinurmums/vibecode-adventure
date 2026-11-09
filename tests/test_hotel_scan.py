@@ -63,6 +63,18 @@ class HotelMatchingTests(unittest.TestCase):
         self.assertEqual(by_name["Example Hotel"]["accommodation_type"], "hotel")
         self.assertEqual(by_name["City Studio Apartment"]["accommodation_type"], "vacation_rental")
 
+    def test_hotel_only_normalisation_has_no_fabricated_flight(self):
+        hotel_only = {"origin":"HOTEL_ONLY","destination":"Lisbon","country":"Portugal",
+                      "departure_date":"2027-06-01","return_date":"2027-06-05",
+                      "flight_price_gbp":None}
+        payload = {"properties":[{"name":"Example Hotel",
+            "total_rate":{"extracted_after_taxes_fees":320}}]}
+        row = normalise(payload, hotel_only, 2)[0]
+        self.assertEqual(row["origin"], "HOTEL_ONLY")
+        self.assertIsNone(row["flight_price_gbp"])
+        self.assertEqual(row["total_price_gbp"], 320)
+        self.assertEqual(row["nights"], 4)
+
     def test_does_not_invent_total_from_nightly_price(self):
         flight = {"origin":"MAN","destination":"Milan","country":"Italy",
                   "departure_date":"2027-01-10","return_date":"2027-01-12",
