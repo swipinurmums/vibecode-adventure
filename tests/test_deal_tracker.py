@@ -292,5 +292,40 @@ class DealTrackerTests(unittest.TestCase):
         self.assertEqual(row["end_date"], "2027-05-08")
 
 
+    def test_comparisons_require_exact_outbound_and_return_dates(self):
+        current = observation("flight", "MAN", "Rome", "Italy",
+                              "2027-05-01", "2027-05-08", 100)
+        other_week = observation("flight", "MAN", "Rome", "Italy",
+                                  "2027-05-08", "2027-05-15", 40)
+        same_week = observation("flight", "MAN", "Rome", "Italy",
+                                 "2027-05-01", "2027-05-08", 150)
+        result = compare([other_week, same_week], current, "flight")
+        self.assertEqual(result["sample_count"], 1)
+        self.assertIsNone(result["benchmark_gbp"])
+
+    def test_rebuild_history_removes_legacy_cross_date_hotel_benchmarks(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "observations.jsonl"
+            old = {
+                "kind": "hotel", "origin": "MAN", "destination": "Dublin",
+                "country": "Ireland", "travel_month": "11", "nights": 7,
+                "property": "The Dawson Hotel", "property_key": "the dawson hotel",
+                "price_gbp": 666, "observed_at": "2026-11-01T10:00:00+00:00",
+                "accommodation_type": "hotel", "rating_band": "3_5_to_4",
+                "adults": 1, "tax_basis": "displayed_total_tax_status_unknown",
+            }
+            current = dict(old, price_gbp=212,
+                           observed_at="2026-11-05T10:00:00+00:00",
+                           start_date="2026-11-16", end_date="2026-11-23",
+                           flight_price_gbp=30)
+            append_history(path, [old, current])
+            rebuilt = rebuild_history(path)
+            self.assertEqual(rebuilt[1]["sample_count"], 0)
+            self.assertEqual(rebuilt[1]["deal_status"], "building_history")
+            self.assertIsNone(rebuilt[1]["benchmark_gbp"])
+            self.assertEqual(len(load_history(path)), 2)
+
+
+
 if __name__ == "__main__":
     unittest.main()
