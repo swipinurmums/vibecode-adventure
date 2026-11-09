@@ -2,13 +2,14 @@
   "schema_version": 1,
   "reconciled": true,
   "months": {
-    "2026-11": {
+    "2026-11-04": {
       "baseline_used": 17,
       "reserved": {
-        "flight": 42,
+        "flight": 43,
         "personal": 0,
         "hotel": 20,
-        "research": 0
+        "research": 0,
+        "coverage": 0
       }
     }
   }
