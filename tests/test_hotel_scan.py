@@ -2,7 +2,7 @@ import csv
 import tempfile
 import unittest
 from pathlib import Path
-from hotel_scan import load_flight_candidates, normalise, valid_nights
+from hotel_scan import hotel_search_query, load_flight_candidates, normalise, valid_nights
 
 
 class HotelMatchingTests(unittest.TestCase):
@@ -74,6 +74,14 @@ class HotelMatchingTests(unittest.TestCase):
         self.assertIsNone(row["flight_price_gbp"])
         self.assertEqual(row["total_price_gbp"], 320)
         self.assertEqual(row["nights"], 4)
+
+    def test_hotel_search_query_supports_continent_country_and_city(self):
+        self.assertEqual(hotel_search_query({
+            "destination": "Tokyo", "country": "Japan", "continent": "Asia"
+        }), "Tokyo, Japan, Asia")
+        self.assertEqual(hotel_search_query({
+            "destination": "Europe", "country": "", "continent": "Europe"
+        }), "Europe")
 
     def test_does_not_invent_total_from_nightly_price(self):
         flight = {"origin":"MAN","destination":"Milan","country":"Italy",
