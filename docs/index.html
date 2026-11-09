@@ -239,7 +239,8 @@ const continentCountries={
 };
 let deals=[],history=null,mode="all",visible=30,savedTrips=loadSavedTrips();
 
-let mapZoomScale=1.08,pinnedDealKey=null;\nlet mapProjectionMode="globe",mapFeatures=[],mapCentroids=new Map(),mapSvg=null,mapLayer=null,mapDotLayer=null,mapProjection=null,mapPath=null,mapRotation=[0,-12,0],mapSelectedKey=null,mapReady=false;
+let mapZoomScale=1.08,pinnedDealKey=null;
+let mapProjectionMode="globe",mapFeatures=[],mapCentroids=new Map(),mapSvg=null,mapLayer=null,mapDotLayer=null,mapProjection=null,mapPath=null,mapRotation=[0,-12,0],mapSelectedKey=null,mapReady=false;
 const cityCoordinates={
  "wroclaw":[17.0385,51.1079],"poznan":[16.9252,52.4064],"rovinj":[13.6387,45.0812],"rovaniemi":[25.7294,66.5039],
  "bangkok":[100.5018,13.7563],"tokyo":[139.6917,35.6895],"osaka":[135.5023,34.6937],"kyoto":[135.7681,35.0116],"seoul":[126.978,37.5665],
@@ -316,8 +317,9 @@ function mapEntries(){
  return [...grouped.values()];
 }
 function projectionForMode(){
- if(mapProjectionMode==="globe")return d3.geoOrthographic().translate([500,280]).scale(245).clipAngle(90).rotate(mapRotation);
- return d3.geoEqualEarth().fitExtent([[24,28],[976,532]],{type:"Sphere"});
+ if(mapProjectionMode==="globe")return d3.geoOrthographic().translate([500,280]).scale(260*mapZoomScale).clipAngle(90).rotate(mapRotation);
+ const p=d3.geoEqualEarth().fitExtent([[24,28],[976,532]],{type:"Sphere"});
+ return p.scale(p.scale()*mapZoomScale);
 }
 function visibleOnGlobe(coords){
  if(mapProjectionMode!=="globe")return true;
@@ -330,6 +332,13 @@ function drawMap(){
  mapProjection=projectionForMode();mapPath=d3.geoPath(mapProjection);
  mapSvg.selectAll("*").remove();
  const defs=mapSvg.append("defs");
+ const ocean=defs.append("radialGradient").attr("id","ocean-fill").attr("cx","38%").attr("cy","32%").attr("r","72%");
+ ocean.append("stop").attr("offset","0%").attr("stop-color","#2d83a8");ocean.append("stop").attr("offset","55%").attr("stop-color","#12638b");ocean.append("stop").attr("offset","100%").attr("stop-color","#063b63");
+ const land=defs.append("linearGradient").attr("id","land-fill").attr("x1","15%").attr("y1","5%").attr("x2","85%").attr("y2","100%");
+ land.append("stop").attr("offset","0%").attr("stop-color","#a8bd86");land.append("stop").attr("offset","52%").attr("stop-color","#829e75");land.append("stop").attr("offset","100%").attr("stop-color","#b39a70");
+ const shadow=defs.append("filter").attr("id","sphere-shadow").attr("x","-35%").attr("y","-35%").attr("width","170%").attr("height","180%");
+ shadow.append("feGaussianBlur").attr("in","SourceAlpha").attr("stdDeviation","11").attr("result","blur");shadow.append("feOffset").attr("in","blur").attr("dx","9").attr("dy","15").attr("result","offset");
+ const mergeShadow=shadow.append("feMerge");mergeShadow.append("feMergeNode").attr("in","offset");mergeShadow.append("feMergeNode").attr("in","SourceGraphic");
  const filter=defs.append("filter").attr("id","red-glow").attr("x","-100%").attr("y","-100%").attr("width","300%").attr("height","300%");
  filter.append("feGaussianBlur").attr("stdDeviation","3").attr("result","blur");
  const merge=filter.append("feMerge");merge.append("feMergeNode").attr("in","blur");merge.append("feMergeNode").attr("in","SourceGraphic");
@@ -340,6 +349,16 @@ function drawMap(){
  mapLayer.selectAll("path").data(mapFeatures).join("path")
   .attr("class",d=>"country-shape"+(chosen&&mapCountryContinent(featureName(d))===chosen?" selected-continent":""))
   .attr("d",mapPath);
+ if(mapZoomScale>1.28){
+  const labels=mapSvg.append("g").attr("class","country-labels");
+  mapFeatures.forEach(feature=>{
+   const name=featureName(feature),coords=d3.geoCentroid(feature);
+   if(!name||!visibleOnGlobe(coords))return;
+   const xy=mapProjection(coords);if(!xy||xy[0]<30||xy[0]>970||xy[1]<25||xy[1]>535)return;
+   if(Math.abs(d3.geoArea(feature))<0.00045)return;
+   labels.append("text").attr("class","country-label").attr("x",xy[0]).attr("y",xy[1]).attr("font-size",Math.max(7,Math.min(11,7+mapZoomScale))).text(name.toUpperCase());
+  });
+ }
  mapDotLayer=mapSvg.append("g").attr("class","map-dots");
  const entries=mapEntries();
  for(const entry of entries){
@@ -351,6 +370,7 @@ function drawMap(){
   g.append("circle").attr("r",radius).attr("class","map-dot "+cls).on("click",(event)=>{event.stopPropagation();selectMapEntry(entry,xy);});
   g.append("circle").attr("r",Math.max(8,radius+4)).attr("fill","transparent").on("click",(event)=>{event.stopPropagation();selectMapEntry(entry,xy);});
  }
+ mapSvg.on("wheel.zoom-map",(event)=>{event.preventDefault();mapZoomScale=Math.max(.55,Math.min(2.35,mapZoomScale*Math.exp(-event.deltaY*.0012)));drawMap();},{passive:false});
  mapSvg.on("click",()=>{mapSelectedKey=null;$("map-popover").hidden=true;});
  if(mapProjectionMode==="globe"){
   mapSvg.call(d3.drag().on("start",()=>{mapSvg.style("cursor","grabbing");}).on("drag",(event)=>{
@@ -374,10 +394,15 @@ function selectMapEntry(entry,xy){
 function jumpToDeal(row,signalKind){
  const key=recordKey(row);
  let card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);
- if(!card){visible=Math.max(visible,filtered().length);render();card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);}
- if(!card&&mode!=="saved"){mode=signalKind==="combined"?"combined":signalKind==="hotel"||row.kind==="hotel"?"hotel":"flight";document.querySelectorAll(".mode button").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));visible=Math.max(visible,filtered().length);render();card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);}
+ if(!card&&mode!=="saved"){
+  mode=signalKind==="combined"?"combined":signalKind==="hotel"||row.kind==="hotel"?"hotel":"flight";
+  document.querySelectorAll(".mode button").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+  $("continent").value="";$("country").value="";$("search").value="";$("ready").checked=false;
+ }
+ pinnedDealKey=key;visible=9;render();
  $("map-popover").hidden=true;mapSelectedKey=null;
- if(card){card.scrollIntoView({behavior:"smooth",block:"center"});card.classList.add("map-target");setTimeout(()=>card.classList.remove("map-target"),1900);}
+ card=[...document.querySelectorAll(".deal")].find(el=>el.dataset.mapKey===key);
+ if(card){$("result-count").parentElement.scrollIntoView({behavior:"smooth",block:"start"});card.classList.add("map-target");setTimeout(()=>card.classList.remove("map-target"),2500);}
 }
 async function initMap(){
  mapSvg=d3.select("#world-map");
@@ -473,7 +498,8 @@ async function drawHistory(row,box){
  }catch(e){box.querySelector(".chart-note").textContent="Could not load price history right now.";}
 }
 function render(){
- updateSavedCount();const list=filtered(),root=$("results");root.innerHTML="";
+ updateSavedCount();let list=filtered(),root=$("results");root.innerHTML="";
+ if(pinnedDealKey){const at=list.findIndex(r=>recordKey(r)===pinnedDealKey);if(at>0){const [chosen]=list.splice(at,1);list.unshift(chosen);}else if(at<0)pinnedDealKey=null;}
  $("result-count").textContent=list.length.toLocaleString("en-GB")+" matching opportunities";
  $("result-note").textContent=mode==="combined"?"Only packages with both component benchmarks are shown.":"GBP · flight fares are return prices; hotel prices are whole-stay totals.";
  if(!list.length){root.innerHTML='<div class="empty" style="grid-column:1/-1"><b>No matching opportunities yet.</b><br>Try another destination or switch off “Benchmarked only”. New observations continue to build the comparisons.</div>';drawMap();$("more").hidden=true;return;}
@@ -511,7 +537,7 @@ async function load(){
 document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.mode;visible=9;pinnedDealKey=null;mapSelectedKey=null;$("map-popover").hidden=true;render();}));
 ["search","country","sort","ready"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",()=>{visible=9;pinnedDealKey=null;render();}));
 $("projection-toggle").addEventListener("click",()=>{mapProjectionMode=mapProjectionMode==="globe"?"atlas":"globe";mapZoomScale=1.08;$("projection-toggle").innerHTML=mapProjectionMode==="globe"?"Flatten map <span>↘</span>":"3D globe <span>↗</span>";$("map-hint").textContent=mapProjectionMode==="globe"?"Drag to explore · Select a dot to preview a deal":"Drag to explore · Select a dot to preview a deal";mapSelectedKey=null;$("map-popover").hidden=true;drawMap();});
-$("continent").addEventListener("change",()=>{updateCountries();visible=30;mapSelectedKey=null;$("map-popover").hidden=true;render();});
+$("continent").addEventListener("change",()=>{updateCountries();visible=9;pinnedDealKey=null;mapSelectedKey=null;$("map-popover").hidden=true;render();});
 $("more").addEventListener("click",()=>{visible+=9;render();});
 updateSavedCount();
 initMap();
