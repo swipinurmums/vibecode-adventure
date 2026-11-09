@@ -172,7 +172,7 @@ def comparable_hotel_value(row, key):
 
 def compare(history, current, kind):
     # Hotel prices are independent of departure airport; flight fares are not.
-    keys = ("destination", "country", "travel_month", "nights", "start_date", "end_date")
+    keys = (("destination", "country", "travel_month", "nights")\n            if kind == "hotel" and current.get("flexible_month_search") else\n            ("destination", "country", "travel_month", "nights", "start_date", "end_date"))
     if kind == "flight":
         keys = ("origin",) + keys
     # Flight fares are comparable only when observed at a similar booking
