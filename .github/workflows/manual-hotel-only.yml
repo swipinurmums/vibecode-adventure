@@ -22,14 +22,42 @@ on:
         description: Optional city or destination to narrow the search
         required: false
         type: string
-      check_in:
-        description: Check-in date (YYYY-MM-DD)
+      check_in_month:
+        description: Flexible check-in month (YYYY-MM)
         required: true
         type: string
-      check_out:
-        description: Check-out date (YYYY-MM-DD)
+      check_out_month:
+        description: Flexible check-out month (YYYY-MM)
         required: true
         type: string
+      min_nights:
+        description: Minimum stay length
+        required: true
+        type: choice
+        options:
+          - "3"
+          - "5"
+          - "7"
+        default: "3"
+      max_nights:
+        description: Maximum stay length
+        required: true
+        type: choice
+        options:
+          - "5"
+          - "7"
+          - "10"
+          - "14"
+        default: "7"
+      max_searches:
+        description: Number of date combinations to compare (each uses one hotel search)
+        required: true
+        type: choice
+        options:
+          - "3"
+          - "5"
+          - "7"
+        default: "5"
       adults:
         description: Number of adults
         required: true
@@ -62,24 +90,26 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run API-free backend tests before reserving credits
         run: python -m unittest discover -s tests -v
-      - name: Validate stay dates
+      - name: Validate flexible month and stay-length inputs
         env:
-          CHECK_IN: ${{ inputs.check_in }}
-          CHECK_OUT: ${{ inputs.check_out }}
+          CHECK_IN_MONTH: ${{ inputs.check_in_month }}
+          CHECK_OUT_MONTH: ${{ inputs.check_out_month }}
+          MIN_NIGHTS: ${{ inputs.min_nights }}
+          MAX_NIGHTS: ${{ inputs.max_nights }}
+          MAX_SEARCHES: ${{ inputs.max_searches }}
         run: |
           python - <<'PY'
           import os
-          from datetime import date
-          start = date.fromisoformat(os.environ["CHECK_IN"])
-          end = date.fromisoformat(os.environ["CHECK_OUT"])
-          if start <= date.today():
-              raise SystemExit("Check-in must be in the future")
-          if end <= start:
-              raise SystemExit("Check-out must be after check-in")
+          from hotel_scan import generate_flexible_stays
+          stays = generate_flexible_stays(
+              os.environ["CHECK_IN_MONTH"], os.environ["CHECK_OUT_MONTH"],
+              int(os.environ["MIN_NIGHTS"]), int(os.environ["MAX_NIGHTS"]),
+              int(os.environ["MAX_SEARCHES"]))
+          print(f"Validated {len(stays)} date combinations: {stays}")
           PY
       - name: Reserve hotel search before API request
         run: |
-          python credit_ledger.py reserve --category hotel --count 1
+          python credit_ledger.py reserve --category hotel --count ${{ inputs.max_searches }}
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/usage/monthly.json
@@ -95,7 +125,7 @@ jobs:
           CHECK_OUT: ${{ inputs.check_out }}
           ADULTS: ${{ inputs.adults }}
         run: |
-          python hotel_scan.py --continent "$CONTINENT" --destination "$DESTINATION" --country "$COUNTRY" --check-in "$CHECK_IN" --check-out "$CHECK_OUT" --adults "$ADULTS"
+          python hotel_scan.py --continent "$CONTINENT" --destination "$DESTINATION" --country "$COUNTRY" --check-in-month "$CHECK_IN_MONTH" --check-out-month "$CHECK_OUT_MONTH" --min-nights "$MIN_NIGHTS" --max-nights "$MAX_NIGHTS" --max-searches "$MAX_SEARCHES" --adults "$ADULTS"
       - name: Store hotel observations and refresh deal feed
         run: |
           HOTEL_CSV="$(find data/hotels -name hotels.csv -type f -print | sort | tail -n 1)"
