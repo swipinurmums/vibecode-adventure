@@ -115,7 +115,7 @@ function loadSavedTrips(){try{const value=JSON.parse(localStorage.getItem("hunte
 function saveSavedTrips(){try{localStorage.setItem(SAVED_KEY,JSON.stringify(savedTrips));}catch(e){$("feed-status").textContent="Could not save bookmarks in this browser";}updateSavedCount();}
 function recordKey(row){return [row.kind,row.origin,row.destination,row.country,row.property,row.start_date,row.end_date,row.travel_month,row.nights].map(x=>norm(x)).join("|");}
 function isSaved(row){return savedTrips.some(x=>x.key===recordKey(row));}
-function toggleSaved(row){const key=recordKey(row);if(isSaved(row))savedTrips=savedTrips.filter(x=>x.key!==key);else savedTrips.unshift({key,row,saved_at:new Date().toISOString()});saveSavedTrips();render();}
+function toggleSaved(row){const key=recordKey(row);if(isSaved(row))savedTrips=savedTrips.filter(x=>x.key!==key);else savedTrips.unshift({key,row,viewMode:mode==="combined"?"combined":(row.kind==="hotel"?"hotel":"flight"),saved_at:new Date().toISOString()});saveSavedTrips();render();}
 function updateSavedCount(){$("saved-count").textContent=String(savedTrips.length);}
 const $=id=>document.getElementById(id);
 const norm=s=>String(s||"").trim().toLocaleLowerCase();
@@ -140,16 +140,17 @@ function filtered(){
   if(q&&!norm([r.destination,r.country,r.property,r.origin].join(" ")).includes(q))return false;
   if(cont&&continentOf(r.country)!==cont)return false;
   if(country&&norm(r.country)!==norm(country))return false;
-  const d=discountFor(r,mode==="all"?(r.kind==="hotel"?"hotel":"flight"):mode);
+  const savedMode=mode==="saved"?(savedTrips.find(x=>x.key===recordKey(r))?.viewMode||(r.kind==="hotel"?"hotel":"flight")):mode;
+  const d=discountFor(r,savedMode==="all"?(r.kind==="hotel"?"hotel":"flight"):savedMode);
   if(ready&&!(typeof d==="number"&&Number.isFinite(d)))return false;
   return true;
  });
  const sort=$("sort").value;
- list.sort((a,b)=>sort==="price"?(Number(priceFor(a,mode==="all"?(a.kind==="hotel"?"hotel":"flight"):mode)??Infinity)-Number(priceFor(b,mode==="all"?(b.kind==="hotel"?"hotel":"flight"):mode)??Infinity)):sort==="newest"?String(b.observed_at||"").localeCompare(String(a.observed_at||"")):(Number(discountFor(b,mode==="all"?(b.kind==="hotel"?"hotel":"flight"):mode)??-999)-Number(discountFor(a,mode==="all"?(a.kind==="hotel"?"hotel":"flight"):mode)??-999)));
+ list.sort((a,b)=>{const am=mode==="saved"?(savedTrips.find(x=>x.key===recordKey(a))?.viewMode||(a.kind==="hotel"?"hotel":"flight")):mode==="all"?(a.kind==="hotel"?"hotel":"flight"):mode;const bm=mode==="saved"?(savedTrips.find(x=>x.key===recordKey(b))?.viewMode||(b.kind==="hotel"?"hotel":"flight")):mode==="all"?(b.kind==="hotel"?"hotel":"flight"):mode;return sort==="price"?(Number(priceFor(a,am)??Infinity)-Number(priceFor(b,bm)??Infinity)):sort==="newest"?String(b.observed_at||"").localeCompare(String(a.observed_at||"")):(Number(discountFor(b,bm)??-999)-Number(discountFor(a,am)??-999));});
  return list;
 }
 function card(row){
- const m=mode==="all"?(row.kind==="hotel"?"hotel":"flight"):mode;
+ const m=mode==="saved"?(savedTrips.find(x=>x.key===recordKey(row))?.viewMode||(row.kind==="hotel"?"hotel":"flight")):mode==="all"?(row.kind==="hotel"?"hotel":"flight"):mode;
  const st=status(row,m),disc=discountFor(row,m),price=priceFor(row,m),bench=benchmarkFor(row,m);
  const dateLine=date(row.start_date)+" – "+date(row.end_date);
  const title=row.kind==="hotel"?(row.destination||row.country||"Hotel stay"):(row.destination||"Flight");
