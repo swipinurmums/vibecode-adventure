@@ -1,4 +1,4 @@
-import argparse, csv, json, os
+import argparse, calendar, csv, json, os
 from datetime import date, datetime, timezone
 from pathlib import Path
 import requests
@@ -13,6 +13,41 @@ def valid_nights(start, end):
     except (TypeError, ValueError):
         return 0
     return n if n > 0 else 0
+
+
+def generate_flexible_stays(check_in_month, check_out_month, min_nights=3, max_nights=7,
+                            max_searches=5, today=None):
+    """Create evenly spaced real date pairs within the selected months."""
+    try:
+        start_year, start_month = map(int, check_in_month.split("-"))
+        end_year, end_month = map(int, check_out_month.split("-"))
+        first = date(start_year, start_month, 1)
+        last = date(end_year, end_month, calendar.monthrange(end_year, end_month)[1])
+    except (TypeError, ValueError):
+        raise ValueError("Months must use YYYY-MM format")
+    today = today or date.today()
+    if first < date(today.year, today.month, 1) or last <= today:
+        raise ValueError("Selected months must include future stay dates")
+    if min_nights < 1 or max_nights < min_nights:
+        raise ValueError("Stay length must be a valid positive range")
+    if max_searches < 1:
+        raise ValueError("max_searches must be positive")
+    candidates = []
+    day = max(first, today)
+    while day <= last:
+        if day.month == start_month and day.year == start_year:
+            for nights in range(min_nights, max_nights + 1):
+                checkout = date.fromordinal(day.toordinal() + nights)
+                if checkout.year == end_year and checkout.month == end_month:
+                    candidates.append((day.isoformat(), checkout.isoformat()))
+        day = date.fromordinal(day.toordinal() + 1)
+    if not candidates:
+        raise ValueError("No date combinations fit those months and stay length")
+    count = min(max_searches, len(candidates))
+    if count == 1:
+        return [candidates[len(candidates) // 2]]
+    indexes = [round(i * (len(candidates) - 1) / (count - 1)) for i in range(count)]
+    return list(dict.fromkeys(candidates[i] for i in indexes))
 
 
 def classify_accommodation(name, source_type=None):
@@ -48,7 +83,7 @@ def normalise(payload, flight, adults):
             "flight_price_gbp": flight.get("flight_price_gbp"),
             "flight_stops": flight.get("stops"),
             "flight_airline": flight.get("airline"),
-            "nights": nights, "adults": adults,
+            "nights": nights, "adults": adults,\n            "flexible_month_search": bool(flight.get("flexible_month_search", False)),
             "property": p.get("name"), "accommodation_type": classify_accommodation(
                 p.get("name"), p.get("type")),
             "rating": p.get("overall_rating"),
@@ -137,30 +172,50 @@ def main():
     if args.continent:
         if args.from_csv:
             ap.error("--continent cannot be combined with --from-csv")
-        if not args.check_in or not args.check_out or not valid_nights(args.check_in, args.check_out):
-            ap.error("--continent requires valid --check-in and --check-out dates")
+        exact_dates = bool(args.check_in or args.check_out)
+        flexible_months = bool(args.check_in_month or args.check_out_month)
+        if exact_dates == flexible_months:
+            ap.error("Choose either both exact dates or both flexible months")
         city = args.destination.strip()
         country = args.country.strip()
-        candidates = [{
-            "origin": "HOTEL_ONLY", "destination": city or country or args.continent,
-            "country": country, "continent": args.continent,
-            "departure_date": args.check_in, "return_date": args.check_out,
-            "flight_price_gbp": None, "stops": None, "airline": None,
-        }]
+        if flexible_months:
+            if not args.check_in_month or not args.check_out_month:
+                ap.error("Both check-in and check-out months are required")
+            try:
+                stays = generate_flexible_stays(args.check_in_month, args.check_out_month,
+                    args.min_nights, args.max_nights, args.max_searches)
+            except ValueError as exc:
+                ap.error(str(exc))
+            candidates = [{
+                "origin": "HOTEL_ONLY", "destination": city or country or args.continent,
+                "country": country, "continent": args.continent,
+                "departure_date": start, "return_date": end,
+                "flight_price_gbp": None, "stops": None, "airline": None,
+                "flexible_month_search": True,
+            } for start, end in stays]
+        else:
+            if not args.check_in or not args.check_out or not valid_nights(args.check_in, args.check_out):
+                ap.error("--check-in and --check-out must be valid dates")
+            candidates = [{
+                "origin": "HOTEL_ONLY", "destination": city or country or args.continent,
+                "country": country, "continent": args.continent,
+                "departure_date": args.check_in, "return_date": args.check_out,
+                "flight_price_gbp": None, "stops": None, "airline": None,
+            }]
     else:
         if not args.from_csv:
             ap.error("Use --from-csv for flight-led searches or --continent for hotel-only searches")
-        if args.destination or args.country or args.check_in or args.check_out:
+        if args.destination or args.country or args.check_in or args.check_out or args.check_in_month or args.check_out_month:
             ap.error("--destination/--country/--check-in/--check-out require --continent")
         candidates = load_flight_candidates(args.from_csv, args.max_flight_price)
     if not candidates:
         print("No eligible priced flight rows with valid future trip dates. No hotel searches made.")
         return 0
     selected = candidates[:args.max_searches]
-    print(f"Eligible flight candidates: {len(candidates)}; hotel searches allowed this run: {args.max_searches}")
+    print(f"Hotel search candidates: {len(candidates)}; hotel searches allowed this run: {args.max_searches}")
     root = Path("data/hotels") / datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     root.mkdir(parents=True, exist_ok=True)
-    for index, flight in enumerate(selected, 1):
+    all_rows = []\n    for index, flight in enumerate(selected, 1):
         city = flight["destination"]
         country = flight.get("country", "")
         start, end = flight["departure_date"], flight["return_date"]
@@ -189,7 +244,7 @@ def main():
                 print(f"   {row['url']}")
         if not priced:
             print("No whole-stay property totals returned; nightly prices were not converted into totals.")
-    print(f"Hotel results saved under {root}")
+    if all_rows:\n        with (root / "hotels.csv").open("w", newline="", encoding="utf-8") as handle:\n            writer = csv.DictWriter(handle, fieldnames=list(all_rows[0]))\n            writer.writeheader()\n            writer.writerows(all_rows)\n    print(f"Hotel results saved under {root}")
     return 0
 
 
