@@ -41,7 +41,7 @@ def current(data):
         months[key] = months.pop(legacy_key)
     return months.setdefault(key, {
         "baseline_used": None,
-        "reserved": {"flight": 0, "personal": 0, "hotel": 0, "research": 0}
+        "reserved": {"flight": 0, "personal": 0, "hotel": 0, "research": 0, "coverage": 0}
     })
 
 def status(data):
@@ -66,7 +66,7 @@ def reconcile(baseline_used):
     # Prior unclassified usage is conservatively charged to the flight bucket,
     # preserving the 50 personal and 80 hotel allocations.
     month["baseline_used"] = baseline_used
-    month["reserved"] = {"flight": baseline_used, "personal": 0, "hotel": 0, "research": 0}
+    month["reserved"] = {"flight": baseline_used, "personal": 0, "hotel": 0, "research": 0, "coverage": 0}
     data["reconciled"] = True
     save(data)
     print(f"Saved opening baseline of {baseline_used} searches for billing cycle {month_key()}.")
