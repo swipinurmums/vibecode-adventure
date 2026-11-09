@@ -147,15 +147,15 @@ function card(row){
  const subtitle=row.kind==="hotel"?(row.property||"Accommodation listing"):(row.origin?row.origin+" return":"Return flight");
  const n=row.sample_count??row.flight_sample_count??0;
  const source=row.benchmark_source||row.flight_benchmark_source||"";
- const conf=row.confidence||row.flight_confidence||"low";
+ const conf=m==="combined"?"Flight: "+(row.flight_confidence||"low")+" · Hotel: "+(row.confidence||"low"):(m==="flight"?(row.flight_confidence||row.confidence||"low"):(row.confidence||"low"));
  const discount=typeof disc==="number"?(disc>=0?disc.toFixed(1)+"% below":" "+Math.abs(disc).toFixed(1)+"% above"):"Not established";
  const div=document.createElement("article");div.className="deal";
- div.innerHTML='<div class="deal-top"><span class="kind">'+(row.kind==="hotel"?"Hotel": "Flight")+'</span><span class="pill '+cssStatus(st)+'">'+labelStatus(st)+'</span></div>'+
+ div.innerHTML='<div class="deal-top"><span class="kind">'+(m==="combined"?"Combined holiday":row.kind==="hotel"?"Hotel":"Flight")+'</span><span class="pill '+cssStatus(st)+'">'+labelStatus(st)+'</span></div>'+
  '<div><div class="destination">'+esc(title)+'</div><div class="property">'+esc(subtitle)+'</div></div>'+
  '<div class="price-row"><div class="price">'+fmt(price)+' <small>'+(m==="hotel"?"total stay":m==="combined"?"flight + stay":"return")+'</small></div><div class="discount '+(typeof disc==="number"?"":"none")+'">'+esc(discount)+'</div></div>'+
  '<div class="compare"><span>Typical benchmark</span><b>'+fmt(bench)+'</b></div>'+
  '<div class="mini"><div><b>'+esc(dateLine)+'</b><span>Travel dates · '+(row.nights||"—")+' nights</span></div><div><b>'+esc(row.country||"Country unavailable")+'</b><span>'+(row.origin&&row.origin!=="HOTEL_ONLY"?"From "+esc(row.origin):"Destination")+'</span></div></div>'+
- '<div class="card-foot"><span class="conf">'+(bench!=null?(n+" comparable samples · "+conf+" confidence"): "Benchmark not established yet")+'</span><button class="detail" type="button">Price history ↗</button></div><div class="chartbox"><div class="charttitle">Observed price history · dates shown below</div><div class="chart-note">Loading history…</div></div>';
+ '<div class="card-foot"><span class="conf">'+(bench!=null?(m==="combined"?"Flight "+(row.flight_sample_count||0)+" samples · Hotel "+n+" samples · "+conf:" "+n+" comparable samples · "+conf+" confidence"): "Benchmark not established yet")+'</span><button class="detail" type="button">Price history ↗</button></div><div class="chartbox"><div class="charttitle">Observed price history · dates shown below</div><div class="chart-note">Loading history…</div></div>';
  const button=div.querySelector(".detail"),box=div.querySelector(".chartbox");
  button.addEventListener("click",async()=>{box.classList.toggle("open");if(box.dataset.loaded||!box.classList.contains("open"))return;await drawHistory(row,box);box.dataset.loaded="1";});
  return div;
