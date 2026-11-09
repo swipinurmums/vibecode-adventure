@@ -66,10 +66,20 @@ def normalise(payload, flight, adults):
                                        r["total_price_gbp"] if r["total_price_gbp"] is not None else float("inf")))
 
 
+def hotel_search_query(flight):
+    parts = [flight.get("destination"), flight.get("country"), flight.get("continent")]
+    result = []
+    for part in parts:
+        value = (part or "").strip()
+        if value and value.casefold() not in [x.casefold() for x in result]:
+            result.append(value)
+    return ", ".join(result)
+
+
 def fetch_one(api_key, flight, adults):
     params = {
         "engine": "google_hotels",
-        "q": ", ".join(x for x in (flight.get("destination"), flight.get("country")) if x),
+        "q": hotel_search_query(flight),
         "check_in_date": flight["departure_date"],
         "check_out_date": flight["return_date"],
         "adults": adults, "children": 0,
@@ -106,10 +116,10 @@ def load_flight_candidates(path, max_flight_price):
 
 def main():
     ap = argparse.ArgumentParser(description="Search hotels from flight candidates or independently by destination and stay dates.")
-    source = ap.add_mutually_exclusive_group(required=True)
-    source.add_argument("--from-csv", help="Explore scanner destinations.csv")
-    source.add_argument("--destination", help="Destination city for a hotel-only search")
-    ap.add_argument("--country", default="", help="Country, used with --destination")
+    ap.add_argument("--from-csv", help="Explore scanner destinations.csv")
+    ap.add_argument("--continent", choices=["Africa", "Asia", "Europe", "North America", "South America", "Oceania"])
+    ap.add_argument("--destination", default="", help="Optional city or destination to narrow a hotel-only search")
+    ap.add_argument("--country", default="", help="Optional country to narrow a hotel-only search")
     ap.add_argument("--check-in", help="Hotel-only check-in date (YYYY-MM-DD)")
     ap.add_argument("--check-out", help="Hotel-only check-out date (YYYY-MM-DD)")
     ap.add_argument("--max-searches", type=int, default=1,
@@ -124,18 +134,24 @@ def main():
     key = os.getenv("SERPAPI_KEY")
     if not key or key == "replace_me":
         raise SystemExit("SERPAPI_KEY is missing")
-    if args.destination:
+    if args.continent:
+        if args.from_csv:
+            ap.error("--continent cannot be combined with --from-csv")
         if not args.check_in or not args.check_out or not valid_nights(args.check_in, args.check_out):
-            ap.error("--destination requires valid --check-in and --check-out dates")
+            ap.error("--continent requires valid --check-in and --check-out dates")
+        city = args.destination.strip()
+        country = args.country.strip()
         candidates = [{
-            "origin": "HOTEL_ONLY", "destination": args.destination.strip(),
-            "country": args.country.strip(), "departure_date": args.check_in,
-            "return_date": args.check_out, "flight_price_gbp": None,
-            "stops": None, "airline": None,
+            "origin": "HOTEL_ONLY", "destination": city or country or args.continent,
+            "country": country, "continent": args.continent,
+            "departure_date": args.check_in, "return_date": args.check_out,
+            "flight_price_gbp": None, "stops": None, "airline": None,
         }]
     else:
-        if args.check_in or args.check_out:
-            ap.error("--check-in/--check-out are only used with --destination")
+        if not args.from_csv:
+            ap.error("Use --from-csv for flight-led searches or --continent for hotel-only searches")
+        if args.destination or args.country or args.check_in or args.check_out:
+            ap.error("--destination/--country/--check-in/--check-out require --continent")
         candidates = load_flight_candidates(args.from_csv, args.max_flight_price)
     if not candidates:
         print("No eligible priced flight rows with valid future trip dates. No hotel searches made.")
