@@ -37,7 +37,7 @@ input:focus,select:focus{outline:2px solid #8ec84d;outline-offset:1px}
 .result-head strong{font-size:14px}.result-head span{font-size:12px;color:var(--muted)}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
 .deal{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px;min-width:0;display:flex;flex-direction:column;gap:12px}
-.deal-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.deal-actions{display:flex;align-items:center;gap:8px}.bookmark{width:30px;height:30px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);font-size:17px;line-height:1;cursor:pointer;display:grid;place-items:center}.bookmark:hover,.bookmark.saved{color:var(--green);border-color:#647b4d;background:#202b1e}.bookmark.saved{font-size:18px}
+.deal-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.deal-actions{display:flex;align-items:center;gap:8px}.bookmark{width:30px;height:30px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);font-size:17px;line-height:1;cursor:pointer;display:grid;place-items:center}.bookmark:hover,.bookmark.saved{color:var(--green);border-color:#647b4d;background:#202b1e}.bookmark.saved{font-size:18px}.bookmark svg{width:16px;height:16px}.bookmark.saved svg path{fill:currentColor;fill-opacity:.18}
 .kind{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .pill{font-size:10px;font-weight:800;border-radius:100px;padding:5px 8px;background:#27312a;color:var(--muted);white-space:nowrap}
 .pill.strong{background:#263b1c;color:var(--green2)}.pill.below{background:#24372d;color:#a9e6bb}.pill.typical{background:#332d20;color:var(--amber)}.pill.building{background:#282e34;color:#bdc9d4}
@@ -82,7 +82,7 @@ footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-s
   </section>
   <section class="filters">
     <div class="mode" role="tablist" aria-label="Deal type">
-      <button class="active" data-mode="all">All</button><button data-mode="flight">Flights</button><button data-mode="hotel">Hotels</button><button data-mode="combined">Combined holidays</button><button data-mode="saved" aria-label="Saved locations">▮ Saved locations <span class="saved-count" id="saved-count">0</span></button>
+      <button class="active" data-mode="all">All</button><button data-mode="flight">Flights</button><button data-mode="hotel">Hotels</button><button data-mode="combined">Combined holidays</button><button data-mode="saved" aria-label="Saved locations">♧ Saved locations <span class="saved-count" id="saved-count">0</span></button>
     </div>
     <div class="filter-grid">
       <div class="searchbox"><label for="search">Search destination or property</label><input id="search" type="search" placeholder="e.g. Tokyo, Italy, Bangkok hotel"></div>
@@ -160,7 +160,7 @@ function card(row){
  const conf=m==="combined"?"Flight: "+(row.flight_confidence||"low")+" · Hotel: "+(row.confidence||"low"):(m==="flight"?(row.flight_confidence||row.confidence||"low"):(row.confidence||"low"));
  const discount=typeof disc==="number"?(disc>=0?disc.toFixed(1)+"% below":" "+Math.abs(disc).toFixed(1)+"% above"):"Not established";
  const div=document.createElement("article");div.className="deal";
- div.innerHTML='<div class="deal-top"><span class="kind">'+(m==="combined"?"Combined holiday":row.kind==="hotel"?"Hotel":"Flight")+'</span><div class="deal-actions"><span class="pill '+cssStatus(st)+'">'+labelStatus(st)+'</span><button class="bookmark '+(isSaved(row)?"saved":"")+'" type="button" aria-label="'+(isSaved(row)?"Remove saved trip":"Save trip")+'" title="'+(isSaved(row)?"Remove saved trip":"Save trip")+'">'+(isSaved(row)?"▮":"▯")+'</button></div></div>'+
+ div.innerHTML='<div class="deal-top"><span class="kind">'+(m==="combined"?"Combined holiday":row.kind==="hotel"?"Hotel":"Flight")+'</span><div class="deal-actions"><span class="pill '+cssStatus(st)+'">'+labelStatus(st)+'</span><button class="bookmark '+(isSaved(row)?"saved":"")+'" type="button" aria-label="'+(isSaved(row)?"Remove saved trip":"Save trip")+'" title="'+(isSaved(row)?"Remove saved trip":"Save trip")+'">'+'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-3.75L6 21V4.75Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>'+'</button></div></div>'+
  '<div><div class="destination">'+esc(title)+'</div><div class="property">'+esc(subtitle)+'</div></div>'+
  '<div class="price-row"><div class="price">'+fmt(price)+' <small>'+(m==="hotel"?"total stay":m==="combined"?"flight + stay":"return")+'</small></div><div class="discount '+(typeof disc==="number"?"":"none")+'">'+esc(discount)+'</div></div>'+
  '<div class="compare"><span>Typical benchmark</span><b>'+fmt(bench)+'</b></div>'+
