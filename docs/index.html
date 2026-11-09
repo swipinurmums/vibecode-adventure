@@ -188,7 +188,12 @@ main.wrap{max-width:none;width:100%;padding:10px 18px 30px}
 /* Satellite globe refinements */
 .map-panel{border:0!important;border-radius:0!important;box-shadow:none!important;background:#020817!important}
 .map-stage{background:#020817!important}
-#world-map{background-color:#020817!important;background-image:radial-gradient(1px 1px at 7% 13%,#dcecffb0 98%,transparent),radial-gradient(1px 1px at 16% 72%,#dcecff80 98%,transparent),radial-gradient(1.5px 1.5px at 27% 38%,#ffffffa0 98%,transparent),radial-gradient(1px 1px at 38% 86%,#dcecff80 98%,transparent),radial-gradient(1px 1px at 49% 17%,#ffffff90 98%,transparent),radial-gradient(1px 1px at 61% 63%,#dcecff90 98%,transparent),radial-gradient(1.5px 1.5px at 73% 29%,#ffffffa0 98%,transparent),radial-gradient(1px 1px at 84% 78%,#dcecff90 98%,transparent),radial-gradient(1px 1px at 94% 44%,#ffffff80 98%,transparent),radial-gradient(1px 1px at 56% 92%,#ffffff70 98%,transparent),radial-gradient(1px 1px at 31% 7%,#ffffff70 98%,transparent),radial-gradient(1px 1px at 91% 9%,#dcecff80 98%,transparent)!important;background-size:100% 100%!important;overflow:hidden!important}
+#world-map{background-color:#020817!important;overflow:hidden!important;isolation:isolate}
+#world-map::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background-image:
+radial-gradient(1px 1px at 3% 11%,#e8f5ff 98%,transparent),radial-gradient(1px 1px at 8% 63%,#cfe7ffb8 98%,transparent),radial-gradient(1.4px 1.4px at 13% 31%,#fff 98%,transparent),radial-gradient(1px 1px at 18% 88%,#dcecffb8 98%,transparent),radial-gradient(1px 1px at 23% 8%,#fff 98%,transparent),radial-gradient(1px 1px at 28% 57%,#dcecffc9 98%,transparent),radial-gradient(1.5px 1.5px at 33% 23%,#fff 98%,transparent),radial-gradient(1px 1px at 38% 76%,#cfe7ffb8 98%,transparent),radial-gradient(1px 1px at 43% 42%,#fff 98%,transparent),radial-gradient(1px 1px at 48% 93%,#dcecffb8 98%,transparent),radial-gradient(1.4px 1.4px at 53% 13%,#fff 98%,transparent),radial-gradient(1px 1px at 58% 61%,#dcecffc9 98%,transparent),radial-gradient(1px 1px at 63% 34%,#fff 98%,transparent),radial-gradient(1px 1px at 68% 84%,#cfe7ffb8 98%,transparent),radial-gradient(1.5px 1.5px at 73% 7%,#fff 98%,transparent),radial-gradient(1px 1px at 78% 49%,#dcecffc9 98%,transparent),radial-gradient(1px 1px at 83% 91%,#fff 98%,transparent),radial-gradient(1px 1px at 88% 26%,#cfe7ffb8 98%,transparent),radial-gradient(1.4px 1.4px at 93% 66%,#fff 98%,transparent),radial-gradient(1px 1px at 97% 14%,#dcecffb8 98%,transparent);
+background-size:100% 100%;opacity:.88;animation:starfield-twinkle 9s ease-in-out infinite}
+@keyframes starfield-twinkle{0%,100%{opacity:.68}50%{opacity:1}}
+.maplibregl-canvas-container{position:relative;z-index:1;background:transparent!important}
 .maplibregl-canvas{background:transparent;filter:drop-shadow(0 0 22px #4c83ad35)}
 .maplibregl-ctrl-attrib{background:#071426d9!important;color:#a9c3d2!important;border-radius:5px 0 0 0;padding:2px 5px!important}
 .maplibregl-ctrl-attrib a{color:#d4e7f0!important}
@@ -354,9 +359,11 @@ async function initMap(){
      "terrain":{type:"raster-dem",url:"https://tiles.mapterhorn.com/tilejson.json",tileSize:256},
     },
     terrain:{source:"terrain",exaggeration:1},
-    light:{anchor:"map",position:[1.15,210,35],intensity:0.72},
+    light:{anchor:"map",position:[1.15,220,38],intensity:0.9},
     layers:[
+     {id:"space-atmosphere",type:"sky",paint:{"sky-type":"atmosphere","sky-atmosphere-sun":[220,38],"sky-atmosphere-sun-intensity":8,"sky-atmosphere-color":"#79b6df","sky-atmosphere-halo-color":"#d5edff","sky-opacity":1}},
      {id:"blue-marble",type:"raster",source:"blue-marble",paint:{"raster-saturation":0.16,"raster-contrast":0.06,"raster-brightness-min":0.02,"raster-brightness-max":0.93}},
+     {id:"terrain-shading",type:"hillshade",source:"terrain",paint:{"hillshade-illumination-direction":300,"hillshade-illumination-anchor":"map","hillshade-exaggeration":0.22,"hillshade-shadow-color":"#102536","hillshade-highlight-color":"#e5f2ec","hillshade-accent-color":"#597a86"}},
      {id:"sentinel",type:"raster",source:"sentinel",minzoom:0,paint:{"raster-opacity":["interpolate",["linear"],["zoom"],0,0.24,1.5,0.3,3.5,0.46,6,0.68],"raster-saturation":0.06,"raster-contrast":0.04}},
     ]
    },
