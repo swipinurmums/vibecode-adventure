@@ -172,7 +172,9 @@ def comparable_hotel_value(row, key):
 
 def compare(history, current, kind):
     # Hotel prices are independent of departure airport; flight fares are not.
-    keys = (("destination", "country", "travel_month", "nights")\n            if kind == "hotel" and current.get("flexible_month_search") else\n            ("destination", "country", "travel_month", "nights", "start_date", "end_date"))
+    keys = (("destination", "country", "travel_month", "nights")
+            if kind == "hotel" and current.get("flexible_month_search") else
+            ("destination", "country", "travel_month", "nights", "start_date", "end_date"))
     if kind == "flight":
         keys = ("origin",) + keys
     # Flight fares are comparable only when observed at a similar booking
@@ -249,7 +251,8 @@ def append_history(path, rows):
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("a", encoding="utf-8") as f:
         for row in rows:
-            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+            f.write(json.dumps(row, ensure_ascii=False) + "
+")
 
 
 def ingest_explore(source, history_path=HISTORY):
@@ -286,7 +289,8 @@ def ingest_hotels(source, history_path=HISTORY):
         )
         if row is None:
             continue
-        row["flexible_month_search"] = str(item.get("flexible_month_search", "")).strip().casefold() in ("1", "true", "yes")\n        row.update(compare(history, row, "hotel"))
+        row["flexible_month_search"] = str(item.get("flexible_month_search", "")).strip().casefold() in ("1", "true", "yes")
+        row.update(compare(history, row, "hotel"))
 
         # Combine independently benchmarked flight and hotel components.
         # This is an indicative package comparison (sum of component medians),
@@ -408,7 +412,8 @@ def rebuild_history(path=HISTORY):
         rebuilt.append(row)
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rebuilt),
+    p.write_text("".join(json.dumps(row, ensure_ascii=False) + "
+" for row in rebuilt),
                  encoding="utf-8")
     return rebuilt
 
