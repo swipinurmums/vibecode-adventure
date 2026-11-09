@@ -2,11 +2,29 @@ import csv
 import tempfile
 import unittest
 from pathlib import Path
-from hotel_scan import (hotel_search_query, load_flight_candidates, normalise, valid_nights,\n                         generate_flexible_stays)
+from hotel_scan import (hotel_search_query, load_flight_candidates, normalise, valid_nights,
+                         generate_flexible_stays)
 
 
 class HotelMatchingTests(unittest.TestCase):
-    def test_flexible_month_search_samples_valid_future_date_pairs(self):\n        stays = generate_flexible_stays("2027-06", "2027-06", 5, 7, 4, today=__import__("datetime").date(2026, 11, 9))\n        self.assertEqual(len(stays), 4)\n        for check_in, check_out in stays:\n            self.assertEqual(check_in[:7], "2027-06")\n            self.assertEqual(check_out[:7], "2027-06")\n            self.assertIn(valid_nights(check_in, check_out), (5, 6, 7))\n\n    def test_flexible_month_search_supports_different_months(self):\n        stays = generate_flexible_stays("2027-06", "2027-07", 5, 7, 5, today=__import__("datetime").date(2026, 11, 9))\n        self.assertTrue(stays)\n        self.assertTrue(all(start[:7] == "2027-06" and end[:7] == "2027-07" for start, end in stays))\n\n    def test_flexible_month_search_rejects_impossible_month_and_duration(self):\n        with self.assertRaises(ValueError):\n            generate_flexible_stays("2027-06", "2027-06", 20, 25, 5, today=__import__("datetime").date(2026, 11, 9))\n\n    def test_trip_dates_are_taken_from_flight_row(self):
+    def test_flexible_month_search_samples_valid_future_date_pairs(self):
+        stays = generate_flexible_stays("2027-06", "2027-06", 5, 7, 4, today=__import__("datetime").date(2026, 11, 9))
+        self.assertEqual(len(stays), 4)
+        for check_in, check_out in stays:
+            self.assertEqual(check_in[:7], "2027-06")
+            self.assertEqual(check_out[:7], "2027-06")
+            self.assertIn(valid_nights(check_in, check_out), (5, 6, 7))
+
+    def test_flexible_month_search_supports_different_months(self):
+        stays = generate_flexible_stays("2027-06", "2027-07", 5, 7, 5, today=__import__("datetime").date(2026, 11, 9))
+        self.assertTrue(stays)
+        self.assertTrue(all(start[:7] == "2027-06" and end[:7] == "2027-07" for start, end in stays))
+
+    def test_flexible_month_search_rejects_impossible_month_and_duration(self):
+        with self.assertRaises(ValueError):
+            generate_flexible_stays("2027-06", "2027-06", 20, 25, 5, today=__import__("datetime").date(2026, 11, 9))
+
+    def test_trip_dates_are_taken_from_flight_row(self):
         self.assertEqual(valid_nights("2027-01-10", "2027-01-17"), 7)
         self.assertEqual(valid_nights("2027-01-17", "2027-01-17"), 0)
         self.assertEqual(valid_nights("bad-date", "2027-01-17"), 0)
