@@ -68,6 +68,20 @@ class DealFeedTests(unittest.TestCase):
         self.assertIn("google_flights_price_insights",deal)
         self.assertEqual(deal["deal_modes"],["hotel","combined"])
 
+    def test_matched_flight_uses_the_insight_fare_that_was_benchmarked(self):
+        row = {"kind":"flight","origin":"MAN","destination":"Rome","country":"Italy",
+               "start_date":"2027-05-01","end_date":"2027-05-08","price_gbp":95,
+               "discount_percent":5,"sample_count":3,"observed_at":"2026-11-01"}
+        insight = {"origin":"MAN","destination":"Rome","departure_date":"2027-05-01",
+                   "return_date":"2027-05-08","google_flights_lowest_price_gbp":80,
+                   "typical_price_low_gbp":100,"discount_vs_typical_low_percent":20,
+                   "observed_at":"2026-11-02"}
+        deal = build_feed([row], {("MAN","Rome","2027-05-01","2027-05-08"):insight})["deals"][0]
+        self.assertEqual(deal["price_gbp"], 80)
+        self.assertEqual(deal["explore_price_gbp"], 95)
+        self.assertEqual(deal["price_source"], "google_flights_price_insights")
+        self.assertEqual(deal["ranking_discount_percent"], 20)
+
     def test_orphan_price_insight_is_a_standalone_flight_deal(self):
         insight = {"origin":"MAN","destination":"Tokyo","departure_date":"2027-06-01",
                    "return_date":"2027-06-08","google_flights_lowest_price_gbp":400,
