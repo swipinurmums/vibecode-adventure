@@ -1,0 +1,37 @@
+name: Rebuild historical deal benchmarks
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: serpapi-monthly-ledger
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run API-free backend tests
+        run: python -m unittest discover -s tests -v
+      - name: Re-score exact-date benchmarks and rebuild feed
+        run: |
+          python deal_tracker.py rebuild-history
+          python deal_feed.py
+      - name: Save corrected history and deal feed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/history/observations.jsonl data/deals/deals.json
+          git commit -m "Rebuild exact-date historical deal benchmarks" || echo "No changes to commit"
+          git push
