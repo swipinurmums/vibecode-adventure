@@ -251,8 +251,7 @@ def append_history(path, rows):
     p.parent.mkdir(parents=True, exist_ok=True)
     with p.open("a", encoding="utf-8") as f:
         for row in rows:
-            f.write(json.dumps(row, ensure_ascii=False) + "
-")
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
 def ingest_explore(source, history_path=HISTORY):
