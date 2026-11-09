@@ -146,6 +146,34 @@ main.wrap{padding-top:15px;padding-bottom:38px}
 .notice{color:#82959e;font-size:10px;margin-top:9px}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.map-stage{height:58vh;min-height:400px}.map-toolbar{align-items:stretch;flex-direction:column;gap:9px}.map-controls{justify-content:space-between}.map-select,.map-search{width:50%}.footer-bottom{align-items:flex-start;flex-direction:column}.footer-links{flex-wrap:wrap}}
 @media(max-width:560px){.wrap{padding:0 12px}main.wrap{padding-top:10px}.map-toolbar{gap:7px}.mode{overflow-x:auto;flex-wrap:nowrap}.mode button{white-space:nowrap;padding:7px 10px}.map-controls{gap:7px}.map-select{width:42%}.map-search{width:58%}.map-stage{height:58vh;min-height:360px;max-height:520px}.map-legend{left:8px;top:8px;gap:7px;padding:6px 7px;font-size:9px}.map-hint{display:none}.projection-toggle{right:9px;bottom:9px;padding:8px 10px}.grid{grid-template-columns:1fr}.filter-grid{gap:8px}.filter-grid>div{width:45%}.footer-stats{gap:13px;flex-wrap:wrap}.footer-stats div{gap:4px}.footer-stats strong{font-size:13px}.site-footer{padding:15px 12px 20px}.footer-links{gap:12px}}
+/* Globe-first immersive layout */
+:root{--ocean:#125d83;--ocean-deep:#073c62;--land:#789b72;--land-warm:#b5a078}
+html{scroll-behavior:smooth}
+body{background:linear-gradient(180deg,#eaf5fa 0%,#f4f9fb 100%)}
+main.wrap{max-width:none;width:100%;padding:10px 18px 30px}
+.map-toolbar{max-width:1700px;margin:0 auto 8px;min-height:42px}
+.map-panel{border-radius:16px;background:radial-gradient(ellipse at 50% 45%,#d8edf6 0%,#b8d9e9 58%,#9fc6da 100%);box-shadow:0 18px 55px #174d6720}
+.map-stage{height:calc(100svh - 174px);min-height:560px;max-height:none;background:radial-gradient(ellipse at 50% 47%,#d5eaf4 0%,#b5d6e7 70%,#9fc6d9 100%)}
+#world-map{touch-action:none;overflow:visible}
+.map-sphere{fill:url(#ocean-fill);stroke:#d5edf7;stroke-width:2;filter:url(#sphere-shadow)}
+.map-graticule{stroke:#a8d0e0;stroke-width:.55;opacity:.3}
+.country-shape{fill:url(#land-fill);stroke:#f5fbff;stroke-width:.85;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.country-shape.selected-continent{fill:#d5bb82;stroke:#fff;stroke-width:1.15}
+.country-shape:hover{fill:#b6c99a}
+.country-label{font:700 8px Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:.045em;fill:#f8fff5;stroke:#385b4b;stroke-width:2.2px;paint-order:stroke;stroke-linejoin:round;text-anchor:middle;pointer-events:none;opacity:.94}
+.map-popover{backdrop-filter:blur(10px)}
+.map-dot{vector-effect:non-scaling-stroke}
+.compact-filters{max-width:1700px;margin:9px auto 0;display:flex;justify-content:flex-end}
+.filter-grid{justify-content:flex-end;gap:13px}
+.filter-grid>div{width:190px}
+.check{padding:8px 4px!important}
+.result-head{max-width:1700px;margin:28px auto 12px}
+#results{max-width:1700px;margin:0 auto}
+.deal.map-target{outline:3px solid #e34e57;box-shadow:0 0 0 6px #e34e572b,0 12px 30px #d94a5040;animation:card-highlight 2.4s ease-out}
+@keyframes card-highlight{0%,35%{box-shadow:0 0 0 7px #e34e5750,0 12px 30px #d94a5050}100%{box-shadow:0 0 0 0 #e34e5700,0 3px 13px #416c7c09}}
+@media(max-width:900px){.map-stage{height:calc(100svh - 205px);min-height:480px}.map-toolbar{align-items:stretch;flex-direction:column;gap:7px}.map-controls{justify-content:space-between}.map-select,.map-search{width:50%}.compact-filters{justify-content:flex-start}}
+@media(max-width:560px){main.wrap{padding:8px 9px 24px}.map-toolbar{gap:7px}.map-stage{height:calc(100svh - 225px);min-height:430px;max-height:none}.map-legend{left:8px;top:8px;gap:7px;padding:6px 7px;font-size:9px}.map-hint{display:none}.projection-toggle{right:9px;bottom:9px;padding:8px 10px}.compact-filters{margin-top:7px}.filter-grid{justify-content:flex-start;gap:8px}.filter-grid>div{width:42%}.grid{grid-template-columns:1fr}}
+
 
 </style>
 </head>
@@ -211,7 +239,7 @@ const continentCountries={
 };
 let deals=[],history=null,mode="all",visible=30,savedTrips=loadSavedTrips();
 
-let mapProjectionMode="globe",mapFeatures=[],mapCentroids=new Map(),mapSvg=null,mapLayer=null,mapDotLayer=null,mapProjection=null,mapPath=null,mapRotation=[0,-12,0],mapSelectedKey=null,mapReady=false;
+let mapZoomScale=1.08,pinnedDealKey=null;\nlet mapProjectionMode="globe",mapFeatures=[],mapCentroids=new Map(),mapSvg=null,mapLayer=null,mapDotLayer=null,mapProjection=null,mapPath=null,mapRotation=[0,-12,0],mapSelectedKey=null,mapReady=false;
 const cityCoordinates={
  "wroclaw":[17.0385,51.1079],"poznan":[16.9252,52.4064],"rovinj":[13.6387,45.0812],"rovaniemi":[25.7294,66.5039],
  "bangkok":[100.5018,13.7563],"tokyo":[139.6917,35.6895],"osaka":[135.5023,34.6937],"kyoto":[135.7681,35.0116],"seoul":[126.978,37.5665],
@@ -449,7 +477,7 @@ function render(){
  $("result-count").textContent=list.length.toLocaleString("en-GB")+" matching opportunities";
  $("result-note").textContent=mode==="combined"?"Only packages with both component benchmarks are shown.":"GBP · flight fares are return prices; hotel prices are whole-stay totals.";
  if(!list.length){root.innerHTML='<div class="empty" style="grid-column:1/-1"><b>No matching opportunities yet.</b><br>Try another destination or switch off “Benchmarked only”. New observations continue to build the comparisons.</div>';drawMap();$("more").hidden=true;return;}
- list.slice(0,visible).forEach(r=>{const node=card(r);node.dataset.mapKey=recordKey(r);root.appendChild(node);});
+ list.slice(0,visible).forEach(r=>{const node=card(r);node.dataset.mapKey=recordKey(r);if(recordKey(r)===pinnedDealKey)node.classList.add("map-target");root.appendChild(node);});
  drawMap();
  $("more").hidden=visible>=list.length;$("more").textContent="Show more ("+(list.length-visible)+" remaining)";
 }
@@ -480,11 +508,11 @@ async function load(){
   $("feed-status").textContent="Updated "+new Date(feed.generated_at).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"});
  }catch(e){$("feed-status").textContent="Feed unavailable";$("results").innerHTML='<div class="empty" style="grid-column:1/-1">Could not load the latest deal feed. Refresh in a moment or check the <a href="https://github.com/swipinurmums/vibecode-adventure/actions">GitHub Actions runs</a>.</div>';}
 }
-document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.mode;visible=30;mapSelectedKey=null;$("map-popover").hidden=true;render();}));
-["search","country","sort","ready"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",()=>{visible=30;render();}));
-$("projection-toggle").addEventListener("click",()=>{mapProjectionMode=mapProjectionMode==="globe"?"atlas":"globe";$("projection-toggle").innerHTML=mapProjectionMode==="globe"?"Flatten map <span>↘</span>":"3D globe <span>↗</span>";$("map-hint").textContent=mapProjectionMode==="globe"?"Drag to explore · Select a dot to preview a deal":"Drag to explore · Select a dot to preview a deal";mapSelectedKey=null;$("map-popover").hidden=true;drawMap();});
+document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.mode;visible=9;pinnedDealKey=null;mapSelectedKey=null;$("map-popover").hidden=true;render();}));
+["search","country","sort","ready"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",()=>{visible=9;pinnedDealKey=null;render();}));
+$("projection-toggle").addEventListener("click",()=>{mapProjectionMode=mapProjectionMode==="globe"?"atlas":"globe";mapZoomScale=1.08;$("projection-toggle").innerHTML=mapProjectionMode==="globe"?"Flatten map <span>↘</span>":"3D globe <span>↗</span>";$("map-hint").textContent=mapProjectionMode==="globe"?"Drag to explore · Select a dot to preview a deal":"Drag to explore · Select a dot to preview a deal";mapSelectedKey=null;$("map-popover").hidden=true;drawMap();});
 $("continent").addEventListener("change",()=>{updateCountries();visible=30;mapSelectedKey=null;$("map-popover").hidden=true;render();});
-$("more").addEventListener("click",()=>{visible+=30;render();});
+$("more").addEventListener("click",()=>{visible+=9;render();});
 updateSavedCount();
 initMap();
 load();
