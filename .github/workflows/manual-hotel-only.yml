@@ -49,6 +49,8 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: pip install -r requirements.txt
+      - name: Run API-free backend tests before reserving credits
+        run: python -m unittest discover -s tests -v
       - name: Validate stay dates
         env:
           CHECK_IN: ${{ inputs.check_in }}
