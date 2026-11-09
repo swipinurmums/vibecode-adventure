@@ -230,7 +230,10 @@ def compare(history, current, kind):
             day = observed[:10] if len(observed) >= 10 else observed
             if kind == "hotel":
                 property_key = (row.get("property") or "").strip().casefold()
-                sample_key = (day, property_key)
+                if current.get("flexible_month_search"):
+                    sample_key = (day, property_key, row.get("start_date"), row.get("end_date"))
+                else:
+                    sample_key = (day, property_key)
             else:
                 sample_key = (day,)
             samples_by_key[sample_key] = value
