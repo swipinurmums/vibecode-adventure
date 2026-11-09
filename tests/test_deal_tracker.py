@@ -327,5 +327,21 @@ class DealTrackerTests(unittest.TestCase):
 
 
 
+    def test_hotel_benchmark_is_not_limited_by_departure_airport(self):
+        current = observation("hotel", "MAN", "Rome", "Italy",
+                              "2027-05-01", "2027-05-08", 100, "Hotel A",
+                              "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)
+        history = []
+        for index, airport in enumerate(("BHX", "LBA", "MAN")):
+            row = observation("hotel", airport, "Rome", "Italy",
+                              "2027-05-01", "2027-05-08", 150 + index, "Hotel A",
+                              "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)
+            row["observed_at"] = f"2026-11-0{index + 1}T08:00:00+00:00"
+            history.append(row)
+        result = compare(history, current, "hotel")
+        self.assertEqual(result["sample_count"], 3)
+        self.assertEqual(result["benchmark_gbp"], 151)
+
+
 if __name__ == "__main__":
     unittest.main()
