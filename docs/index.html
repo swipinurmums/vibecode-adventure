@@ -359,9 +359,9 @@ async function initMap(){
      "terrain":{type:"raster-dem",url:"https://tiles.mapterhorn.com/tilejson.json",tileSize:256},
     },
     terrain:{source:"terrain",exaggeration:1},
+    sky:{"atmosphere-blend":["interpolate",["linear"],["zoom"],0,1,5,1,7,0]},
     light:{anchor:"map",position:[1.15,220,38],intensity:0.9},
     layers:[
-     {id:"space-atmosphere",type:"sky",paint:{"sky-type":"atmosphere","sky-atmosphere-sun":[220,38],"sky-atmosphere-sun-intensity":8,"sky-atmosphere-color":"#79b6df","sky-atmosphere-halo-color":"#d5edff","sky-opacity":1}},
      {id:"blue-marble",type:"raster",source:"blue-marble",paint:{"raster-saturation":0.16,"raster-contrast":0.06,"raster-brightness-min":0.02,"raster-brightness-max":0.93}},
      {id:"terrain-shading",type:"hillshade",source:"terrain",paint:{"hillshade-illumination-direction":300,"hillshade-illumination-anchor":"map","hillshade-exaggeration":0.22,"hillshade-shadow-color":"#102536","hillshade-highlight-color":"#e5f2ec","hillshade-accent-color":"#597a86"}},
      {id:"sentinel",type:"raster",source:"sentinel",minzoom:0,paint:{"raster-opacity":["interpolate",["linear"],["zoom"],0,0.24,1.5,0.3,3.5,0.46,6,0.68],"raster-saturation":0.06,"raster-contrast":0.04}},
