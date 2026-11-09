@@ -22,6 +22,16 @@ class DealFeedTests(unittest.TestCase):
         self.assertEqual(result["combined_deal_status"],"strong_combined_deal")
         self.assertEqual(result["deal_modes"],["hotel","combined"])
 
+    def test_same_hotel_is_deduplicated_across_departure_airports(self):
+        common = {"kind":"hotel","destination":"Rome","country":"Italy",
+                  "start_date":"2027-05-01","end_date":"2027-05-08","nights":7,
+                  "property":"Hotel A","property_key":"hotel a"}
+        rows = [dict(common, origin="MAN", observed_at="2026-11-01"),
+                dict(common, origin="HOTEL_ONLY", observed_at="2026-11-02")]
+        latest = latest_rows(rows)
+        self.assertEqual(len(latest), 1)
+        self.assertEqual(latest[0]["origin"], "HOTEL_ONLY")
+
     def test_hotel_only_deal_does_not_require_or_invent_flight_benchmark(self):
         row = {"kind":"hotel","discount_percent":22,"benchmark_gbp":300,
                "sample_count":4,"price_gbp":234}
@@ -37,7 +47,7 @@ class DealFeedTests(unittest.TestCase):
                "start_date":"2027-05-01","end_date":"2027-05-08","nights":7,
                "property":"Hotel A","observed_at":"2026-11-01","price_gbp":200,
                "flight_price_gbp":80,"benchmark_gbp":300,"discount_percent":33.3,
-               "flight_benchmark_gbp":100,"sample_count":3}
+               "flight_benchmark_gbp":100,"flight_sample_count":5,"sample_count":5}
         insight = {"origin":"MAN","destination":"Rome","departure_date":"2027-05-01",
                    "return_date":"2027-05-08","benchmark_status":"strong_deal",
                    "google_flights_lowest_price_gbp":75,"typical_price_low_gbp":100,
@@ -47,6 +57,9 @@ class DealFeedTests(unittest.TestCase):
         self.assertEqual(deal["flight_deal_status"],"strong_flight_deal")
         self.assertEqual(deal["combined_deal_status"],"strong_combined_deal")
         self.assertEqual(deal["confidence"],"high")
+        self.assertEqual(deal["benchmark_source"],"personal_historical_median")
+        self.assertEqual(deal["flight_benchmark_source"],"google_flights_price_insights")
+        self.assertEqual(deal["flight_confidence"],"medium")
         self.assertEqual(deal["combined_price_gbp"],280.0)
         self.assertEqual(deal["combined_benchmark_gbp"],400.0)
         self.assertEqual(deal["combined_discount_percent"],30.0)
