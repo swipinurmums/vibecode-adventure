@@ -57,27 +57,49 @@ def status_for(discount, component):
 
 
 def rank_record(row, insight=None):
-    """Rank a flight or hotel on its own component; expose package value separately."""
+    """Rank the requested component independently; never let package value overwrite it."""
     is_hotel = row.get("kind") == "hotel"
+    historical_source = "personal_historical_median"
+    insight_source = "google_flights_price_insights"
     if is_hotel:
         hotel_discount = row.get("discount_percent")
         flight_discount = (insight or {}).get("discount_vs_typical_low_percent")
         if flight_discount is None:
             flight_discount = row.get("flight_discount_percent")
-        component_discount = hotel_discount
-        component = "hotel"
+        component_discount, component = hotel_discount, "hotel"
+        component_source = historical_source if row.get("benchmark_gbp") is not None else "insufficient_comparable_history"
+        flight_source = insight_source if insight and flight_discount is not None else (
+            historical_source if row.get("flight_benchmark_gbp") is not None else "insufficient_comparable_history")
     else:
         flight_discount = (insight or {}).get("discount_vs_typical_low_percent")
         if flight_discount is None:
             flight_discount = row.get("discount_percent", row.get("flight_discount_percent"))
         hotel_discount = None
-        component_discount = flight_discount
-        component = "flight"
+        component_discount, component = flight_discount, "flight"
+        component_source = insight_source if insight and flight_discount is not None else (
+            historical_source if row.get("benchmark_gbp") is not None else "insufficient_comparable_history")
+        flight_source = component_source
 
     combined = row.get("combined_discount_percent") if is_hotel else None
     modes = [component]
     if is_hotel and isinstance(combined, (int, float)):
         modes.append("combined")
+    samples = row.get("sample_count", 0) or 0
+    component_confidence = (
+        "high" if component_source == historical_source and samples >= 5
+        else ("medium" if component_source != "insufficient_comparable_history" else "low")
+    )
+    flight_samples = row.get("flight_sample_count", 0) or 0
+    flight_confidence = (
+        "medium" if flight_source == insight_source
+        else ("high" if flight_source == historical_source and flight_samples >= 5
+              else ("medium" if flight_source == historical_source else "low"))
+    )
+    hotel_source = historical_source if is_hotel and row.get("benchmark_gbp") is not None else "insufficient_comparable_history"
+    combined_source = (
+        row.get("combined_benchmark_method") or "component_benchmarks"
+        if isinstance(combined, (int, float)) else "insufficient_component_benchmarks"
+    )
     return {
         "deal_status": status_for(component_discount, component),
         "ranking_discount_percent": round(component_discount, 1) if isinstance(component_discount, (int, float)) else None,
@@ -89,17 +111,13 @@ def rank_record(row, insight=None):
         "combined_deal_status": status_for(combined, "combined") if is_hotel else None,
         "combined_ranking_discount_percent": round(combined, 1) if isinstance(combined, (int, float)) else None,
         "deal_modes": modes,
-        "benchmark_source": (
-            "google_flights_price_insights" if insight and flight_discount is not None
-            else ("personal_historical_median" if row.get("benchmark_gbp") is not None
-                  else "insufficient_comparable_history")
-        ),
-        "confidence": (
-            "high" if is_hotel and row.get("sample_count", 0) >= 3
-            else ("medium" if (insight or row.get("benchmark_gbp") is not None) else "low")
-        ),
+        "benchmark_source": component_source,
+        "flight_benchmark_source": flight_source,
+        "hotel_benchmark_source": hotel_source,
+        "combined_benchmark_source": combined_source,
+        "confidence": component_confidence,
+        "flight_confidence": flight_confidence,
     }
-
 
 def build_feed(history, insights):
     records = []
@@ -158,6 +176,9 @@ def build_feed(history, insights):
         record.update(ranked)
         if insight:
             record["google_flights_price_insights"] = insight
+            if record.get("kind") == "flight":
+                record["benchmark_price_gbp"] = insight.get("google_flights_lowest_price_gbp")
+                record["benchmark_reference_gbp"] = insight.get("typical_price_low_gbp")
             matched_insights.add(key)
         records.append(record)
 
@@ -173,6 +194,8 @@ def build_feed(history, insights):
             "price_gbp": insight.get("google_flights_lowest_price_gbp"),
             "observed_at": insight.get("observed_at"),
             "benchmark_gbp": insight.get("typical_price_low_gbp"),
+            "benchmark_price_gbp": insight.get("google_flights_lowest_price_gbp"),
+            "benchmark_source": "google_flights_price_insights",
         }
         record = dict(row)
         record.update(rank_record(dict(row, kind="flight"), insight))
