@@ -77,6 +77,8 @@ class DealTrackerTests(unittest.TestCase):
                 ("2027-06-10", "2027-06-17", 150),
                 ("2027-06-22", "2027-06-29", 140))
         ]
+        for index, row in enumerate(history, 1):
+            row["observed_at"] = f"2026-11-0{index}T08:00:00+00:00"
         result = compare(history, current, "hotel")
         self.assertEqual(result["sample_count"], 3)
         self.assertEqual(result["benchmark_gbp"], 150)
