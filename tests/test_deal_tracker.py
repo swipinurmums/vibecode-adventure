@@ -195,6 +195,27 @@ class DealTrackerTests(unittest.TestCase):
         self.assertEqual(result["deal_status"], "building_history")
 
 
+    def test_flexible_hotel_date_combinations_same_day_count_as_one_sample(self):
+        current = observation("hotel", "HOTEL_ONLY", "Bangkok", "Thailand",
+                              "2027-02-28", "2027-03-07", 100, "Hotel A",
+                              "hotel", 4.2, 1, "displayed_total_tax_status_unknown", 4, 4.5, 150)
+        current["flexible_month_search"] = True
+        history = []
+        for start, end, price, observed in (
+            ("2027-02-22", "2027-03-01", 150, "2026-11-05T08:00:00+00:00"),
+            ("2027-02-25", "2027-03-04", 140, "2026-11-05T08:01:00+00:00"),
+            ("2027-02-26", "2027-03-05", 130, "2026-11-04T08:00:00+00:00"),
+        ):
+            row = observation("hotel", "HOTEL_ONLY", "Bangkok", "Thailand",
+                              start, end, price, "Hotel A", "hotel", 4.2, 1,
+                              "displayed_total_tax_status_unknown", 4, 4.5, 150)
+            row["flexible_month_search"] = True
+            row["observed_at"] = observed
+            history.append(row)
+        result = compare(history, current, "hotel")
+        self.assertEqual(result["sample_count"], 2)
+        self.assertEqual(result["deal_status"], "building_history")
+
     def test_hotel_comparison_excludes_different_tax_basis(self):
         current = observation("hotel", "MAN", "Rome", "Italy", "2027-05-01", "2027-05-08",
                               100, "Hotel A", "hotel", 4.2, 2, "after_taxes_and_fees", 4, 4.6, 150)
