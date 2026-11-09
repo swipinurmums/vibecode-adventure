@@ -22,7 +22,7 @@ class HotelMatchingTests(unittest.TestCase):
 
     def test_flexible_month_search_rejects_impossible_month_and_duration(self):
         with self.assertRaises(ValueError):
-            generate_flexible_stays("2027-06", "2027-06", 20, 25, 5, today=__import__("datetime").date(2026, 11, 9))
+            generate_flexible_stays("2027-06", "2027-06", 35, 40, 5, today=__import__("datetime").date(2026, 11, 9))
 
     def test_trip_dates_are_taken_from_flight_row(self):
         self.assertEqual(valid_nights("2027-01-10", "2027-01-17"), 7)
