@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101411">
+<title>Hunter — Travel deal finder</title>
+<style>
+:root{color-scheme:dark;--bg:#0e120f;--panel:#171d19;--panel2:#1d2520;--line:#303b33;--muted:#9aa89d;--text:#edf3ee;--green:#b7f36b;--green2:#d6ffa2;--amber:#f5c46b;--red:#f08e82;--blue:#91c8ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+a{color:var(--green2);text-decoration:none}a:hover{text-decoration:underline}
+header{border-bottom:1px solid var(--line);background:#111713;position:sticky;top:0;z-index:5}
+.wrap{max-width:1240px;margin:auto;padding:0 24px}
+.top{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:21px;letter-spacing:.02em}.mark{width:34px;height:34px;border-radius:11px;background:var(--green);color:#101810;display:grid;place-items:center;font-weight:900}
+.top-right{display:flex;align-items:center;gap:16px;color:var(--muted);font-size:12px}
+main{padding:34px 0 64px}.intro{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:26px}
+.eyebrow{color:var(--green);font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+h1{font-size:clamp(30px,4vw,44px);line-height:1.1;letter-spacing:-.04em;margin:7px 0 8px}
+.sub{color:var(--muted);max-width:660px;margin:0}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 14px;border-radius:10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn.primary{background:var(--green);border-color:var(--green);color:#11180e}.btn:hover{filter:brightness(1.08);text-decoration:none}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 17px}.stat strong{font-size:25px;display:block;letter-spacing:-.04em}.stat span{font-size:12px;color:var(--muted)}
+.filters{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:18px}
+.mode{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:15px}
+.mode button{border:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 13px;border-radius:9px;font-weight:700;cursor:pointer}
+.mode button.active{background:var(--green);color:#10180d;border-color:var(--green)}
+.filter-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr auto;gap:10px;align-items:end}
+label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin:0 0 6px}
+input,select{width:100%;background:#101612;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px 11px;font:inherit;font-size:13px;min-width:0}
+input:focus,select:focus{outline:2px solid #8ec84d;outline-offset:1px}
+.check{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;white-space:nowrap;padding:10px 2px}.check input{width:auto}
+.result-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:22px 2px 12px}
+.result-head strong{font-size:14px}.result-head span{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.deal{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.deal-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kind{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pill{font-size:10px;font-weight:800;border-radius:100px;padding:5px 8px;background:#27312a;color:var(--muted);white-space:nowrap}
+.pill.strong{background:#263b1c;color:var(--green2)}.pill.below{background:#24372d;color:#a9e6bb}.pill.typical{background:#332d20;color:var(--amber)}.pill.building{background:#282e34;color:#bdc9d4}
+.destination{font-size:19px;font-weight:800;letter-spacing:-.025em;line-height:1.2}
+.property{font-size:12px;color:var(--muted);margin-top:3px;min-height:18px}
+.price-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.price{font-size:29px;font-weight:850;letter-spacing:-.05em}.price small{font-size:12px;font-weight:600;letter-spacing:0;color:var(--muted)}
+.discount{font-size:13px;font-weight:800;color:var(--green2)}.discount.none{color:var(--muted);font-weight:600}
+.compare{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;border-top:1px solid var(--line);padding-top:11px}
+.mini div{min-width:0}.mini b{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mini span{display:block;font-size:10px;color:var(--muted)}
+.card-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:4px}
+.conf{font-size:10px;color:var(--muted)}.detail{font-size:11px;color:var(--green2);font-weight:700;cursor:pointer;background:none;border:0;padding:0}
+.chartbox{display:none;border-top:1px solid var(--line);padding-top:10px}.chartbox.open{display:block}.charttitle{font-size:11px;color:var(--muted);margin-bottom:5px}.chart{width:100%;height:94px;overflow:visible}.chart text{fill:var(--muted);font-size:9px}.chart .line{fill:none;stroke:var(--green);stroke-width:2}.chart .dot{fill:var(--green)}
+.chart-note{font-size:10px;color:var(--muted);margin-top:3px}
+.empty{padding:45px 20px;text-align:center;background:var(--panel);border:1px dashed var(--line);border-radius:15px;color:var(--muted)}
+.load{display:flex;justify-content:center;margin:22px}
+footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:11px}
+.notice{color:var(--muted);font-size:11px;margin-top:12px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-grid .searchbox{grid-column:span 2}.intro{align-items:start;flex-direction:column}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.wrap{padding:0 15px}.top{height:62px}.top-right{gap:8px}.grid{grid-template-columns:1fr}.filter-grid{grid-template-columns:1fr 1fr}.filter-grid .searchbox{grid-column:span 2}.stat{padding:12px}.stat strong{font-size:22px}.actions{width:100%}.actions .btn{flex:1;justify-content:center}}
+</style>
+</head>
+<body>
+<header><div class="wrap top">
+  <div class="brand"><div class="mark">H</div> HUNTER</div>
+  <div class="top-right"><span id="feed-status">Connecting to live deal feed…</span><a href="https://github.com/swipinurmums/vibecode-adventure/actions" target="_blank" rel="noopener">Activity ↗</a></div>
+</div></header>
+<main class="wrap">
+  <section class="intro">
+    <div><div class="eyebrow">Worldwide travel intelligence</div><h1>Find the price worth travelling for.</h1><p class="sub">Hunter tracks flight fares, hotel stays and combined holiday value. A low price is not automatically a deal — we show the benchmark and how much evidence supports it.</p></div>
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/swipinurmums/vibecode-adventure/actions/workflows/manual-flight-insights.yml" target="_blank" rel="noopener">＋ Flight search</a>
+      <a class="btn" href="https://github.com/swipinurmums/vibecode-adventure/actions/workflows/manual-hotel-only.yml" target="_blank" rel="noopener">＋ Hotel search</a>
+    </div>
+  </section>
+  <section class="stats">
+    <div class="stat"><strong id="stat-total">—</strong><span>Tracked opportunities</span></div>
+    <div class="stat"><strong id="stat-strong">—</strong><span>Strong benchmarked deals</span></div>
+    <div class="stat"><strong id="stat-flight">—</strong><span>Flight opportunities</span></div>
+    <div class="stat"><strong id="stat-hotel">—</strong><span>Hotel opportunities</span></div>
+  </section>
+  <section class="filters">
+    <div class="mode" role="tablist" aria-label="Deal type">
+      <button class="active" data-mode="all">All</button><button data-mode="flight">Flights</button><button data-mode="hotel">Hotels</button><button data-mode="combined">Combined holidays</button>
+    </div>
+    <div class="filter-grid">
+      <div class="searchbox"><label for="search">Search destination or property</label><input id="search" type="search" placeholder="e.g. Tokyo, Italy, Bangkok hotel"></div>
+      <div><label for="continent">Continent</label><select id="continent"><option value="">Everywhere</option><option>Europe</option><option>Asia</option><option>Africa</option><option>North America</option><option>South America</option><option>Oceania</option></select></div>
+      <div><label for="country">Country</label><select id="country"><option value="">All countries</option></select></div>
+      <div><label for="sort">Sort by</label><select id="sort"><option value="best">Best benchmark discount</option><option value="price">Lowest price</option><option value="newest">Recently observed</option></select></div>
+      <label class="check"><input id="ready" type="checkbox"> Benchmarked only</label>
+    </div>
+    <div class="notice">Manual searches open the secure GitHub Actions form. Your API key stays on the server; this page never calls SerpApi directly.</div>
+  </section>
+  <div class="result-head"><strong id="result-count">Loading opportunities…</strong><span id="result-note">Prices in GBP · return flights / whole-stay hotel totals</span></div>
+  <section id="results" class="grid" aria-live="polite"></section>
+  <div class="load"><button id="more" class="btn" hidden>Show more</button></div>
+</main>
+<footer><div class="wrap">HUNTER · Discovery, not booking. Benchmarks are labelled by source; personal historical medians are not universal market averages. Always verify final prices, availability and taxes with the provider.</div></footer>
+<script>
+const FEED_URL="https://raw.githubusercontent.com/swipinurmums/vibecode-adventure/main/data/deals/deals.json";
+const HISTORY_URL="https://raw.githubusercontent.com/swipinurmums/vibecode-adventure/main/data/history/observations.jsonl";
+const PER_PAGE= thirty=>30;
+const continentCountries={
+ Europe:["Albania","Andorra","Austria","Belarus","Belgium","Bosnia and Herzegovina","Bulgaria","Croatia","Cyprus","Czechia","Denmark","Estonia","Finland","France","Germany","Greece","Hungary","Iceland","Ireland","Italy","Kosovo","Latvia","Liechtenstein","Lithuania","Luxembourg","Malta","Moldova","Monaco","Montenegro","Netherlands","North Macedonia","Norway","Poland","Portugal","Romania","Russia","San Marino","Serbia","Slovakia","Slovenia","Spain","Sweden","Switzerland","Türkiye","Ukraine","United Kingdom","Vatican City","Svalbard & Jan Mayen"],
+ Asia:["Afghanistan","Armenia","Azerbaijan","Bahrain","Bangladesh","Bhutan","Brunei","Cambodia","China","Georgia","India","Indonesia","Iran","Iraq","Israel","Japan","Jordan","Kazakhstan","Kuwait","Kyrgyzstan","Laos","Lebanon","Malaysia","Maldives","Mongolia","Myanmar","Nepal","North Korea","Oman","Pakistan","Palestine","Philippines","Qatar","Saudi Arabia","Singapore","South Korea","Sri Lanka","Syria","Taiwan","Tajikistan","Thailand","Turkmenistan","United Arab Emirates","Uzbekistan","Vietnam","Russia","Cyprus","Türkiye"],
+ Africa:["Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi","Cameroon","Cape Verde","Central African Republic","Chad","Comoros","Côte d’Ivoire","Democratic Republic of the Congo","Djibouti","Egypt","Equatorial Guinea","Eritrea","Eswatini","Ethiopia","Gabon","Gambia","Ghana","Guinea","Guinea-Bissau","Kenya","Lesotho","Liberia","Libya","Madagascar","Malawi","Mali","Mauritania","Mauritius","Morocco","Mozambique","Namibia","Niger","Nigeria","Republic of the Congo","Rwanda","Senegal","Seychelles","Sierra Leone","Somalia","South Africa","South Sudan","Sudan","Tanzania","Togo","Tunisia","Uganda","Zambia","Zimbabwe"],
+ "North America":["Antigua and Barbuda","Aruba","Bahamas","Barbados","Belize","Bermuda","Canada","Costa Rica","Cuba","Curaçao","Dominica","Dominican Republic","El Salvador","Grenada","Guatemala","Haiti","Honduras","Jamaica","Mexico","Nicaragua","Panama","Saint Lucia","Trinidad and Tobago","United States","Guam"],
+ "South America":["Argentina","Bolivia","Brazil","Chile","Colombia","Ecuador","Falkland Islands","French Guiana","Guyana","Paraguay","Peru","Suriname","Uruguay","Venezuela"],
+ Oceania:["Australia","Cook Islands","Fiji","French Polynesia","Guam","Kiribati","Marshall Islands","Micronesia","Nauru","New Caledonia","New Zealand","Norfolk Island","Palau","Papua New Guinea","Samoa","Solomon Islands","Tonga","Tuvalu","Vanuatu"]
+};
+let deals=[],history=null,mode="all",visible=30;
+const $=id=>document.getElementById(id);
+const norm=s=>String(s||"").trim().toLocaleLowerCase();
+function continentOf(country){const c=norm(country);for(const [name,list] of Object.entries(continentCountries))if(list.some(x=>norm(x)===c))return name;return "";}
+function fmt(n){if(n===null||n===undefined||n==="")return "—";const x=Number(n);return Number.isFinite(x)?"£"+x.toLocaleString("en-GB",{maximumFractionDigits:0}):"—";}
+function date(s){if(!s)return "Dates pending";const d=new Date(s+"T12:00:00Z");return Number.isNaN(d.getTime())?s:d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});}
+function status(row,m){
+ let s=m==="flight"?(row.flight_deal_status||row.deal_status):m==="hotel"?(row.hotel_deal_status||row.deal_status):m==="combined"?(row.combined_deal_status||"building_combined_benchmark"):row.deal_status||"building_benchmark";
+ return s||"building_benchmark";
+}
+function labelStatus(s){return ({strong_flight_deal:"Strong flight deal",below_typical_flight:"Below typical",not_below_typical_flight:"Not below typical",building_flight_benchmark:"Building flight benchmark",strong_hotel_deal:"Strong hotel deal",below_typical_hotel:"Below typical",not_below_typical_hotel:"Not below typical",building_hotel_benchmark:"Building hotel benchmark",strong_combined_deal:"Strong combined deal",below_typical_combined:"Below typical",not_below_typical_combined:"Not below typical",building_combined_benchmark:"Building combined benchmark",building_component_history:"Building component history"})[s]||s.replaceAll("_"," ");}
+function cssStatus(s){return s.startsWith("strong_")?"strong":s.startsWith("below_")?"below":s.startsWith("building_")?"building":"typical";}
+function priceFor(row,m){return m==="flight"?(row.kind==="flight_insight"?row.price_gbp:row.price_gbp):m==="hotel"?row.price_gbp:m==="combined"?row.combined_price_gbp:row.price_gbp;}
+function discountFor(row,m){return m==="flight"?(row.flight_discount_percent??row.ranking_discount_percent):m==="hotel"?(row.hotel_discount_percent??row.ranking_discount_percent):m==="combined"?row.combined_discount_percent:row.ranking_discount_percent;}
+function benchmarkFor(row,m){return m==="flight"?(row.benchmark_gbp??row.flight_benchmark_reference_gbp??row.flight_benchmark_gbp):m==="hotel"?row.benchmark_gbp:m==="combined"?row.combined_benchmark_gbp:row.benchmark_gbp;}
+function matchesMode(r){if(mode==="all")return true;if(mode==="flight")return r.kind==="flight"||r.kind==="flight_insight";if(mode==="hotel")return r.kind==="hotel";return Array.isArray(r.deal_modes)&&r.deal_modes.includes("combined")&&r.combined_price_gbp!=null;}
+function filtered(){
+ const q=norm($("search").value),cont=$("continent").value,country=$("country").value,ready=$("ready").checked;
+ let list=deals.filter(r=>{
+  if(!matchesMode(r))return false;
+  if(q&&!norm([r.destination,r.country,r.property,r.origin].join(" ")).includes(q))return false;
+  if(cont&&continentOf(r.country)!==cont)return false;
+  if(country&&norm(r.country)!==norm(country))return false;
+  const d=discountFor(r,mode==="all"?(r.kind==="hotel"?"hotel":"flight"):mode);
+  if(ready&&!(typeof d==="number"&&Number.isFinite(d)))return false;
+  return true;
+ });
+ const sort=$("sort").value;
+ list.sort((a,b)=>sort==="price"?(Number(priceFor(a,mode==="all"?(a.kind==="hotel"?"hotel":"flight"):mode)??Infinity)-Number(priceFor(b,mode==="all"?(b.kind==="hotel"?"hotel":"flight"):mode)??Infinity)):sort==="newest"?String(b.observed_at||"").localeCompare(String(a.observed_at||"")):(Number(discountFor(b,mode==="all"?(b.kind==="hotel"?"hotel":"flight"):mode)??-999)-Number(discountFor(a,mode==="all"?(a.kind==="hotel"?"hotel":"flight"):mode)??-999)));
+ return list;
+}
+function card(row){
+ const m=mode==="all"?(row.kind==="hotel"?"hotel":"flight"):mode;
+ const st=status(row,m),disc=discountFor(row,m),price=priceFor(row,m),bench=benchmarkFor(row,m);
+ const dateLine=date(row.start_date)+" – "+date(row.end_date);
+ const title=row.kind==="hotel"?(row.destination||row.country||"Hotel stay"):(row.destination||"Flight");
+ const subtitle=row.kind==="hotel"?(row.property||"Accommodation listing"):(row.origin?row.origin+" return":"Return flight");
+ const n=row.sample_count??row.flight_sample_count??0;
+ const source=row.benchmark_source||row.flight_benchmark_source||"";
+ const conf=row.confidence||row.flight_confidence||"low";
+ const discount=typeof disc==="number"?(disc>=0?disc.toFixed(1)+"% below":" "+Math.abs(disc).toFixed(1)+"% above"):"Not established";
+ const div=document.createElement("article");div.className="deal";
+ div.innerHTML='<div class="deal-top"><span class="kind">'+(row.kind==="hotel"?"Hotel": "Flight")+'</span><span class="pill '+cssStatus(st)+'">'+labelStatus(st)+'</span></div>'+
+ '<div><div class="destination">'+esc(title)+'</div><div class="property">'+esc(subtitle)+'</div></div>'+
+ '<div class="price-row"><div class="price">'+fmt(price)+' <small>'+(m==="hotel"?"total stay":m==="combined"?"flight + stay":"return")+'</small></div><div class="discount '+(typeof disc==="number"?"":"none")+'">'+esc(discount)+'</div></div>'+
+ '<div class="compare"><span>Typical benchmark</span><b>'+fmt(bench)+'</b></div>'+
+ '<div class="mini"><div><b>'+esc(dateLine)+'</b><span>Travel dates · '+(row.nights||"—")+' nights</span></div><div><b>'+esc(row.country||"Country unavailable")+'</b><span>'+(row.origin&&row.origin!=="HOTEL_ONLY"?"From "+esc(row.origin):"Destination")+'</span></div></div>'+
+ '<div class="card-foot"><span class="conf">'+(bench!=null?(n+" comparable samples · "+conf+" confidence"): "Benchmark not established yet")+'</span><button class="detail" type="button">Price history ↗</button></div><div class="chartbox"><div class="charttitle">Observed price history · dates shown below</div><div class="chart-note">Loading history…</div></div>';
+ const button=div.querySelector(".detail"),box=div.querySelector(".chartbox");
+ button.addEventListener("click",async()=>{box.classList.toggle("open");if(box.dataset.loaded||!box.classList.contains("open"))return;await drawHistory(row,box);box.dataset.loaded="1";});
+ return div;
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function drawHistory(row,box){
+ try{
+  if(!history){const res=await fetch(HISTORY_URL+"?v="+Date.now());if(!res.ok)throw Error("History unavailable");const raw=await res.text();history=raw.split(/\r?\n/).filter(Boolean).map(x=>{try{return JSON.parse(x)}catch{return null}}).filter(Boolean);}
+  const hotel=row.kind==="hotel";
+  let pts=history.filter(x=>x.kind===row.kind&&norm(x.destination)===norm(row.destination)&&norm(x.country)===norm(row.country)&&(!hotel?x.origin===row.origin:norm(x.property)===norm(row.property)));
+  if(!row.flexible_month_search)pts=pts.filter(x=>x.start_date===row.start_date&&x.end_date===row.end_date);
+  else pts=pts.filter(x=>x.travel_month===row.travel_month&&x.nights===row.nights);
+  const byDay=new Map();for(const p of pts){const day=String(p.observed_at||"").slice(0,10);if(day)byDay.set(day,p);}
+  pts=[...byDay.values()].sort((a,b)=>String(a.observed_at).localeCompare(String(b.observed_at)));
+  if(pts.length<2){box.querySelector(".chart-note").textContent="Only "+pts.length+" distinct observation day(s) so far. The chart will become useful as more live prices are collected.";return;}
+  const vals=pts.map(p=>Number(p.price_gbp)).filter(Number.isFinite),min=Math.min(...vals),max=Math.max(...vals),span=Math.max(max-min,1);
+  const W=320,H=72,L=28,R=8,T=8,B=17;
+  const coords=pts.map((p,i)=>({x:L+(pts.length===1?0:i*(W-L-R)/(pts.length-1)),y:T+(max-Number(p.price_gbp))/span*(H-T-B),p}));
+  const poly=coords.map(c=>c.x+","+c.y).join(" ");
+  const circles=coords.map(c=>'<circle class="dot" cx="'+c.x+'" cy="'+c.y+'" r="3"><title>'+esc(String(c.p.observed_at).slice(0,10))+' · '+fmt(c.p.price_gbp)+' · stay '+esc(c.p.start_date||"")+'</title></circle>').join("");
+  const labels=[coords[0],coords[coords.length-1]].map(c=>'<text x="'+c.x+'" y="'+(H-2)+'" text-anchor="middle">'+esc(String(c.p.observed_at).slice(5,10))+'</text>').join("");
+  box.querySelector(".chart-note").outerHTML='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Observed prices by date"><text x="0" y="12">'+fmt(max)+'</text><text x="0" y="'+(H-20)+'">'+fmt(min)+'</text><polyline class="line" points="'+poly+'"/>'+circles+labels+'</svg><div class="chart-note">'+pts.length+' distinct observation days · '+(row.flexible_month_search?"flexible dates; stay dates may differ":"same exact travel dates")+'</div>';
+ }catch(e){box.querySelector(".chart-note").textContent="Could not load price history right now.";}
+}
+function render(){
+ const list=filtered(),root=$("results");root.innerHTML="";visible=Math.min(visible,30);
+ $("result-count").textContent=list.length.toLocaleString("en-GB")+" matching opportunities";
+ $("result-note").textContent=mode==="combined"?"Only packages with both component benchmarks are shown.":"GBP · flight fares are return prices; hotel prices are whole-stay totals.";
+ if(!list.length){root.innerHTML='<div class="empty" style="grid-column:1/-1"><b>No matching opportunities yet.</b><br>Try another destination or switch off “Benchmarked only”. New observations continue to build the comparisons.</div>';$("more").hidden=true;return;}
+ list.slice(0,visible).forEach(r=>root.appendChild(card(r)));
+ $("more").hidden=visible>=list.length;$("more").textContent="Show more ("+(list.length-visible)+" remaining)";
+}
+function updateCountries(){
+ const cont=$("continent").value,sel=$("country"),previous=sel.value;
+ const found=[...new Set(deals.map(x=>x.country).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+ const items=found.filter(c=>!cont||continentOf(c)===cont);
+ sel.innerHTML='<option value="">All countries</option>'+items.map(c=>'<option>'+esc(c)+'</option>').join("");
+ if(items.some(x=>norm(x)===norm(previous)))sel.value=previous;
+}
+function setStats(){
+ $("stat-total").textContent=deals.length.toLocaleString("en-GB");
+ $("stat-strong").textContent=deals.filter(x=>String(x.deal_status||"").startsWith("strong_")||String(x.flight_deal_status||"").startsWith("strong_")||String(x.combined_deal_status||"").startsWith("strong_")).length;
+ $("stat-flight").textContent=deals.filter(x=>x.kind==="flight"||x.kind==="flight_insight").length;
+ $("stat-hotel").textContent=deals.filter(x=>x.kind==="hotel").length;
+}
+async function load(){
+ try{
+  $("feed-status").textContent="Refreshing live data…";
+  const res=await fetch(FEED_URL+"?v="+Date.now());if(!res.ok)throw Error("HTTP "+res.status);
+  const feed=await res.json();deals=feed.deals||[];setStats();updateCountries();render();
+  $("feed-status").textContent="Updated "+new Date(feed.generated_at).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"});
+ }catch(e){$("feed-status").textContent="Feed unavailable";$("results").innerHTML='<div class="empty" style="grid-column:1/-1">Could not load the latest deal feed. Refresh in a moment or check the <a href="https://github.com/swipinurmums/vibecode-adventure/actions">GitHub Actions runs</a>.</div>';}
+}
+document.querySelectorAll(".mode button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".mode button").forEach(x=>x.classList.remove("active"));b.classList.add("active");mode=b.dataset.mode;visible=30;render();}));
+["search","country","sort","ready"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",()=>{visible=30;render();}));
+$("continent").addEventListener("change",()=>{updateCountries();visible=30;render();});
+$("more").addEventListener("click",()=>{visible+=30;render();});
+load();
+</script>
+</body>
+</html>
