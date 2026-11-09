@@ -27,6 +27,17 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Validate dashboard JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html = Path("docs/index.html").read_text(encoding="utf-8")
+          if "<script>" not in html or "</script>" not in html:
+              raise SystemExit("Dashboard script block is missing")
+          script = html.split("<script>", 1)[1].split("</script>", 1)[0]
+          Path("/tmp/hunter-dashboard.js").write_text(script, encoding="utf-8")
+          PY
+          node --check /tmp/hunter-dashboard.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
