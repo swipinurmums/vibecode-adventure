@@ -74,6 +74,21 @@ jobs:
           COUNT="$(python -c 'import sys; from hotel_scan import load_flight_candidates; print(len(load_flight_candidates(sys.argv[1],250)))' "$CSV_PATH")"
           echo "csv_path=$CSV_PATH" >> "$GITHUB_OUTPUT"
           if [ "$COUNT" -gt 0 ]; then echo "eligible=true" >> "$GITHUB_OUTPUT"; else echo "eligible=false" >> "$GITHUB_OUTPUT"; fi
+      - name: Reserve daily Google Flights benchmark search
+        id: insight_reserve
+        if: steps.hotel.outputs.eligible == 'true'
+        continue-on-error: true
+        run: |
+          python credit_ledger.py reserve --category research --count 1
+          git add data/usage/monthly.json
+          git commit -m "Reserve scheduled route benchmark search"
+          git push
+      - name: Capture market benchmark for a promising flight
+        if: steps.hotel.outputs.eligible == 'true' && steps.insight_reserve.outcome == 'success'
+        continue-on-error: true
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+        run: python flight_insights.py --candidate-csv "${{ steps.hotel.outputs.csv_path }}" --max-flight-price 250
       - name: Reserve daily hotel search before API request
         if: steps.hotel.outputs.eligible == 'true'
         run: |
