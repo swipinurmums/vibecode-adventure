@@ -107,9 +107,25 @@ jobs:
               int(os.environ["MAX_SEARCHES"]))
           print(f"Validated {len(stays)} date combinations: {stays}")
           PY
-      - name: Reserve hotel search before API request
+      - name: Reserve hotel searches before API requests
+        env:
+          CHECK_IN_MONTH: ${{ inputs.check_in_month }}
+          CHECK_OUT_MONTH: ${{ inputs.check_out_month }}
+          MIN_NIGHTS: ${{ inputs.min_nights }}
+          MAX_NIGHTS: ${{ inputs.max_nights }}
+          MAX_SEARCHES: ${{ inputs.max_searches }}
         run: |
-          python credit_ledger.py reserve --category hotel --count ${{ inputs.max_searches }}
+          SEARCH_COUNT="$(python - <<'PY'
+          import os
+          from hotel_scan import generate_flexible_stays
+          stays = generate_flexible_stays(
+              os.environ["CHECK_IN_MONTH"], os.environ["CHECK_OUT_MONTH"],
+              int(os.environ["MIN_NIGHTS"]), int(os.environ["MAX_NIGHTS"]),
+              int(os.environ["MAX_SEARCHES"]))
+          print(len(stays))
+          PY
+          )"
+          python credit_ledger.py reserve --category hotel --count "$SEARCH_COUNT"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/usage/monthly.json
