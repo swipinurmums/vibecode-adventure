@@ -1,311 +1,9 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-11-14T21:09:57.543598+00:00",
-  "deal_count": 1391,
-  "strong_deal_count": 1,
+  "generated_at": "2026-11-15T02:22:07.866571+00:00",
+  "deal_count": 1411,
+  "strong_deal_count": 0,
   "deals": [
-    {
-      "kind": "flight",
-      "origin": "MAN",
-      "destination": "Antalya",
-      "country": "Türkiye",
-      "travel_month": "02",
-      "nights": 9,
-      "start_date": "2027-02-21",
-      "end_date": "2027-03-02",
-      "property": null,
-      "price_gbp": 69,
-      "observed_at": "2026-11-14T21:09:56.642131+00:00",
-      "lead_time_band": "91_180_days",
-      "sample_count": 0,
-      "benchmark_gbp": null,
-      "discount_percent": null,
-      "deal_status": "strong_flight_deal",
-      "ranking_discount_percent": 31.0,
-      "flight_discount_percent": 31.0,
-      "hotel_discount_percent": null,
-      "combined_discount_percent": null,
-      "flight_deal_status": "strong_flight_deal",
-      "hotel_deal_status": null,
-      "combined_deal_status": null,
-      "combined_ranking_discount_percent": null,
-      "deal_modes": [
-        "flight"
-      ],
-      "benchmark_source": "google_flights_price_insights",
-      "flight_benchmark_source": "google_flights_price_insights",
-      "hotel_benchmark_source": "insufficient_comparable_history",
-      "combined_benchmark_source": "insufficient_component_benchmarks",
-      "confidence": "medium",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights",
-      "explore_price_gbp": 69.0,
-      "price_source": "google_flights_price_insights"
-    },
     {
       "kind": "flight",
       "origin": "MAN",
@@ -19065,41 +18763,6 @@
     {
       "kind": "flight",
       "origin": "LBA",
-      "destination": "Miami",
-      "country": "United States",
-      "travel_month": "01",
-      "nights": 7,
-      "start_date": "2027-01-15",
-      "end_date": "2027-01-22",
-      "property": null,
-      "price_gbp": 623.0,
-      "observed_at": "2026-11-09T02:20:35.927125+00:00",
-      "lead_time_band": "31_90_days",
-      "sample_count": 0,
-      "benchmark_gbp": null,
-      "discount_percent": null,
-      "deal_status": "building_flight_benchmark",
-      "ranking_discount_percent": null,
-      "flight_discount_percent": null,
-      "hotel_discount_percent": null,
-      "combined_discount_percent": null,
-      "flight_deal_status": "building_flight_benchmark",
-      "hotel_deal_status": null,
-      "combined_deal_status": null,
-      "combined_ranking_discount_percent": null,
-      "deal_modes": [
-        "flight"
-      ],
-      "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "insufficient_comparable_history",
-      "hotel_benchmark_source": "insufficient_comparable_history",
-      "combined_benchmark_source": "insufficient_component_benchmarks",
-      "confidence": "low",
-      "flight_confidence": "low"
-    },
-    {
-      "kind": "flight",
-      "origin": "LBA",
       "destination": "San Diego",
       "country": "United States",
       "travel_month": "11",
@@ -19415,41 +19078,6 @@
     {
       "kind": "flight",
       "origin": "LBA",
-      "destination": "Denver",
-      "country": "United States",
-      "travel_month": "12",
-      "nights": 7,
-      "start_date": "2026-12-07",
-      "end_date": "2026-12-14",
-      "property": null,
-      "price_gbp": 756.0,
-      "observed_at": "2026-11-09T02:20:35.931918+00:00",
-      "lead_time_band": "8_30_days",
-      "sample_count": 0,
-      "benchmark_gbp": null,
-      "discount_percent": null,
-      "deal_status": "building_flight_benchmark",
-      "ranking_discount_percent": null,
-      "flight_discount_percent": null,
-      "hotel_discount_percent": null,
-      "combined_discount_percent": null,
-      "flight_deal_status": "building_flight_benchmark",
-      "hotel_deal_status": null,
-      "combined_deal_status": null,
-      "combined_ranking_discount_percent": null,
-      "deal_modes": [
-        "flight"
-      ],
-      "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "insufficient_comparable_history",
-      "hotel_benchmark_source": "insufficient_comparable_history",
-      "combined_benchmark_source": "insufficient_component_benchmarks",
-      "confidence": "low",
-      "flight_confidence": "low"
-    },
-    {
-      "kind": "flight",
-      "origin": "LBA",
       "destination": "Mexico City",
       "country": "Mexico",
       "travel_month": "01",
@@ -19495,41 +19123,6 @@
       "price_gbp": 1373.0,
       "observed_at": "2026-11-09T02:20:35.932875+00:00",
       "lead_time_band": "0_7_days",
-      "sample_count": 0,
-      "benchmark_gbp": null,
-      "discount_percent": null,
-      "deal_status": "building_flight_benchmark",
-      "ranking_discount_percent": null,
-      "flight_discount_percent": null,
-      "hotel_discount_percent": null,
-      "combined_discount_percent": null,
-      "flight_deal_status": "building_flight_benchmark",
-      "hotel_deal_status": null,
-      "combined_deal_status": null,
-      "combined_ranking_discount_percent": null,
-      "deal_modes": [
-        "flight"
-      ],
-      "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "insufficient_comparable_history",
-      "hotel_benchmark_source": "insufficient_comparable_history",
-      "combined_benchmark_source": "insufficient_component_benchmarks",
-      "confidence": "low",
-      "flight_confidence": "low"
-    },
-    {
-      "kind": "flight",
-      "origin": "LBA",
-      "destination": "Austin",
-      "country": "United States",
-      "travel_month": "12",
-      "nights": 7,
-      "start_date": "2026-12-07",
-      "end_date": "2026-12-14",
-      "property": null,
-      "price_gbp": 755.0,
-      "observed_at": "2026-11-09T02:20:35.933347+00:00",
-      "lead_time_band": "8_30_days",
       "sample_count": 0,
       "benchmark_gbp": null,
       "discount_percent": null,
@@ -19880,41 +19473,6 @@
       "price_gbp": 1371.0,
       "observed_at": "2026-11-09T02:20:35.938210+00:00",
       "lead_time_band": "0_7_days",
-      "sample_count": 0,
-      "benchmark_gbp": null,
-      "discount_percent": null,
-      "deal_status": "building_flight_benchmark",
-      "ranking_discount_percent": null,
-      "flight_discount_percent": null,
-      "hotel_discount_percent": null,
-      "combined_discount_percent": null,
-      "flight_deal_status": "building_flight_benchmark",
-      "hotel_deal_status": null,
-      "combined_deal_status": null,
-      "combined_ranking_discount_percent": null,
-      "deal_modes": [
-        "flight"
-      ],
-      "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "insufficient_comparable_history",
-      "hotel_benchmark_source": "insufficient_comparable_history",
-      "combined_benchmark_source": "insufficient_component_benchmarks",
-      "confidence": "low",
-      "flight_confidence": "low"
-    },
-    {
-      "kind": "flight",
-      "origin": "LBA",
-      "destination": "Fort Lauderdale",
-      "country": "United States",
-      "travel_month": "01",
-      "nights": 7,
-      "start_date": "2027-01-15",
-      "end_date": "2027-01-22",
-      "property": null,
-      "price_gbp": 623.0,
-      "observed_at": "2026-11-09T02:20:35.938681+00:00",
-      "lead_time_band": "31_90_days",
       "sample_count": 0,
       "benchmark_gbp": null,
       "discount_percent": null,
@@ -50790,6 +50348,41 @@
     {
       "kind": "flight",
       "origin": "MAN",
+      "destination": "Antalya",
+      "country": "Türkiye",
+      "travel_month": "02",
+      "nights": 9,
+      "start_date": "2027-02-21",
+      "end_date": "2027-03-02",
+      "property": null,
+      "price_gbp": 69.0,
+      "observed_at": "2026-11-14T21:09:56.642131+00:00",
+      "lead_time_band": "91_180_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "MAN",
       "destination": "Bahrain",
       "country": "Bahrain",
       "travel_month": "04",
@@ -51726,8 +51319,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 193.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -51741,276 +51334,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -52041,8 +51369,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 273.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -52056,276 +51384,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -52356,8 +51419,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 293.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -52371,276 +51434,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -52671,8 +51469,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 294.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -52686,276 +51484,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -52986,8 +51519,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 312.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -53001,276 +51534,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -53301,8 +51569,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 332.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -53316,276 +51584,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -53616,8 +51619,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 337.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -53631,276 +51634,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -53931,8 +51669,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 369.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -53946,276 +51684,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -54246,8 +51719,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 373.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -54261,276 +51734,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -54561,8 +51769,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 402.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -54576,276 +51784,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -54876,8 +51819,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 498.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -54891,276 +51834,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -55191,8 +51869,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 534.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -55206,276 +51884,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -55506,8 +51919,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 562.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -55521,276 +51934,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -55821,8 +51969,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 603.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -55836,276 +51984,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -56136,8 +52019,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 615.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -56151,276 +52034,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -56451,8 +52069,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 647.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -56466,276 +52084,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -56766,8 +52119,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 755.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -56781,276 +52134,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -57081,8 +52169,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 765.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -57096,276 +52184,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -57396,8 +52219,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 810.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -57411,276 +52234,11 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
     },
     {
       "kind": "hotel",
@@ -57711,8 +52269,8 @@
       "flight_price_gbp": 69.0,
       "flight_benchmark_gbp": null,
       "flight_sample_count": 1,
-      "flight_discount_percent": 31.0,
-      "flight_deal_status": "strong_flight_deal",
+      "flight_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
       "combined_price_gbp": 1101.0,
       "combined_benchmark_gbp": null,
       "combined_discount_percent": null,
@@ -57726,276 +52284,851 @@
         "hotel"
       ],
       "benchmark_source": "insufficient_comparable_history",
-      "flight_benchmark_source": "google_flights_price_insights",
+      "flight_benchmark_source": "insufficient_comparable_history",
       "hotel_benchmark_source": "insufficient_comparable_history",
       "combined_benchmark_source": "insufficient_component_benchmarks",
       "confidence": "low",
-      "flight_confidence": "medium",
-      "google_flights_price_insights": {
-        "origin": "MAN",
-        "destination": "Antalya",
-        "country": "Türkiye",
-        "departure_date": "2027-02-21",
-        "return_date": "2027-03-02",
-        "explore_fare_gbp": 69.0,
-        "google_flights_lowest_price_gbp": 69,
-        "price_level": "low",
-        "typical_price_low_gbp": 100.0,
-        "typical_price_high_gbp": 235.0,
-        "price_history": [
-          [
-            1789426800,
-            104
-          ],
-          [
-            1789513200,
-            104
-          ],
-          [
-            1789599600,
-            114
-          ],
-          [
-            1789686000,
-            114
-          ],
-          [
-            1789772400,
-            114
-          ],
-          [
-            1789858800,
-            114
-          ],
-          [
-            1789945200,
-            114
-          ],
-          [
-            1790031600,
-            107
-          ],
-          [
-            1790118000,
-            104
-          ],
-          [
-            1790204400,
-            104
-          ],
-          [
-            1790290800,
-            104
-          ],
-          [
-            1790377200,
-            104
-          ],
-          [
-            1790463600,
-            104
-          ],
-          [
-            1790550000,
-            99
-          ],
-          [
-            1790636400,
-            100
-          ],
-          [
-            1790722800,
-            96
-          ],
-          [
-            1790809200,
-            96
-          ],
-          [
-            1790895600,
-            96
-          ],
-          [
-            1790982000,
-            96
-          ],
-          [
-            1791068400,
-            96
-          ],
-          [
-            1791154800,
-            89
-          ],
-          [
-            1791241200,
-            90
-          ],
-          [
-            1791327600,
-            87
-          ],
-          [
-            1791414000,
-            87
-          ],
-          [
-            1791500400,
-            87
-          ],
-          [
-            1791586800,
-            87
-          ],
-          [
-            1791673200,
-            80
-          ],
-          [
-            1791759600,
-            82
-          ],
-          [
-            1791846000,
-            82
-          ],
-          [
-            1791932400,
-            82
-          ],
-          [
-            1792018800,
-            84
-          ],
-          [
-            1792105200,
-            98
-          ],
-          [
-            1792191600,
-            98
-          ],
-          [
-            1792278000,
-            98
-          ],
-          [
-            1792364400,
-            98
-          ],
-          [
-            1792450800,
-            77
-          ],
-          [
-            1792537200,
-            77
-          ],
-          [
-            1792623600,
-            77
-          ],
-          [
-            1792710000,
-            77
-          ],
-          [
-            1792796400,
-            77
-          ],
-          [
-            1792882800,
-            77
-          ],
-          [
-            1792972800,
-            77
-          ],
-          [
-            1793059200,
-            77
-          ],
-          [
-            1793145600,
-            77
-          ],
-          [
-            1793232000,
-            95
-          ],
-          [
-            1793318400,
-            92
-          ],
-          [
-            1793404800,
-            94
-          ],
-          [
-            1793491200,
-            94
-          ],
-          [
-            1793577600,
-            94
-          ],
-          [
-            1793664000,
-            94
-          ],
-          [
-            1793750400,
-            94
-          ],
-          [
-            1793836800,
-            86
-          ],
-          [
-            1793923200,
-            88
-          ],
-          [
-            1794009600,
-            88
-          ],
-          [
-            1794096000,
-            88
-          ],
-          [
-            1794182400,
-            72
-          ],
-          [
-            1794268800,
-            72
-          ],
-          [
-            1794355200,
-            70
-          ],
-          [
-            1794441600,
-            70
-          ],
-          [
-            1794528000,
-            69
-          ],
-          [
-            1794614400,
-            69
-          ]
-        ],
-        "observed_at": "2026-11-14T21:09:53.047855+00:00",
-        "source": "google_flights_price_insights",
-        "benchmark_status": "strong_deal",
-        "discount_vs_typical_low_percent": 31.0
-      },
-      "flight_benchmark_price_gbp": 69,
-      "flight_benchmark_reference_gbp": 100.0,
-      "flight_price_benchmark_source": "google_flights_price_insights"
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Las Vegas",
+      "country": "United States",
+      "travel_month": "12",
+      "nights": 6,
+      "start_date": "2026-12-03",
+      "end_date": "2026-12-09",
+      "property": null,
+      "price_gbp": 760.0,
+      "observed_at": "2026-11-15T02:22:07.146019+00:00",
+      "lead_time_band": "8_30_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "New York",
+      "country": "United States",
+      "travel_month": "02",
+      "nights": 6,
+      "start_date": "2027-02-22",
+      "end_date": "2027-02-28",
+      "property": null,
+      "price_gbp": 608.0,
+      "observed_at": "2026-11-15T02:22:07.147685+00:00",
+      "lead_time_band": "91_180_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "San Francisco",
+      "country": "United States",
+      "travel_month": "01",
+      "nights": 9,
+      "start_date": "2027-01-30",
+      "end_date": "2027-02-08",
+      "property": null,
+      "price_gbp": 582.0,
+      "observed_at": "2026-11-15T02:22:07.148362+00:00",
+      "lead_time_band": "31_90_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Los Angeles",
+      "country": "United States",
+      "travel_month": "01",
+      "nights": 6,
+      "start_date": "2027-01-14",
+      "end_date": "2027-01-20",
+      "property": null,
+      "price_gbp": 594.0,
+      "observed_at": "2026-11-15T02:22:07.148963+00:00",
+      "lead_time_band": "31_90_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Chicago",
+      "country": "United States",
+      "travel_month": "01",
+      "nights": 7,
+      "start_date": "2027-01-18",
+      "end_date": "2027-01-25",
+      "property": null,
+      "price_gbp": 627.0,
+      "observed_at": "2026-11-15T02:22:07.149583+00:00",
+      "lead_time_band": "31_90_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Washington, D.C.",
+      "country": "United States",
+      "travel_month": "01",
+      "nights": 6,
+      "start_date": "2027-01-22",
+      "end_date": "2027-01-28",
+      "property": null,
+      "price_gbp": 593.0,
+      "observed_at": "2026-11-15T02:22:07.150184+00:00",
+      "lead_time_band": "31_90_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Boston",
+      "country": "United States",
+      "travel_month": "02",
+      "nights": 6,
+      "start_date": "2027-02-27",
+      "end_date": "2027-03-05",
+      "property": null,
+      "price_gbp": 578.0,
+      "observed_at": "2026-11-15T02:22:07.150793+00:00",
+      "lead_time_band": "91_180_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Miami",
+      "country": "United States",
+      "travel_month": "01",
+      "nights": 7,
+      "start_date": "2027-01-15",
+      "end_date": "2027-01-22",
+      "property": null,
+      "price_gbp": 612.0,
+      "observed_at": "2026-11-15T02:22:07.151437+00:00",
+      "lead_time_band": "31_90_days",
+      "sample_count": 1,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "San Diego",
+      "country": "United States",
+      "travel_month": "12",
+      "nights": 6,
+      "start_date": "2026-12-05",
+      "end_date": "2026-12-11",
+      "property": null,
+      "price_gbp": 769.0,
+      "observed_at": "2026-11-15T02:22:07.152072+00:00",
+      "lead_time_band": "8_30_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Seattle",
+      "country": "United States",
+      "travel_month": "12",
+      "nights": 6,
+      "start_date": "2026-12-03",
+      "end_date": "2026-12-09",
+      "property": null,
+      "price_gbp": 681.0,
+      "observed_at": "2026-11-15T02:22:07.152693+00:00",
+      "lead_time_band": "8_30_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Toronto",
+      "country": "Canada",
+      "travel_month": "01",
+      "nights": 9,
+      "start_date": "2027-01-16",
+      "end_date": "2027-01-25",
+      "property": null,
+      "price_gbp": 577.0,
+      "observed_at": "2026-11-15T02:22:07.153315+00:00",
+      "lead_time_band": "31_90_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Vancouver",
+      "country": "Canada",
+      "travel_month": "01",
+      "nights": 7,
+      "start_date": "2027-01-18",
+      "end_date": "2027-01-25",
+      "property": null,
+      "price_gbp": 721.0,
+      "observed_at": "2026-11-15T02:22:07.153911+00:00",
+      "lead_time_band": "31_90_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Orlando",
+      "country": "United States",
+      "travel_month": "02",
+      "nights": 7,
+      "start_date": "2027-02-15",
+      "end_date": "2027-02-22",
+      "property": null,
+      "price_gbp": 709.0,
+      "observed_at": "2026-11-15T02:22:07.154518+00:00",
+      "lead_time_band": "91_180_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Philadelphia",
+      "country": "United States",
+      "travel_month": "12",
+      "nights": 6,
+      "start_date": "2026-12-07",
+      "end_date": "2026-12-13",
+      "property": null,
+      "price_gbp": 717.0,
+      "observed_at": "2026-11-15T02:22:07.155111+00:00",
+      "lead_time_band": "8_30_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Atlanta",
+      "country": "United States",
+      "travel_month": "12",
+      "nights": 6,
+      "start_date": "2026-12-03",
+      "end_date": "2026-12-09",
+      "property": null,
+      "price_gbp": 674.0,
+      "observed_at": "2026-11-15T02:22:07.155714+00:00",
+      "lead_time_band": "8_30_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Denver",
+      "country": "United States",
+      "travel_month": "12",
+      "nights": 7,
+      "start_date": "2026-12-07",
+      "end_date": "2026-12-14",
+      "property": null,
+      "price_gbp": 797.0,
+      "observed_at": "2026-11-15T02:22:07.156334+00:00",
+      "lead_time_band": "8_30_days",
+      "sample_count": 1,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Mexico City",
+      "country": "Mexico",
+      "travel_month": "01",
+      "nights": 7,
+      "start_date": "2027-01-25",
+      "end_date": "2027-02-01",
+      "property": null,
+      "price_gbp": 938.0,
+      "observed_at": "2026-11-15T02:22:07.156929+00:00",
+      "lead_time_band": "31_90_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Austin",
+      "country": "United States",
+      "travel_month": "12",
+      "nights": 7,
+      "start_date": "2026-12-07",
+      "end_date": "2026-12-14",
+      "property": null,
+      "price_gbp": 796.0,
+      "observed_at": "2026-11-15T02:22:07.157534+00:00",
+      "lead_time_band": "8_30_days",
+      "sample_count": 1,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Nashville",
+      "country": "United States",
+      "travel_month": "02",
+      "nights": 7,
+      "start_date": "2027-02-18",
+      "end_date": "2027-02-25",
+      "property": null,
+      "price_gbp": 729.0,
+      "observed_at": "2026-11-15T02:22:07.158123+00:00",
+      "lead_time_band": "91_180_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Dallas",
+      "country": "United States",
+      "travel_month": "11",
+      "nights": 6,
+      "start_date": "2026-11-27",
+      "end_date": "2026-12-03",
+      "property": null,
+      "price_gbp": 1285.0,
+      "observed_at": "2026-11-15T02:22:07.158724+00:00",
+      "lead_time_band": "8_30_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Cancún",
+      "country": "Mexico",
+      "travel_month": "01",
+      "nights": 7,
+      "start_date": "2027-01-21",
+      "end_date": "2027-01-28",
+      "property": null,
+      "price_gbp": 783.0,
+      "observed_at": "2026-11-15T02:22:07.159337+00:00",
+      "lead_time_band": "31_90_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Tampa",
+      "country": "United States",
+      "travel_month": "12",
+      "nights": 7,
+      "start_date": "2026-12-04",
+      "end_date": "2026-12-11",
+      "property": null,
+      "price_gbp": 724.0,
+      "observed_at": "2026-11-15T02:22:07.159933+00:00",
+      "lead_time_band": "8_30_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Fort Lauderdale",
+      "country": "United States",
+      "travel_month": "01",
+      "nights": 7,
+      "start_date": "2027-01-15",
+      "end_date": "2027-01-22",
+      "property": null,
+      "price_gbp": 612.0,
+      "observed_at": "2026-11-15T02:22:07.160600+00:00",
+      "lead_time_band": "31_90_days",
+      "sample_count": 1,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
+    },
+    {
+      "kind": "flight",
+      "origin": "LBA",
+      "destination": "Calgary",
+      "country": "Canada",
+      "travel_month": "11",
+      "nights": 7,
+      "start_date": "2026-11-30",
+      "end_date": "2026-12-07",
+      "property": null,
+      "price_gbp": 755.0,
+      "observed_at": "2026-11-15T02:22:07.161206+00:00",
+      "lead_time_band": "8_30_days",
+      "sample_count": 0,
+      "benchmark_gbp": null,
+      "discount_percent": null,
+      "deal_status": "building_flight_benchmark",
+      "ranking_discount_percent": null,
+      "flight_discount_percent": null,
+      "hotel_discount_percent": null,
+      "combined_discount_percent": null,
+      "flight_deal_status": "building_flight_benchmark",
+      "hotel_deal_status": null,
+      "combined_deal_status": null,
+      "combined_ranking_discount_percent": null,
+      "deal_modes": [
+        "flight"
+      ],
+      "benchmark_source": "insufficient_comparable_history",
+      "flight_benchmark_source": "insufficient_comparable_history",
+      "hotel_benchmark_source": "insufficient_comparable_history",
+      "combined_benchmark_source": "insufficient_component_benchmarks",
+      "confidence": "low",
+      "flight_confidence": "low"
     }
   ]
 }
